@@ -16,11 +16,13 @@ public class Velocity extends Module {
    public static TickSetting d;
    public static TickSetting e;
    public static ComboSetting mode;
-   public static TickSetting hhh;
+   public static TickSetting hhh1;
+   public static TickSetting hhh2;
 
    public Velocity() {
       super("Velocity", ModuleCategory.combat);
-      this.registerSetting(hhh = new TickSetting("Intave", false));
+      this.registerSetting(hhh1 = new TickSetting("IntaveReduce", false));
+      this.registerSetting(hhh2 = new TickSetting("JumpReset", false));
       this.registerSetting(a = new SliderSetting("Horizontal", 90.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(b = new SliderSetting("Vertical", 100.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(c = new SliderSetting("Chance", 100.0D, 0.0D, 100.0D, 1.0D));
@@ -46,24 +48,23 @@ public class Velocity extends Module {
             }
          }
 
-         if (hhh.isToggled()) {
-            if (mc.thePlayer.onGround) mc.thePlayer.jump();
-            if (mc.thePlayer.hurtTime == 7 && mc.thePlayer.getLastAttackerTime() <= 500) {
-               mc.thePlayer.motionX *= 0.6;
-               mc.thePlayer.motionZ *= 0.6;
-            }
+         if (hhh1.isToggled() && mc.thePlayer.hurtTime == 7 && mc.thePlayer.getLastAttackerTime() <= 500) {
+            mc.thePlayer.motionX *= 0.6;
+            mc.thePlayer.motionZ *= 0.6;
          }
+      }
 
-         if (a.getInput() != 100.0D) {
-            mc.thePlayer.motionX *= a.getInput() / 100.0D;
-            mc.thePlayer.motionZ *= a.getInput() / 100.0D;
-         }
+      if (hhh2.isToggled() && mc.thePlayer.onGround && mc.thePlayer.hurtTime <= 10) mc.thePlayer.jump();
 
-         if (b.getInput() != 100.0D) {
-            mc.thePlayer.motionY *= b.getInput() / 100.0D;
-         }
+      if (a.getInput() != 100.0D) {
+         mc.thePlayer.motionX *= a.getInput() / 100.0D;
+         mc.thePlayer.motionZ *= a.getInput() / 100.0D;
+      }
 
+      if (b.getInput() != 100.0D) {
+         mc.thePlayer.motionY *= b.getInput() / 100.0D;
       }
 
    }
+
 }
