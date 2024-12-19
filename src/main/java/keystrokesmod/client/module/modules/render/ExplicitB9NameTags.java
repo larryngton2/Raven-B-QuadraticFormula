@@ -3,7 +3,9 @@
 package keystrokesmod.client.module.modules.render;
 
 
+import jdk.management.jfr.SettingDescriptorInfo;
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.CombatUtils;
@@ -50,8 +52,9 @@ public class ExplicitB9NameTags extends Module {
     private final TickSetting distanceSetting;
 
     public ExplicitB9NameTags() {
-        super("(ExplicitB9)NameTags", ModuleCategory.render);
+        super("NameTags2", ModuleCategory.render);
 
+        DescriptionSetting fucking = new DescriptionSetting("this module is from explicit b9, i have to say this or else im fucked.");
         modeSetting = new SliderSetting("Mode (Hearts/Percentage)", 1.0D, 1.0D, 2.0D, 1.0D);
         mode = "Percentage"; // default value
         scaleSetting = new SliderSetting("Scale", 5.0D, 0.1D, 10.0D, 0.1D);
@@ -60,6 +63,7 @@ public class ExplicitB9NameTags extends Module {
         durabilitySetting = new TickSetting("Durability", false);
         distanceSetting = new TickSetting("Distance", false);
 
+        registerSetting(fucking);
         registerSetting(modeSetting);
         registerSetting(scaleSetting);
         registerSetting(rangeSetting);

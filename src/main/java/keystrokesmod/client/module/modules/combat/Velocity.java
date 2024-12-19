@@ -66,9 +66,4 @@ public class Velocity extends Module {
       }
 
    }
-
-   private enum vMode {
-      Vanilla,
-      Intave
-   }
 }
