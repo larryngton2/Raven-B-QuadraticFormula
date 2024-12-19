@@ -54,7 +54,7 @@ public class Velocity extends Module {
          }
       }
 
-      if (hhh2.isToggled() && mc.thePlayer.onGround && mc.thePlayer.hurtTime <= 10) mc.thePlayer.jump();
+      if (hhh2.isToggled() && mc.thePlayer.onGround) mc.thePlayer.jump();
 
       if (a.getInput() != 100.0D) {
          mc.thePlayer.motionX *= a.getInput() / 100.0D;
