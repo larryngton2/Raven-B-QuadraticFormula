@@ -16,10 +16,11 @@ public class Velocity extends Module {
    public static TickSetting d;
    public static TickSetting e;
    public static ComboSetting mode;
+   public static TickSetting hhh;
 
    public Velocity() {
       super("Velocity", ModuleCategory.combat);
-      this.registerSetting(mode = new ComboSetting("Mode", vMode.Vanilla));
+      this.registerSetting(hhh = new TickSetting("Intave", false));
       this.registerSetting(a = new SliderSetting("Horizontal", 90.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(b = new SliderSetting("Vertical", 100.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(c = new SliderSetting("Chance", 100.0D, 0.0D, 100.0D, 1.0D));
@@ -45,7 +46,7 @@ public class Velocity extends Module {
             }
          }
 
-         if (mode.getMode() == vMode.Intave) {
+         if (hhh.isToggled()) {
             if (mc.thePlayer.onGround) mc.thePlayer.jump();
             if (mc.thePlayer.hurtTime == 7 && mc.thePlayer.getLastAttackerTime() <= 500) {
                mc.thePlayer.motionX *= 0.6;
