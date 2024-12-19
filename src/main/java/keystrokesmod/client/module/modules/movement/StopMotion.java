@@ -17,18 +17,18 @@ public class StopMotion extends Module {
    }
 
    public void onEnable() {
-      if(!Utils.Player.isPlayerInGame()){
+      if (!Utils.Player.isPlayerInGame()) {
          this.disable();
          return;
       }
 
-      if(a.isToggled())
+      if (a.isToggled())
          mc.thePlayer.motionX = 0;
 
-      if(b.isToggled())
+      if (b.isToggled())
          mc.thePlayer.motionY = 0;
 
-      if(c.isToggled())
+      if (c.isToggled())
          mc.thePlayer.motionZ = 0;
 
       this.disable();

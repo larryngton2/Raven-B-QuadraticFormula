@@ -15,7 +15,7 @@ public class GuiModule extends Module {
 
    public GuiModule() {
       super("Gui", ModuleCategory.client);
-      withKeycode(54);
+      withKeycode();
 
       this.registerSetting(guiTheme = new SliderSetting("Theme", 3.0D, 1.0D, 4.0D, 1.0D));
       this.registerSetting(guiThemeDesc = new DescriptionSetting(Utils.md + "b+"));

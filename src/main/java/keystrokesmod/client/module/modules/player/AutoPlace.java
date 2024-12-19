@@ -75,7 +75,7 @@ public class AutoPlace extends Module {
             if (i != null && i.getItem() instanceof ItemBlock) {
                MovingObjectPosition m = mc.objectMouseOver;
                if (m != null && m.typeOfHit == MovingObjectType.BLOCK && m.sideHit != EnumFacing.UP && m.sideHit != EnumFacing.DOWN) {
-                  if (this.lm != null && (double)this.f < c.getInput()) {
+                  if (this.lm != null && (double) this.f < c.getInput()) {
                      ++this.f;
                   } else {
                      this.lm = m;
@@ -112,7 +112,8 @@ public class AutoPlace extends Module {
          if (FastPlace.rightClickDelayTimerField != null) {
             FastPlace.rightClickDelayTimerField.set(mc, i);
          }
-      } catch (IllegalAccessException | IndexOutOfBoundsException ignored) {}
+      } catch (IllegalAccessException | IndexOutOfBoundsException ignored) {
+      }
    }
 
    private void rv() {

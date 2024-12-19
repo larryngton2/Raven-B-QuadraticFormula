@@ -36,6 +36,13 @@ public class DuelsStats extends Module {
    }
 
    public void onEnable() {
+      /// im keeping this piece of shitcode on here because
+      /// WHY THE FUCK WOULD YOU DO THIS STUPID ASS SHIT,
+      /// WHEN "==" EXISTS.
+      /// WHAT THE FUCK IS THIS GUY WHO WROTE THIS ON? FUCKING MARIJUANA????
+      /// WHAT THE ACTUAL FUCK.
+      /// EVEN I DON'T WRITE THAT SHITTY CODE, AND I'M NOT EVEN EXPERIENCED...
+
       if (mc.thePlayer != null) {
       } else {
          this.disable();
@@ -58,8 +65,8 @@ public class DuelsStats extends Module {
                this.queue.add(playerName);
                Raven.getExecutor().execute(() -> {
                   String id = getPlayerUUID(playerName);
-                  if(!id.isEmpty()){
-                     if(sendIgnOnJoin.isToggled())
+                  if (!id.isEmpty()) {
+                     if (sendIgnOnJoin.isToggled())
                         Utils.Player.sendMessageToSelf("&eOpponent found: " + "&3" + playerName);
                      getAndDisplayStatsForPlayer(id, playerName);
                   }
@@ -80,7 +87,7 @@ public class DuelsStats extends Module {
             PlayerProfile playerProfile = new PlayerProfile(new UUID(uuid), (Utils.Profiles.DuelsStatsMode) selectedGameMode.getMode());
             playerProfile.populateStats();
 
-            if(!playerProfile.isPlayer)return;
+            if (!playerProfile.isPlayer) return;
 
             if (playerProfile.nicked) {
                Utils.Player.sendMessageToSelf("&3" + playerName + " " + "&eis nicked!");
@@ -91,7 +98,7 @@ public class DuelsStats extends Module {
                Utils.Player.sendMessageToSelf("&eOpponent found: " + "&3" + playerProfile.inGameName);
             }
 
-            double wlr = playerProfile.losses != 0 ? Utils.Java.round((double)playerProfile.wins / (double)playerProfile.losses, 2) : (double)playerProfile.wins;
+            double wlr = playerProfile.losses != 0 ? Utils.Java.round((double) playerProfile.wins / (double) playerProfile.losses, 2) : (double) playerProfile.wins;
             Utils.Player.sendMessageToSelf("&7&m-------------------------");
             if (dm != Utils.Profiles.DuelsStatsMode.OVERALL) {
                Utils.Player.sendMessageToSelf("&e" + Utils.md + "&3" + dm.name());

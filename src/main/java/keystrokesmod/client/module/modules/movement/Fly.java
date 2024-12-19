@@ -23,45 +23,45 @@ public class Fly extends Module {
    }
 
    public void onEnable() {
-      switch((int)a.getInput()) {
-      case 1:
-         this.vanFly.onEnable();
-         break;
-      case 2:
-         this.gliFly.onEnable();
+      switch ((int) a.getInput()) {
+         case 1:
+            this.vanFly.onEnable();
+            break;
+         case 2:
+            this.gliFly.onEnable();
       }
 
    }
 
    public void onDisable() {
-      switch((int)a.getInput()) {
-      case 1:
-         this.vanFly.onDisable();
-         break;
-      case 2:
-         this.gliFly.onDisable();
+      switch ((int) a.getInput()) {
+         case 1:
+            this.vanFly.onDisable();
+            break;
+         case 2:
+            this.gliFly.onDisable();
       }
 
    }
 
    public void update() {
-      switch((int)a.getInput()) {
-      case 1:
-         this.vanFly.update();
-         break;
-      case 2:
-         this.gliFly.update();
+      switch ((int) a.getInput()) {
+         case 1:
+            this.vanFly.update();
+            break;
+         case 2:
+            this.gliFly.update();
       }
 
    }
 
    public void guiUpdate() {
-      switch((int)a.getInput()) {
-      case 1:
-         dc.setDesc(Utils.md + c1);
-         break;
-      case 2:
-         dc.setDesc(Utils.md + c2);
+      switch ((int) a.getInput()) {
+         case 1:
+            dc.setDesc(Utils.md + c1);
+            break;
+         case 2:
+            dc.setDesc(Utils.md + c2);
       }
 
    }
@@ -69,7 +69,8 @@ public class Fly extends Module {
    class GliFly {
       boolean opf = false;
 
-      public void onEnable() {}
+      public void onEnable() {
+      }
 
       public void onDisable() {
          this.opf = false;
@@ -101,10 +102,11 @@ public class Fly extends Module {
    static class VanFly {
       private final float dfs = 0.05F;
 
-      public void onEnable() {}
+      public void onEnable() {
+      }
 
       public void onDisable() {
-         if(Minecraft.getMinecraft().thePlayer== null)
+         if (Minecraft.getMinecraft().thePlayer == null)
             return;
 
          if (Minecraft.getMinecraft().thePlayer.capabilities.isFlying) {
@@ -116,7 +118,7 @@ public class Fly extends Module {
 
       public void update() {
          Module.mc.thePlayer.motionY = 0.0D;
-         Module.mc.thePlayer.capabilities.setFlySpeed((float)(0.05000000074505806D * Fly.b.getInput()));
+         Module.mc.thePlayer.capabilities.setFlySpeed((float) (0.05000000074505806D * Fly.b.getInput()));
          Module.mc.thePlayer.capabilities.isFlying = true;
       }
    }

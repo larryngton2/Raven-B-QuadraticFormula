@@ -79,10 +79,10 @@ public class ExplicitB9NameTags extends Module {
     @SubscribeEvent
     public void nameTag(Pre<? extends EntityLivingBase> player) {
         boolean _0 = player.entity.getDisplayName().getFormattedText() != null;
-        boolean _1 = !player.entity.getDisplayName().getFormattedText().equals("");
+        boolean _1 = !player.entity.getDisplayName().getFormattedText().isEmpty();
         boolean _2 = player.entity instanceof EntityPlayer && CombatUtils.canTarget(player.entity, true);
         boolean _3 = ((double) Minecraft.getMinecraft().thePlayer.getDistanceToEntity(player.entity) <= rangeSetting.getInput() || rangeSetting.getInput() == 0.0D);
-        if ( _0 && _1  && _2 && _3) {
+        if (_0 && _1 && _2 && _3) {
             player.setCanceled(true);
         }
     }
@@ -142,7 +142,7 @@ public class ExplicitB9NameTags extends Module {
     private void drawNames(EntityPlayer player) {
         float llllIIllllIlllI = (float) getWidth(getPlayerName(player)) / 2.0F + 2.2F;
         float llllIIllllIllIl;
-        llllIIllllIlllI = llllIIllllIllIl = (float) ((double) llllIIllllIlllI + (getWidth(" " + getHealth(player)) / 2) + 2.5D);
+        llllIIllllIlllI = llllIIllllIllIl = (float) ((double) llllIIllllIlllI + ((double) getWidth(" " + getHealth(player)) / 2) + 2.5D);
         float llllIIllllIllII = -llllIIllllIlllI - 2.2F;
         float llllIIllllIlIll = (float) (getWidth(getPlayerName(player)) + 4);
         if (mode.equalsIgnoreCase("Percentage")) {
@@ -158,7 +158,7 @@ public class ExplicitB9NameTags extends Module {
             llllIIllllIlIll += (float) (getWidth(getHealth(player)) + getWidth(" ") - 1);
         }
 
-        drawString(getPlayerName(player), llllIIllllIllIl - llllIIllllIlIll, 0.0F, 16777215);
+        drawString(getPlayerName(player), llllIIllllIllIl - llllIIllllIlIll, 16777215);
 
         int blendColor;
         if (player.getHealth() > 10.0F) {
@@ -168,16 +168,16 @@ public class ExplicitB9NameTags extends Module {
         }
 
         if (mode.equalsIgnoreCase("Percentage")) {
-            drawString(getHealth(player) + "%", llllIIllllIllIl - (float) getWidth(getHealth(player) + " %"), 0.0F, blendColor);
+            drawString(getHealth(player) + "%", llllIIllllIllIl - (float) getWidth(getHealth(player) + " %"), blendColor);
         } else {
-            drawString(getHealth(player), llllIIllllIllIl - (float) getWidth(getHealth(player) + " "), 0.0F, blendColor);
+            drawString(getHealth(player), llllIIllllIllIl - (float) getWidth(getHealth(player) + " "), blendColor);
         }
 
         GlStateManager.enableDepth();
     }
 
-    private void drawString(String string, float x, float y, int z) {
-        Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(string, x, y, z);
+    private void drawString(String string, float x, int z) {
+        Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(string, x, (float) 0.0, z);
     }
 
     private int getWidth(String string) {
@@ -231,7 +231,7 @@ public class ExplicitB9NameTags extends Module {
                 var10.stackSize = 1;
             }
 
-            renderItemStack(var10, pos, -20);
+            renderItemStack(var10, pos);
             pos += 16;
         }
 
@@ -240,7 +240,7 @@ public class ExplicitB9NameTags extends Module {
         for (int i = 3; i >= 0; --i) {
             ItemStack var11 = armor[i];
             if (var11 != null) {
-                renderItemStack(var11, pos, -20);
+                renderItemStack(var11, pos);
                 pos += 16;
             }
         }
@@ -257,7 +257,7 @@ public class ExplicitB9NameTags extends Module {
         return Math.max(Minecraft.getMinecraft().thePlayer.getDistanceToEntity(player) / 4.0F, 2.0F);
     }
 
-    private void renderItemStack(ItemStack is, int xPos, int yPos) {
+    private void renderItemStack(ItemStack is, int xPos) {
         GlStateManager.pushMatrix();
         GlStateManager.depthMask(true);
         GlStateManager.clear(256);
@@ -270,8 +270,8 @@ public class ExplicitB9NameTags extends Module {
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
-        Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(is, xPos, yPos);
-        Minecraft.getMinecraft().getRenderItem().renderItemOverlays(Minecraft.getMinecraft().fontRendererObj, is, xPos, yPos);
+        Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(is, xPos, -20);
+        Minecraft.getMinecraft().getRenderItem().renderItemOverlays(Minecraft.getMinecraft().fontRendererObj, is, xPos, -20);
         Minecraft.getMinecraft().getRenderItem().zLevel = 0.0F;
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableCull();
@@ -280,14 +280,14 @@ public class ExplicitB9NameTags extends Module {
         GlStateManager.disableLighting();
         GlStateManager.scale(0.5D, 0.5D, 0.5D);
         GlStateManager.disableDepth();
-        renderEnchantText(is, xPos, yPos);
+        renderEnchantText(is, xPos);
         GlStateManager.enableDepth();
         GlStateManager.scale(2.0F, 2.0F, 2.0F);
         GlStateManager.popMatrix();
     }
 
-    private void renderEnchantText(ItemStack is, int xPos, int yPos) {
-        int newYPos = yPos - 24;
+    private void renderEnchantText(ItemStack is, int xPos) {
+        int newYPos = -20 - 24;
         if (is.getEnchantmentTagList() != null && is.getEnchantmentTagList().tagCount() >= 6) {
             Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow("god", (float) (xPos * 2), (float) newYPos, 16711680);
         } else {
@@ -300,7 +300,7 @@ public class ExplicitB9NameTags extends Module {
                 int unbreakingLvl = EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, is);
                 int remainingDurability = is.getMaxDamage() - is.getItemDamage();
                 if (dura) {
-                    Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(String.valueOf(remainingDurability), (float) (xPos * 2), (float) yPos, 16777215);
+                    Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(String.valueOf(remainingDurability), (float) (xPos * 2), (float) -20, 16777215);
                 }
 
                 if (protection > 0) {

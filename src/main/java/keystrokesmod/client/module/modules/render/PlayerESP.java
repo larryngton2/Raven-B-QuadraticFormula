@@ -58,7 +58,7 @@ public class PlayerESP extends Module {
    }
 
    public void guiUpdate() {
-      this.rgb_c = (new Color((int)a.getInput(), (int)b.getInput(), (int)c.getInput())).getRGB();
+      this.rgb_c = (new Color((int) a.getInput(), (int) b.getInput(), (int) c.getInput())).getRGB();
    }
 
    @SubscribeEvent
@@ -69,8 +69,8 @@ public class PlayerESP extends Module {
          if (Raven.debugger) {
             var3 = mc.theWorld.loadedEntityList.iterator();
 
-            while(var3.hasNext()) {
-               Entity en = (Entity)var3.next();
+            while (var3.hasNext()) {
+               Entity en = (Entity) var3.next();
                if (en instanceof EntityLivingBase && en != mc.thePlayer) {
                   this.r(en, rgb);
                }
@@ -79,7 +79,7 @@ public class PlayerESP extends Module {
          } else {
             var3 = mc.theWorld.playerEntities.iterator();
 
-            while(true) {
+            while (true) {
                EntityPlayer en;
                do {
                   do {
@@ -88,10 +88,10 @@ public class PlayerESP extends Module {
                            return;
                         }
 
-                        en = (EntityPlayer)var3.next();
-                     } while(en == mc.thePlayer);
-                  } while(en.deathTime != 0);
-               } while(!f.isToggled() && en.isInvisible());
+                        en = (EntityPlayer) var3.next();
+                     } while (en == mc.thePlayer);
+                  } while (en.deathTime != 0);
+               } while (!f.isToggled() && en.isInvisible());
 
                if (!AntiBot.bot(en)) {
                   this.r(en, rgb);

@@ -25,7 +25,7 @@ public class Timer extends Module {
             return;
          }
 
-         Utils.Client.getTimer().timerSpeed = (float)a.getInput();
+         Utils.Client.getTimer().timerSpeed = (float) a.getInput();
       } else {
          Utils.Client.resetTimer();
       }

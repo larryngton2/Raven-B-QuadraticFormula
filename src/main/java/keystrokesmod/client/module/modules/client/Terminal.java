@@ -21,7 +21,7 @@ public class Terminal extends Module {
 
    public Terminal() {
       super("Terminal", ModuleCategory.client);
-      withEnabled(true);
+      withEnabled();
 
       this.registerSetting(opacity = new SliderSetting("Terminal background opacity", 100, 0, 255, 1));
    }

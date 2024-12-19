@@ -130,22 +130,22 @@ public class SumoFences extends Module {
    }
 
    public void guiUpdate() {
-      switch((int)c.getInput()) {
-      case 1:
-         this.f = Blocks.oak_fence.getDefaultState();
-         d.setDesc(Utils.md + this.c2);
-         break;
-      case 2:
-         this.f = Blocks.leaves.getDefaultState();
-         d.setDesc(Utils.md + this.c3);
-         break;
-      case 3:
-         this.f = Blocks.glass.getDefaultState();
-         d.setDesc(Utils.md + this.c4);
-         break;
-      case 4:
-         this.f = Blocks.barrier.getDefaultState();
-         d.setDesc(Utils.md + this.c5);
+      switch ((int) c.getInput()) {
+         case 1:
+            this.f = Blocks.oak_fence.getDefaultState();
+            d.setDesc(Utils.md + this.c2);
+            break;
+         case 2:
+            this.f = Blocks.leaves.getDefaultState();
+            d.setDesc(Utils.md + this.c3);
+            break;
+         case 3:
+            this.f = Blocks.glass.getDefaultState();
+            d.setDesc(Utils.md + this.c4);
+            break;
+         case 4:
+            this.f = Blocks.barrier.getDefaultState();
+            d.setDesc(Utils.md + this.c5);
       }
 
    }

@@ -43,7 +43,7 @@ public class DescriptionSetting extends Setting {
 
    @Override
    public void applyConfigFromJson(JsonObject data) {
-      if(!data.get("type").getAsString().equals(getSettingType()))
+      if (!data.get("type").getAsString().equals(getSettingType()))
          return;
 
       setDesc(data.get("value").getAsString());

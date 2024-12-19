@@ -41,7 +41,7 @@ public class BurstClicker extends Module {
             } catch (NoSuchMethodException var3) {
             }
          }
-      } catch(NoClassDefFoundError varbruh){
+      } catch (NoClassDefFoundError varbruh) {
          varbruh.printStackTrace();
       }
 
@@ -58,7 +58,7 @@ public class BurstClicker extends Module {
                int cl = (int) clicks.getInput();
                int del = (int) delay.getInput();
 
-               for(int i = 0; i < cl * 2 && this.isEnabled() && Utils.Player.isPlayerInGame() && mc.currentScreen == null && mc.inGameHasFocus; ++i) {
+               for (int i = 0; i < cl * 2 && this.isEnabled() && Utils.Player.isPlayerInGame() && mc.currentScreen == null && mc.inGameHasFocus; ++i) {
                   if (i % 2 == 0) {
                      this.l_c = true;
                      if (del != 0) {
@@ -78,7 +78,7 @@ public class BurstClicker extends Module {
                }
 
                this.disable();
-            } catch (InterruptedException var5) {
+            } catch (InterruptedException ignored) {
             }
 
          });
@@ -111,7 +111,7 @@ public class BurstClicker extends Module {
       if (r) {
          try {
             this.rightClickMouse.invoke(mc);
-         } catch (IllegalAccessException | InvocationTargetException var4) {
+         } catch (IllegalAccessException | InvocationTargetException ignored) {
          }
       } else {
          int key = mc.gameSettings.keyBindAttack.getKeyCode();

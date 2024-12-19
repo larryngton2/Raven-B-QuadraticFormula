@@ -64,7 +64,8 @@ public class FastPlace extends Module {
                      rightClickDelayTimerField.set(mc, c);
                   }
                }
-            } catch (IllegalAccessException | IndexOutOfBoundsException ignored) {}
+            } catch (IllegalAccessException | IndexOutOfBoundsException ignored) {
+            }
          }
       }
    }

@@ -34,18 +34,18 @@ public class ChestESP extends Module {
    @SubscribeEvent
    public void onRenderWorldLast(RenderWorldLastEvent ev) {
       if (Utils.Player.isPlayerInGame()) {
-         int rgb = d.isToggled() ? Utils.Client.rainbowDraw(2L, 0L) : (new Color((int)a.getInput(), (int)b.getInput(), (int)c.getInput())).getRGB();
-         Iterator var3 = mc.theWorld.loadedTileEntityList.iterator();
+         int rgb = d.isToggled() ? Utils.Client.rainbowDraw(2L, 0L) : (new Color((int) a.getInput(), (int) b.getInput(), (int) c.getInput())).getRGB();
+         Iterator<TileEntity> var3 = mc.theWorld.loadedTileEntityList.iterator();
 
-         while(true) {
+         while (true) {
             TileEntity te;
             do {
                if (!var3.hasNext()) {
                   return;
                }
 
-               te = (TileEntity)var3.next();
-            } while(!(te instanceof TileEntityChest) && !(te instanceof TileEntityEnderChest));
+               te = (TileEntity) var3.next();
+            } while (!(te instanceof TileEntityChest) && !(te instanceof TileEntityEnderChest));
 
             Utils.HUD.re(te.getPos(), rgb, true);
          }

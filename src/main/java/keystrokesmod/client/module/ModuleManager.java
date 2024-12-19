@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ModuleManager {
-   private List<Module> modules = new ArrayList<>();
+   private final List<Module> modules = new ArrayList<>();
 
    public static boolean initialized = false;
 
@@ -108,10 +108,10 @@ public class ModuleManager {
 
       initialized = true;
    }
-   
+
    private void addModule(Module m) {
       modules.add(m);
-   } 
+   }
 
    // prefer using getModuleByClazz();
    // ok might add in 1.0.18
@@ -175,9 +175,9 @@ public class ModuleManager {
 
    public int getLongestActiveModule(FontRenderer fr) {
       int length = 0;
-      for(Module mod : modules) {
-         if(mod.isEnabled()){
-            if(fr.getStringWidth(mod.getName()) > length){
+      for (Module mod : modules) {
+         if (mod.isEnabled()) {
+            if (fr.getStringWidth(mod.getName()) > length) {
                length = fr.getStringWidth(mod.getName());
             }
          }
@@ -187,8 +187,8 @@ public class ModuleManager {
 
    public int getBoxHeight(FontRenderer fr, int margin) {
       int length = 0;
-      for(Module mod : modules) {
-         if(mod.isEnabled()){
+      for (Module mod : modules) {
+         if (mod.isEnabled()) {
             length += fr.FONT_HEIGHT + margin;
          }
       }

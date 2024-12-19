@@ -20,8 +20,8 @@ public class MurderMystery extends Module {
    public static TickSetting alertMurderers;
    public static TickSetting searchDetectives;
    public static TickSetting announceMurder;
-   private static final List<EntityPlayer> mur = new ArrayList();
-   private static final List<EntityPlayer> det = new ArrayList();
+   private static final List<EntityPlayer> mur = new ArrayList<>();
+   private static final List<EntityPlayer> det = new ArrayList<>();
 
    public MurderMystery() {
       super("Murder Mystery", ModuleCategory.minigames);
@@ -44,7 +44,7 @@ public class MurderMystery extends Module {
          } else {
             Iterator<EntityPlayer> entityPlayerIterator = mc.theWorld.playerEntities.iterator();
 
-            while(true) {
+            while (true) {
                EntityPlayer entity;
                do {
                   do {
@@ -53,10 +53,10 @@ public class MurderMystery extends Module {
                            return;
                         }
 
-                        entity = (EntityPlayer)entityPlayerIterator.next();
-                     } while(entity == mc.thePlayer);
-                  } while(entity.isInvisible());
-               } while(AntiBot.bot(entity));
+                        entity = (EntityPlayer) entityPlayerIterator.next();
+                     } while (entity == mc.thePlayer);
+                  } while (entity.isInvisible());
+               } while (AntiBot.bot(entity));
                String c4 = "&7[&cALERT&7]";
                if (entity.getHeldItem() != null && entity.getHeldItem().hasDisplayName()) {
                   Item i = entity.getHeldItem().getItem();
@@ -72,7 +72,7 @@ public class MurderMystery extends Module {
                         }
 
                         if (announceMurder.isToggled()) {
-                           String msg = Utils.Java.randomChoice(new String[] {entity.getName() + " " + c6, entity.getName()});
+                           String msg = Utils.Java.randomChoice(new String[]{entity.getName() + " " + c6, entity.getName()});
                            mc.thePlayer.sendChatMessage(msg);
                         }
                      }
@@ -116,16 +116,13 @@ public class MurderMystery extends Module {
             return false;
          }
 
-         Iterator var2 = Utils.Client.getPlayersFromScoreboard().iterator();
-
-         while(var2.hasNext()) {
-            String l = (String)var2.next();
-            String s = Utils.Java.str(l);
-            String c3 = "Role:";
-            if (s.contains(c3)) {
-               return true;
-            }
-         }
+          for (String l : Utils.Client.getPlayersFromScoreboard()) {
+              String s = Utils.Java.str(l);
+              String c3 = "Role:";
+              if (s.contains(c3)) {
+                  return true;
+              }
+          }
       }
 
       return false;

@@ -55,7 +55,7 @@ public class WaterBucket extends Module {
       if (mc.thePlayer.motionY < -0.6D && !mc.thePlayer.onGround && !mc.thePlayer.capabilities.isFlying && !mc.thePlayer.capabilities.isCreativeMode && !this.handling) {
          BlockPos playerPos = mc.thePlayer.getPosition();
 
-         for(int i = 1; i < 3; ++i) {
+         for (int i = 1; i < 3; ++i) {
             BlockPos blockPos = playerPos.down(i);
             Block block = mc.theWorld.getBlockState(blockPos).getBlock();
             if (block.isBlockSolid(mc.theWorld, blockPos, EnumFacing.UP)) {
@@ -73,7 +73,7 @@ public class WaterBucket extends Module {
       if (this.containsItem(mc.thePlayer.getHeldItem(), Items.water_bucket)) {
          return true;
       } else {
-         for(int i = 0; i < InventoryPlayer.getHotbarSize(); ++i) {
+         for (int i = 0; i < InventoryPlayer.getHotbarSize(); ++i) {
             if (this.containsItem(mc.thePlayer.inventory.mainInventory[i], Items.water_bucket)) {
                mc.thePlayer.inventory.currentItem = i;
                return true;

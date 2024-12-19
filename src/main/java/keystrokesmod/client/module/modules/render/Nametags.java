@@ -37,7 +37,7 @@ public class Nametags extends Module {
          e.setCanceled(true);
       } else {
          if (e.entity instanceof EntityPlayer && e.entity != mc.thePlayer && e.entity.deathTime == 0) {
-            EntityPlayer en = (EntityPlayer)e.entity;
+            EntityPlayer en = (EntityPlayer) e.entity;
             if (!d.isToggled() && en.isInvisible()) {
                return;
             }
@@ -55,7 +55,7 @@ public class Nametags extends Module {
             }
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float)e.x + 0.0F, (float)e.y + en.height + 0.5F, (float)e.z);
+            GlStateManager.translate((float) e.x + 0.0F, (float) e.y + en.height + 0.5F, (float) e.z);
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(-mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
@@ -72,7 +72,7 @@ public class Nametags extends Module {
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            int i = (int)(-a.getInput());
+            int i = (int) (-a.getInput());
             int j = mc.fontRendererObj.getStringWidth(str) / 2;
             GlStateManager.disableTexture2D();
             if (b.isToggled()) {

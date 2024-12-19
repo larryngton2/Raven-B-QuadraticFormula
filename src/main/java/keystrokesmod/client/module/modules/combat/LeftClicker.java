@@ -309,7 +309,7 @@ public class LeftClicker extends Module {
 
         try {
             this.playerMouseInput.invoke(guiScreen, mouseInGUIPosX, mouseInGUIPosY, 0);
-        } catch (IllegalAccessException | InvocationTargetException var5) {
+        } catch (IllegalAccessException | InvocationTargetException ignored) {
         }
 
     }

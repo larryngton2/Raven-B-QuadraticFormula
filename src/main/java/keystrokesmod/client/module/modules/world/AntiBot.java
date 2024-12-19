@@ -2,7 +2,6 @@ package keystrokesmod.client.module.modules.world;
 
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.ModuleManager;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.modules.player.Freecam;
 import keystrokesmod.client.utils.Utils;
@@ -20,7 +19,7 @@ public class AntiBot extends Module {
 
    public AntiBot() {
       super("AntiBot", ModuleCategory.world);
-      withEnabled(true);
+      withEnabled();
 
       this.registerSetting(a = new TickSetting("Wait 80 ticks", false));
    }
@@ -31,9 +30,9 @@ public class AntiBot extends Module {
 
    @SubscribeEvent
    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-      if(!Utils.Player.isPlayerInGame()) return;
+      if (!Utils.Player.isPlayerInGame()) return;
       if (a.isToggled() && event.entity instanceof EntityPlayer && event.entity != mc.thePlayer) {
-         newEnt.put((EntityPlayer)event.entity, System.currentTimeMillis());
+         newEnt.put((EntityPlayer) event.entity, System.currentTimeMillis());
       }
 
    }
@@ -47,7 +46,7 @@ public class AntiBot extends Module {
    }
 
    public static boolean bot(Entity en) {
-      if(!Utils.Player.isPlayerInGame() || mc.currentScreen != null) return false;
+      if (!Utils.Player.isPlayerInGame() || mc.currentScreen != null) return false;
       if (Freecam.en != null && Freecam.en == en) {
          return true;
       } else {

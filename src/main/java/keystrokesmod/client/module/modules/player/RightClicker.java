@@ -59,7 +59,7 @@ public class RightClicker extends Module {
    public RightClicker() {
       super("Right Clicker", ModuleCategory.player);
 
-      this.registerSetting(rightCPS = new DoubleSliderSetting("RightCPS", 12, 16, 1,60, 0.5));
+      this.registerSetting(rightCPS = new DoubleSliderSetting("RightCPS", 12, 16, 1, 60, 0.5));
       this.registerSetting(jitterRight = new SliderSetting("Jitter right", 0.0D, 0.0D, 3.0D, 0.1D));
       this.registerSetting(rightClickDelay = new SliderSetting("Rightclick delay (ms)", 85D, 0D, 500D, 1.0D));
       this.registerSetting(noBlockSword = new TickSetting("Don't rightclick sword", true));
@@ -111,37 +111,35 @@ public class RightClicker extends Module {
 
    @SubscribeEvent
    public void onRenderTick(RenderTickEvent ev) {
-      if(!Utils.Client.currentScreenMinecraft() &&
+      if (!Utils.Client.currentScreenMinecraft() &&
               !(Minecraft.getMinecraft().currentScreen instanceof GuiInventory) // to make it work in survival inventory
-          && !(Minecraft.getMinecraft().currentScreen instanceof GuiChest) // to make it work in chests
+              && !(Minecraft.getMinecraft().currentScreen instanceof GuiChest) // to make it work in chests
       )
          return;
 
-      if(clickTimings.getMode() != ClickEvent.Render)
+      if (clickTimings.getMode() != ClickEvent.Render)
          return;
 
-      if(clickStyle.getMode() == ClickStyle.Raven){
+      if (clickStyle.getMode() == ClickStyle.Raven) {
          ravenClick();
-      }
-      else if (clickStyle.getMode() == ClickStyle.SKid){
+      } else if (clickStyle.getMode() == ClickStyle.SKid) {
          skidClick(ev, null);
       }
    }
 
    @SubscribeEvent
    public void onTick(TickEvent.PlayerTickEvent ev) {
-      if(!Utils.Client.currentScreenMinecraft() && !(Minecraft.getMinecraft().currentScreen instanceof GuiInventory)
+      if (!Utils.Client.currentScreenMinecraft() && !(Minecraft.getMinecraft().currentScreen instanceof GuiInventory)
               && !(Minecraft.getMinecraft().currentScreen instanceof GuiChest) // to make it work in chests
       )
          return;
 
-      if(clickTimings.getMode() != ClickEvent.Tick)
+      if (clickTimings.getMode() != ClickEvent.Tick)
          return;
 
-      if(clickStyle.getMode() == ClickStyle.Raven){
+      if (clickStyle.getMode() == ClickStyle.Raven) {
          ravenClick();
-      }
-      else if (clickStyle.getMode() == ClickStyle.SKid){
+      } else if (clickStyle.getMode() == ClickStyle.SKid) {
          skidClick(null, ev);
       }
    }
@@ -156,9 +154,9 @@ public class RightClicker extends Module {
       double speedRight = 1.0 / io.netty.util.internal.ThreadLocalRandom.current().nextDouble(rightCPS.getInputMin() - 0.2D, rightCPS.getInputMax());
       double rightHoldLength = speedRight / io.netty.util.internal.ThreadLocalRandom.current().nextDouble(rightCPS.getInputMin() - 0.02D, rightCPS.getInputMax());
 
-      if(!Mouse.isButtonDown(1) && !rightDown){
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-            Utils.Client.setMouseButtonState(1, false);
+      if (!Mouse.isButtonDown(1) && !rightDown) {
+         KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+         Utils.Client.setMouseButtonState(1, false);
       }
 
       if (Mouse.isButtonDown(1) || rightDown) {
@@ -171,24 +169,24 @@ public class RightClicker extends Module {
             EntityPlayerSP entityPlayer;
             if (this.rand.nextBoolean()) {
                entityPlayer = mc.thePlayer;
-               entityPlayer.rotationYaw = (float)((double)entityPlayer.rotationYaw + (double)this.rand.nextFloat() * jitterMultiplier);
+               entityPlayer.rotationYaw = (float) ((double) entityPlayer.rotationYaw + (double) this.rand.nextFloat() * jitterMultiplier);
             } else {
                entityPlayer = mc.thePlayer;
-               entityPlayer.rotationYaw = (float)((double)entityPlayer.rotationYaw - (double)this.rand.nextFloat() * jitterMultiplier);
+               entityPlayer.rotationYaw = (float) ((double) entityPlayer.rotationYaw - (double) this.rand.nextFloat() * jitterMultiplier);
             }
 
             if (this.rand.nextBoolean()) {
                entityPlayer = mc.thePlayer;
-               entityPlayer.rotationPitch = (float)((double)entityPlayer.rotationPitch + (double)this.rand.nextFloat() * jitterMultiplier * 0.45D);
+               entityPlayer.rotationPitch = (float) ((double) entityPlayer.rotationPitch + (double) this.rand.nextFloat() * jitterMultiplier * 0.45D);
             } else {
                entityPlayer = mc.thePlayer;
-               entityPlayer.rotationPitch = (float)((double)entityPlayer.rotationPitch - (double)this.rand.nextFloat() * jitterMultiplier * 0.45D);
+               entityPlayer.rotationPitch = (float) ((double) entityPlayer.rotationPitch - (double) this.rand.nextFloat() * jitterMultiplier * 0.45D);
             }
          }
 
          if (System.currentTimeMillis() - lastClick > speedRight * 1000) {
             lastClick = System.currentTimeMillis();
-            if (rightHold < lastClick){
+            if (rightHold < lastClick) {
                rightHold = lastClick;
             }
             int key = mc.gameSettings.keyBindUseItem.getKeyCode();
@@ -202,7 +200,7 @@ public class RightClicker extends Module {
             Utils.Client.setMouseButtonState(1, false);
 
          }
-      } else if (!Mouse.isButtonDown(1)){
+      } else if (!Mouse.isButtonDown(1)) {
          this.rightClickWaiting = false;
          this.allowedClick = false;
       }
@@ -219,14 +217,13 @@ public class RightClicker extends Module {
       Mouse.poll();
       if (Mouse.isButtonDown(1)) {
          this.rightClickExecute(mc.gameSettings.keyBindUseItem.getKeyCode());
-      } else if (!Mouse.isButtonDown(1)){
+      } else if (!Mouse.isButtonDown(1)) {
          this.rightClickWaiting = false;
          this.allowedClick = false;
          this.righti = 0L;
          this.rightj = 0L;
       }
    }
-
 
    public boolean rightClickAllowed() {
       ItemStack item = mc.thePlayer.getHeldItem();
@@ -237,8 +234,8 @@ public class RightClicker extends Module {
             }
          }
 
-         if(ignoreRods.isToggled()){
-            if(item.getItem() instanceof ItemFishingRod){
+         if (ignoreRods.isToggled()) {
+            if (item.getItem() instanceof ItemFishingRod) {
                return false;
             }
          }
@@ -261,18 +258,18 @@ public class RightClicker extends Module {
          }
       }
 
-      if(preferFastPlace.isToggled()) {
+      if (preferFastPlace.isToggled()) {
          Module fastplace = Raven.moduleManager.getModuleByClazz(FastPlace.class);
          if (fastplace != null && fastplace.isEnabled())
             return false;
       }
 
-      if(rightClickDelay.getInput() != 0){
-         if(!rightClickWaiting && !allowedClick) {
+      if (rightClickDelay.getInput() != 0) {
+         if (!rightClickWaiting && !allowedClick) {
             this.rightClickWaitStartTime = System.currentTimeMillis();
             this.rightClickWaiting = true;
-            return  false;
-         } else if(this.rightClickWaiting && !allowedClick) {
+            return false;
+         } else if (this.rightClickWaiting && !allowedClick) {
             double passedTime = System.currentTimeMillis() - this.rightClickWaitStartTime;
             if (passedTime >= rightClickDelay.getInput()) {
                this.allowedClick = true;
@@ -297,18 +294,18 @@ public class RightClicker extends Module {
          EntityPlayerSP entityPlayer;
          if (this.rand.nextBoolean()) {
             entityPlayer = mc.thePlayer;
-            entityPlayer.rotationYaw = (float)((double)entityPlayer.rotationYaw + (double)this.rand.nextFloat() * jitterMultiplier);
+            entityPlayer.rotationYaw = (float) ((double) entityPlayer.rotationYaw + (double) this.rand.nextFloat() * jitterMultiplier);
          } else {
             entityPlayer = mc.thePlayer;
-            entityPlayer.rotationYaw = (float)((double)entityPlayer.rotationYaw - (double)this.rand.nextFloat() * jitterMultiplier);
+            entityPlayer.rotationYaw = (float) ((double) entityPlayer.rotationYaw - (double) this.rand.nextFloat() * jitterMultiplier);
          }
 
          if (this.rand.nextBoolean()) {
             entityPlayer = mc.thePlayer;
-            entityPlayer.rotationPitch = (float)((double)entityPlayer.rotationPitch + (double)this.rand.nextFloat() * jitterMultiplier * 0.45D);
+            entityPlayer.rotationPitch = (float) ((double) entityPlayer.rotationPitch + (double) this.rand.nextFloat() * jitterMultiplier * 0.45D);
          } else {
             entityPlayer = mc.thePlayer;
-            entityPlayer.rotationPitch = (float)((double)entityPlayer.rotationPitch - (double)this.rand.nextFloat() * jitterMultiplier * 0.45D);
+            entityPlayer.rotationPitch = (float) ((double) entityPlayer.rotationPitch - (double) this.rand.nextFloat() * jitterMultiplier * 0.45D);
          }
       }
 
@@ -331,7 +328,7 @@ public class RightClicker extends Module {
 
    public void genRightTimings() {
       double clickSpeed = Utils.Client.ranModuleVal(rightCPS, this.rand) + 0.4D * this.rand.nextDouble();
-      long delay = (int)Math.round(1000.0D / clickSpeed);
+      long delay = (int) Math.round(1000.0D / clickSpeed);
       if (System.currentTimeMillis() > this.rightk) {
          if (!this.rightn && this.rand.nextInt(100) >= 85) {
             this.rightn = true;
@@ -340,23 +337,23 @@ public class RightClicker extends Module {
             this.rightn = false;
          }
 
-         this.rightk = System.currentTimeMillis() + 500L + (long)this.rand.nextInt(1500);
+         this.rightk = System.currentTimeMillis() + 500L + (long) this.rand.nextInt(1500);
       }
 
       if (this.rightn) {
-         delay = (long)((double)delay * this.rightm);
+         delay = (long) ((double) delay * this.rightm);
       }
 
       if (System.currentTimeMillis() > this.rightl) {
          if (this.rand.nextInt(100) >= 80) {
-            delay += 50L + (long)this.rand.nextInt(100);
+            delay += 50L + (long) this.rand.nextInt(100);
          }
 
-         this.rightl = System.currentTimeMillis() + 500L + (long)this.rand.nextInt(1500);
+         this.rightl = System.currentTimeMillis() + 500L + (long) this.rand.nextInt(1500);
       }
 
       this.rightj = System.currentTimeMillis() + delay;
-      this.righti = System.currentTimeMillis() + delay / 2L - (long)this.rand.nextInt(10);
+      this.righti = System.currentTimeMillis() + delay / 2L - (long) this.rand.nextInt(10);
    }
 
    private void inInvClick(GuiScreen guiScreen) {

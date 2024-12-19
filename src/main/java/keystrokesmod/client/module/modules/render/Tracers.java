@@ -55,7 +55,7 @@ public class Tracers extends Module {
    }
 
    public void guiUpdate() {
-      this.rgb_c = (new Color((int)b.getInput(), (int)c.getInput(), (int)d.getInput())).getRGB();
+      this.rgb_c = (new Color((int) b.getInput(), (int) c.getInput(), (int) d.getInput())).getRGB();
    }
 
    @SubscribeEvent
@@ -66,17 +66,17 @@ public class Tracers extends Module {
          if (Raven.debugger) {
             var3 = mc.theWorld.loadedEntityList.iterator();
 
-            while(var3.hasNext()) {
-               Entity en = (Entity)var3.next();
+            while (var3.hasNext()) {
+               Entity en = (Entity) var3.next();
                if (en instanceof EntityLivingBase && en != mc.thePlayer) {
-                  Utils.HUD.dtl(en, rgb, (float)f.getInput());
+                  Utils.HUD.dtl(en, rgb, (float) f.getInput());
                }
             }
 
          } else {
             var3 = mc.theWorld.playerEntities.iterator();
 
-            while(true) {
+            while (true) {
                EntityPlayer en;
                do {
                   do {
@@ -85,13 +85,13 @@ public class Tracers extends Module {
                            return;
                         }
 
-                        en = (EntityPlayer)var3.next();
-                     } while(en == mc.thePlayer);
-                  } while(en.deathTime != 0);
-               } while(!a.isToggled() && en.isInvisible());
+                        en = (EntityPlayer) var3.next();
+                     } while (en == mc.thePlayer);
+                  } while (en.deathTime != 0);
+               } while (!a.isToggled() && en.isInvisible());
 
                if (!AntiBot.bot(en)) {
-                  Utils.HUD.dtl(en, rgb, (float)f.getInput());
+                  Utils.HUD.dtl(en, rgb, (float) f.getInput());
                }
             }
          }

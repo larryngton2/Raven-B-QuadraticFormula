@@ -39,11 +39,11 @@ public class BedAura extends Module {
    public TimerTask t() {
       return new TimerTask() {
          public void run() {
-            int ra = (int)BedAura.r.getInput();
+            int ra = (int) BedAura.r.getInput();
 
-            for(int y = ra; y >= -ra; --y) {
-               for(int x = -ra; x <= ra; ++x) {
-                  for(int z = -ra; z <= ra; ++z) {
+            for (int y = ra; y >= -ra; --y) {
+               for (int x = -ra; x <= ra; ++x) {
+                  for (int z = -ra; z <= ra; ++z) {
                      if (Utils.Player.isPlayerInGame()) {
                         BlockPos p = new BlockPos(Module.mc.thePlayer.posX + (double) x, Module.mc.thePlayer.posY + (double) y, Module.mc.thePlayer.posZ + (double) z);
                         boolean bed = Module.mc.theWorld.getBlockState(p).getBlock() == Blocks.bed;

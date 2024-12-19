@@ -115,12 +115,9 @@ public class ClickAssist extends Module {
                }
             }
 
-            this.fix(0);
-            this.fix(1);
-         } else {
-            this.fix(0);
-            this.fix(1);
          }
+          this.fix(0);
+          this.fix(1);
       }
    }
 

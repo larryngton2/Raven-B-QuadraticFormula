@@ -38,29 +38,29 @@ public class StringEncrypt extends Module {
    }
 
    public void guiUpdate() {
-      switch((int) value.getInput()) {
-      case 1:
-         this.m3t = false;
-         moduleDesc.setDesc(Utils.md + m1);
-         break;
-      case 2:
-         this.m3t = false;
-         moduleDesc.setDesc(Utils.md + m2);
-         break;
-      case 3:
-         if (!this.m3t) {
-            m3s = Utils.Java.rand().nextInt(10) - 5;
-            if (m3s == 0) {
-               m3s = 1;
+      switch ((int) value.getInput()) {
+         case 1:
+            this.m3t = false;
+            moduleDesc.setDesc(Utils.md + m1);
+            break;
+         case 2:
+            this.m3t = false;
+            moduleDesc.setDesc(Utils.md + m2);
+            break;
+         case 3:
+            if (!this.m3t) {
+               m3s = Utils.Java.rand().nextInt(10) - 5;
+               if (m3s == 0) {
+                  m3s = 1;
+               }
             }
-         }
 
-         this.m3t = true;
-         moduleDesc.setDesc(Utils.md + m3);
-         break;
-      case 4:
-         this.m3t = false;
-         moduleDesc.setDesc(Utils.md + m4);
+            this.m3t = true;
+            moduleDesc.setDesc(Utils.md + m3);
+            break;
+         case 4:
+            this.m3t = false;
+            moduleDesc.setDesc(Utils.md + m4);
       }
    }
 
@@ -78,7 +78,7 @@ public class StringEncrypt extends Module {
             StringBuilder s3 = new StringBuilder();
             boolean w = false;
 
-            for(int i = 0; i < s.length(); ++i) {
+            for (int i = 0; i < s.length(); ++i) {
                String c = Character.toString(s.charAt(i));
                if (c.equals("§")) {
                   w = true;
@@ -100,8 +100,8 @@ public class StringEncrypt extends Module {
          } else {
             s2 = new StringBuilder();
 
-            for(int i = 0; i < s.length(); ++i) {
-               char c = (char)(s.charAt(i) + m3s);
+            for (int i = 0; i < s.length(); ++i) {
+               char c = (char) (s.charAt(i) + m3s);
                s2.append(c);
             }
 

@@ -50,7 +50,7 @@ public class SliderSetting extends Setting {
 
    @Override
    public void applyConfigFromJson(JsonObject data) {
-      if(!data.get("type").getAsString().equals(getSettingType()))
+      if (!data.get("type").getAsString().equals(getSettingType()))
          return;
 
       setValue(data.get("value").getAsDouble());
@@ -75,7 +75,7 @@ public class SliderSetting extends Setting {
 
    public void setValue(double n) {
       n = check(n, this.min, this.max);
-      n = (double)Math.round(n * (1.0D / this.interval)) / (1.0D / this.interval);
+      n = (double) Math.round(n * (1.0D / this.interval)) / (1.0D / this.interval);
       this.value = n;
    }
 

@@ -39,7 +39,7 @@ public class Reach extends Module {
    @SubscribeEvent
    public void onMouse(MouseEvent ev) {
       // legit event
-      if(!Utils.Player.isPlayerInGame()) return;
+      if (!Utils.Player.isPlayerInGame()) return;
       Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
       if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)) return;
       if (ev.button >= 0 && ev.buttonstate) {
@@ -50,11 +50,11 @@ public class Reach extends Module {
    @SubscribeEvent
    public void onRenderTick(TickEvent.RenderTickEvent ev) {
       // autoclick event
-      if(!Utils.Player.isPlayerInGame()) return;
+      if (!Utils.Player.isPlayerInGame()) return;
       Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
       if (autoClicker == null || !autoClicker.isEnabled()) return;
 
-      if (autoClicker.isEnabled()  && Mouse.isButtonDown(0)){
+      if (autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
          call();
       }
    }
@@ -62,7 +62,8 @@ public class Reach extends Module {
    public static boolean call() {
       if (!Utils.Player.isPlayerInGame()) return false;
       if (weapon_only.isToggled() && !Utils.Player.isPlayerHoldingWeapon()) return false;
-      if (moving_only.isToggled() && (double)mc.thePlayer.moveForward == 0.0D && (double)mc.thePlayer.moveStrafing == 0.0D) return false;
+      if (moving_only.isToggled() && (double) mc.thePlayer.moveForward == 0.0D && (double) mc.thePlayer.moveStrafing == 0.0D)
+         return false;
       if (sprint_only.isToggled() && !mc.thePlayer.isSprinting()) return false;
       if (!hit_through_blocks.isToggled() && mc.objectMouseOver != null) {
          BlockPos p = mc.objectMouseOver.getBlockPos();
@@ -72,18 +73,18 @@ public class Reach extends Module {
       }
 
       double r = Utils.Client.ranModuleVal(reach, Utils.Java.rand());
-      Object[] o = zz(r, 0.0D);
+      Object[] o = zz(r);
       if (o == null) {
          return false;
       } else {
-         Entity en = (Entity)o[0];
-         mc.objectMouseOver = new MovingObjectPosition(en, (Vec3)o[1]);
+         Entity en = (Entity) o[0];
+         mc.objectMouseOver = new MovingObjectPosition(en, (Vec3) o[1]);
          mc.pointedEntity = en;
          return true;
       }
    }
 
-   private static Object[] zz(double zzD, double zzE) {
+   private static Object[] zz(double zzD) {
       Module reach = Raven.moduleManager.getModuleByClazz(Reach.class);
       if (reach != null && !reach.isEnabled()) {
          zzD = mc.playerController.extendedReach() ? 6.0D : 3.0D;
@@ -106,7 +107,7 @@ public class Reach extends Module {
             if (o.canBeCollidedWith()) {
                float ex = (float) ((double) o.getCollisionBorderSize() * HitBox.exp(o));
                AxisAlignedBB zz13 = o.getEntityBoundingBox().expand(ex, ex, ex);
-               zz13 = zz13.expand(zzE, zzE, zzE);
+               zz13 = zz13.expand(0.0, 0.0, 0.0);
                MovingObjectPosition zz14 = zz13.calculateIntercept(eyes_positions, new_eyes_pos);
                if (zz13.isVecInside(eyes_positions)) {
                   if (0.0D < zz9 || zz9 == 0.0D) {

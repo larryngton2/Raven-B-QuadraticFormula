@@ -41,7 +41,7 @@ public class TickSetting extends Setting {
 
    @Override
    public void applyConfigFromJson(JsonObject data) {
-      if(!data.get("type").getAsString().equals(getSettingType()))
+      if (!data.get("type").getAsString().equals(getSettingType()))
          return;
 
       setEnabled(data.get("value").getAsBoolean());

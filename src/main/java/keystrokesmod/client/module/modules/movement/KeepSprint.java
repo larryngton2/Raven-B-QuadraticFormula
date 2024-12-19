@@ -27,7 +27,7 @@ public class KeepSprint extends Module {
          dist = mc.objectMouseOver.hitVec.distanceTo(mc.getRenderViewEntity().getPositionEyes(1.0F));
          double val;
          if (dist > 3.0D) {
-            val = (100.0D - (double)((float)b.getInput())) / 100.0D;
+            val = (100.0D - (double) ((float) b.getInput())) / 100.0D;
          } else {
             val = 0.6D;
          }
@@ -35,7 +35,7 @@ public class KeepSprint extends Module {
          mc.thePlayer.motionX *= val;
          mc.thePlayer.motionZ *= val;
       } else {
-         dist = (100.0D - (double)((float)b.getInput())) / 100.0D;
+         dist = (100.0D - (double) ((float) b.getInput())) / 100.0D;
          mc.thePlayer.motionX *= dist;
          mc.thePlayer.motionZ *= dist;
       }

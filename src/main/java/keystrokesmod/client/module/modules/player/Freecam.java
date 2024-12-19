@@ -28,7 +28,7 @@ public class Freecam extends Module {
 
    @Override
    public void onEnable() {
-      if(!Utils.Player.isPlayerInGame()) {
+      if (!Utils.Player.isPlayerInGame()) {
          return;
       }
       if (!mc.thePlayer.onGround) {
@@ -59,8 +59,8 @@ public class Freecam extends Module {
       int x = mc.thePlayer.chunkCoordX;
       int z = mc.thePlayer.chunkCoordZ;
 
-      for(int x2 = -1; x2 <= 1; ++x2) {
-         for(int z2 = -1; z2 <= 1; ++z2) {
+      for (int x2 = -1; x2 <= 1; ++x2) {
+         for (int z2 = -1; z2 <= 1; ++z2) {
             int a = x + x2;
             int b = z + z2;
             mc.theWorld.markBlockRangeForRenderUpdate(a * 16, 0, b * 16, a * 16 + 15, 256, b * 16 + 15);
@@ -70,9 +70,9 @@ public class Freecam extends Module {
    }
 
    public void update() {
-      if(!Utils.Player.isPlayerInGame() || en == null)
+      if (!Utils.Player.isPlayerInGame() || en == null)
          return;
-       if (b.isToggled() && mc.thePlayer.hurtTime != 0) {
+      if (b.isToggled() && mc.thePlayer.hurtTime != 0) {
          this.disable();
       } else {
          mc.thePlayer.setSprinting(false);
@@ -86,42 +86,38 @@ public class Freecam extends Module {
          double dx;
          double dz;
          if (Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode())) {
-            rad = (double)en.rotationYawHead * 0.017453292519943295D;
+            rad = (double) en.rotationYawHead * 0.017453292519943295D;
             dx = -1.0D * Math.sin(rad) * s;
             dz = Math.cos(rad) * s;
             var10000 = en;
             var10000.posX += dx;
-            var10000 = en;
             var10000.posZ += dz;
          }
 
          if (Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
-            rad = (double)en.rotationYawHead * 0.017453292519943295D;
+            rad = (double) en.rotationYawHead * 0.017453292519943295D;
             dx = -1.0D * Math.sin(rad) * s;
             dz = Math.cos(rad) * s;
             var10000 = en;
             var10000.posX -= dx;
-            var10000 = en;
             var10000.posZ -= dz;
          }
 
          if (Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode())) {
-            rad = (double)(en.rotationYawHead - 90.0F) * 0.017453292519943295D;
+            rad = (double) (en.rotationYawHead - 90.0F) * 0.017453292519943295D;
             dx = -1.0D * Math.sin(rad) * s;
             dz = Math.cos(rad) * s;
             var10000 = en;
             var10000.posX += dx;
-            var10000 = en;
             var10000.posZ += dz;
          }
 
          if (Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode())) {
-            rad = (double)(en.rotationYawHead + 90.0F) * 0.017453292519943295D;
+            rad = (double) (en.rotationYawHead + 90.0F) * 0.017453292519943295D;
             dx = -1.0D * Math.sin(rad) * s;
             dz = Math.cos(rad) * s;
             var10000 = en;
             var10000.posX += dx;
-            var10000 = en;
             var10000.posZ += dz;
          }
 

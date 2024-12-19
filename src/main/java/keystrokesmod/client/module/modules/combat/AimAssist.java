@@ -50,73 +50,71 @@ public class AimAssist extends Module {
 
    public void update() {
 
-      if(!Utils.Client.currentScreenMinecraft()){
+      if (!Utils.Client.currentScreenMinecraft()) {
          return;
       }
-      if(!Utils.Player.isPlayerInGame()) return;
-
-         if (breakBlocks.isToggled() && mc.objectMouseOver != null) {
-            BlockPos p = mc.objectMouseOver.getBlockPos();
-            if (p != null) {
-               Block bl = mc.theWorld.getBlockState(p).getBlock();
-               if (bl != Blocks.air && !(bl instanceof BlockLiquid) && bl instanceof  Block) {
-                  return;
-               }
-            }
-         }
-
-
-         if (!weaponOnly.isToggled() || Utils.Player.isPlayerHoldingWeapon()) {
-
-            Module autoClicker = Raven.moduleManager.getModuleByClazz(RightClicker.class);
-            //what if player clicking but mouse not down ????
-            if ((clickAim.isToggled() && Utils.Client.autoClickerClicking()) || (Mouse.isButtonDown(0) && autoClicker != null && !autoClicker.isEnabled()) || !clickAim.isToggled()) {
-               Entity en = this.getEnemy();
-               if (en != null) {
-                  if (Raven.debugger) {
-                     Utils.Player.sendMessageToSelf(this.getName() + " &e" + en.getName());
-                  }
-
-                  if (blatantMode.isToggled()) {
-                     Utils.Player.aim(en, 0.0F, false);
-                  } else {
-                     double n = Utils.Player.fovFromEntity(en);
-                     if (n > 1.0D || n < -1.0D) {
-                        double complimentSpeed = n*(ThreadLocalRandom.current().nextDouble(compliment.getInput() - 1.47328, compliment.getInput() + 2.48293)/100);
-                        double val2 = complimentSpeed + ThreadLocalRandom.current().nextDouble(speed.getInput() - 4.723847, speed.getInput());
-                        float val = (float)(-(complimentSpeed + n / (101.0D - (float)ThreadLocalRandom.current().nextDouble(speed.getInput() - 4.723847, speed.getInput()))));
-                        mc.thePlayer.rotationYaw += val;
-                     }
-                  }
-               }
-
+      if (!Utils.Player.isPlayerInGame()) return;
+      if (breakBlocks.isToggled() && mc.objectMouseOver != null) {
+         BlockPos p = mc.objectMouseOver.getBlockPos();
+         if (p != null) {
+            Block bl = mc.theWorld.getBlockState(p).getBlock();
+            if (bl != Blocks.air && !(bl instanceof BlockLiquid) && bl != null) {
+               return;
             }
          }
       }
+
+      if (!weaponOnly.isToggled() || Utils.Player.isPlayerHoldingWeapon()) {
+
+         Module autoClicker = Raven.moduleManager.getModuleByClazz(RightClicker.class);
+         //what if player clicking but mouse not down ????
+         if ((clickAim.isToggled() && Utils.Client.autoClickerClicking()) || (Mouse.isButtonDown(0) && autoClicker != null && !autoClicker.isEnabled()) || !clickAim.isToggled()) {
+            Entity en = this.getEnemy();
+            if (en != null) {
+               if (Raven.debugger) {
+                  Utils.Player.sendMessageToSelf(this.getName() + " &e" + en.getName());
+               }
+
+               if (blatantMode.isToggled()) {
+                  Utils.Player.aim(en, 0.0F, false);
+               } else {
+                  double n = Utils.Player.fovFromEntity(en);
+                  if (n > 1.0D || n < -1.0D) {
+                     double complimentSpeed = n * (ThreadLocalRandom.current().nextDouble(compliment.getInput() - 1.47328, compliment.getInput() + 2.48293) / 100);
+                     double val2 = complimentSpeed + ThreadLocalRandom.current().nextDouble(speed.getInput() - 4.723847, speed.getInput());
+                     float val = (float) (-(complimentSpeed + n / (101.0D - (float) ThreadLocalRandom.current().nextDouble(speed.getInput() - 4.723847, speed.getInput()))));
+                     mc.thePlayer.rotationYaw += val;
+                  }
+               }
+            }
+
+         }
+      }
+   }
 
 
    public static boolean isAFriend(Entity entity) {
-      if(entity == mc.thePlayer) return true;
+      if (entity == mc.thePlayer) return true;
 
-      for (Entity wut : friends){
+      for (Entity wut : friends) {
          if (wut.equals(entity))
             return true;
       }
       try {
          EntityPlayer bruhentity = (EntityPlayer) entity;
-         if(Raven.debugger){
+         if (Raven.debugger) {
             Utils.Player.sendMessageToSelf("unformatted / " + bruhentity.getDisplayName().getUnformattedText().replace("§", "%"));
 
             Utils.Player.sendMessageToSelf("susbstring entity / " + bruhentity.getDisplayName().getUnformattedText().substring(0, 2));
             Utils.Player.sendMessageToSelf("substring player / " + mc.thePlayer.getDisplayName().getUnformattedText().substring(0, 2));
          }
-         if(mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || mc.thePlayer.getDisplayName().getUnformattedText().startsWith(bruhentity.getDisplayName().getUnformattedText().substring(0, 2))) return true;
+         if (mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || mc.thePlayer.getDisplayName().getUnformattedText().startsWith(bruhentity.getDisplayName().getUnformattedText().substring(0, 2)))
+            return true;
       } catch (Exception fhwhfhwe) {
-         if(Raven.debugger) {
+         if (Raven.debugger) {
             Utils.Player.sendMessageToSelf(fhwhfhwe.getMessage());
          }
       }
-
 
 
       return false;
@@ -124,7 +122,7 @@ public class AimAssist extends Module {
 
    public Entity getEnemy() {
       int fov = (int) AimAssist.fov.getInput();
-      Iterator var2 = mc.theWorld.playerEntities.iterator();
+      Iterator<EntityPlayer> var2 = mc.theWorld.playerEntities.iterator();
 
       EntityPlayer en;
       do {
@@ -140,12 +138,12 @@ public class AimAssist extends Module {
 
                            en = (EntityPlayer) var2.next();
                         } while (ignoreFriends.isToggled() && isAFriend(en));
-                     } while(en == mc.thePlayer);
-                  } while(en.isDead);
-               } while(!aimInvis.isToggled() && en.isInvisible());
-            } while((double)mc.thePlayer.getDistanceToEntity(en) > distance.getInput());
-         } while(AntiBot.bot(en));
-      } while(!blatantMode.isToggled() && !Utils.Player.fov(en, (float)fov));
+                     } while (en == mc.thePlayer);
+                  } while (en.isDead);
+               } while (!aimInvis.isToggled() && en.isInvisible());
+            } while ((double) mc.thePlayer.getDistanceToEntity(en) > distance.getInput());
+         } while (AntiBot.bot(en));
+      } while (!blatantMode.isToggled() && !Utils.Player.fov(en, (float) fov));
 
       return en;
    }
@@ -156,9 +154,9 @@ public class AimAssist extends Module {
 
    public static boolean addFriend(String name) {
       boolean found = false;
-      for (Entity entity:mc.theWorld.getLoadedEntityList()) {
+      for (Entity entity : mc.theWorld.getLoadedEntityList()) {
          if (entity.getName().equalsIgnoreCase(name) || entity.getCustomNameTag().equalsIgnoreCase(name)) {
-            if(!isAFriend(entity)) {
+            if (!isAFriend(entity)) {
                addFriend(entity);
                found = true;
             }
@@ -183,9 +181,9 @@ public class AimAssist extends Module {
    }
 
    public static boolean removeFriend(Entity entityPlayer) {
-      try{
+      try {
          friends.remove(entityPlayer);
-      } catch (Exception eeeeee){
+      } catch (Exception eeeeee) {
          eeeeee.printStackTrace();
          return false;
       }

@@ -1,6 +1,7 @@
 package keystrokesmod.client.module.modules.combat;
 
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
@@ -14,9 +15,11 @@ public class Velocity extends Module {
    public static SliderSetting c;
    public static TickSetting d;
    public static TickSetting e;
+   public static ComboSetting mode;
 
    public Velocity() {
       super("Velocity", ModuleCategory.combat);
+      this.registerSetting(mode = new ComboSetting("Mode", vMode.Vanilla));
       this.registerSetting(a = new SliderSetting("Horizontal", 90.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(b = new SliderSetting("Vertical", 100.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(c = new SliderSetting("Chance", 100.0D, 0.0D, 100.0D, 1.0D));
@@ -26,8 +29,7 @@ public class Velocity extends Module {
 
    @SubscribeEvent
    public void c(LivingUpdateEvent ev) {
-      if (Utils.Player.isPlayerInGame() && mc.thePlayer.maxHurtTime > 0 && mc.thePlayer.hurtTime == mc.thePlayer.maxHurtTime)
-      {
+      if (Utils.Player.isPlayerInGame() && mc.thePlayer.maxHurtTime > 0 && mc.thePlayer.hurtTime == mc.thePlayer.maxHurtTime) {
          if (d.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
             return;
          }
@@ -43,6 +45,14 @@ public class Velocity extends Module {
             }
          }
 
+         if (mode.getMode() == vMode.Intave) {
+            if (mc.thePlayer.onGround) mc.thePlayer.jump();
+            if (mc.thePlayer.hurtTime == 7 && mc.thePlayer.getLastAttackerTime() <= 500) {
+               mc.thePlayer.motionX *= 0.6;
+               mc.thePlayer.motionZ *= 0.6;
+            }
+         }
+
          if (a.getInput() != 100.0D) {
             mc.thePlayer.motionX *= a.getInput() / 100.0D;
             mc.thePlayer.motionZ *= a.getInput() / 100.0D;
@@ -51,7 +61,13 @@ public class Velocity extends Module {
          if (b.getInput() != 100.0D) {
             mc.thePlayer.motionY *= b.getInput() / 100.0D;
          }
+
       }
 
+   }
+
+   private enum vMode {
+      Vanilla,
+      Intave
    }
 }

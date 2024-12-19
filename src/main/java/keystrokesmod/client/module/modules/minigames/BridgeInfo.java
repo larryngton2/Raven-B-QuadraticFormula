@@ -91,9 +91,9 @@ public class BridgeInfo extends Module {
 
          int blc2 = 0;
 
-         for(int i = 0; i < 9; ++i) {
+         for (int i = 0; i < 9; ++i) {
             ItemStack stack = mc.thePlayer.inventory.getStackInSlot(i);
-            if (stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock)stack.getItem()).block.equals(Blocks.stained_hardened_clay)) {
+            if (stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).block.equals(Blocks.stained_hardened_clay)) {
                blc2 += stack.stackSize;
             }
          }
@@ -110,13 +110,13 @@ public class BridgeInfo extends Module {
          }
 
          String t1 = "Enemy: ";
-         mc.fontRendererObj.drawString(t1 + this.en, (float)hudX, (float)hudY, rgb, true);
+         mc.fontRendererObj.drawString(t1 + this.en, (float) hudX, (float) hudY, rgb, true);
          String t2 = "Distance to goal: ";
-         mc.fontRendererObj.drawString(t2 + this.d1, (float)hudX, (float)(hudY + 11), rgb, true);
+         mc.fontRendererObj.drawString(t2 + this.d1, (float) hudX, (float) (hudY + 11), rgb, true);
          String t3 = "Enemy distance to goal: ";
-         mc.fontRendererObj.drawString(t3 + this.d2, (float)hudX, (float)(hudY + 22), rgb, true);
+         mc.fontRendererObj.drawString(t3 + this.d2, (float) hudX, (float) (hudY + 22), rgb, true);
          String t4 = "Blocks: ";
-         mc.fontRendererObj.drawString(t4 + this.blc, (float)hudX, (float)(hudY + 33), rgb, true);
+         mc.fontRendererObj.drawString(t4 + this.blc, (float) hudX, (float) (hudY + 33), rgb, true);
       }
 
    }
@@ -217,7 +217,7 @@ public class BridgeInfo extends Module {
 
          try {
             this.handleInput();
-         } catch (IOException var12) {
+         } catch (IOException ignored) {
          }
 
          super.drawScreen(mX, mY, pt);

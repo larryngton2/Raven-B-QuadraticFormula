@@ -3,7 +3,6 @@ package keystrokesmod.client.module.modules.movement;
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.ModuleManager;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.utils.Utils;
 
@@ -49,8 +48,8 @@ public class Boost extends Module {
          this.i = mc.thePlayer.ticksExisted;
       }
 
-      Utils.Client.getTimer().timerSpeed = (float)a.getInput();
-      if ((double)this.i == (double)mc.thePlayer.ticksExisted - b.getInput()) {
+      Utils.Client.getTimer().timerSpeed = (float) a.getInput();
+      if ((double) this.i == (double) mc.thePlayer.ticksExisted - b.getInput()) {
          Utils.Client.resetTimer();
          this.disable();
       }

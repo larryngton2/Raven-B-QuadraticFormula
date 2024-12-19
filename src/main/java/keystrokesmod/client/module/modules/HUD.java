@@ -6,9 +6,7 @@ import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -19,8 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static keystrokesmod.client.main.Raven.mResourceLocation;
 
 public class HUD extends Module {
    public static TickSetting editPosition;
@@ -46,8 +42,8 @@ public class HUD extends Module {
       showedError = false;
    }
 
-   public void guiUpdate(){
-      colourModeDesc.setDesc(Utils.md + ColourModes.values()[(int) colourMode.getInput()-1]);
+   public void guiUpdate() {
+      colourModeDesc.setDesc(Utils.md + ColourModes.values()[(int) colourMode.getInput() - 1]);
    }
 
    public void onEnable() {
@@ -74,37 +70,36 @@ public class HUD extends Module {
          int y = hudY;
          int del = 0;
 
-         if (!alphabeticalSort.isToggled()){
+         if (!alphabeticalSort.isToggled()) {
             if (positionMode == Utils.HUD.PositionMode.UPLEFT || positionMode == Utils.HUD.PositionMode.UPRIGHT) {
                Raven.moduleManager.sortShortLong();
-            }
-            else if(positionMode == Utils.HUD.PositionMode.DOWNLEFT || positionMode == Utils.HUD.PositionMode.DOWNRIGHT) {
+            } else if (positionMode == Utils.HUD.PositionMode.DOWNLEFT || positionMode == Utils.HUD.PositionMode.DOWNRIGHT) {
                Raven.moduleManager.sortLongShort();
             }
          }
 
 
          List<Module> en = new ArrayList<>(Raven.moduleManager.getModules());
-         if(en.isEmpty()) return;
+         if (en.isEmpty()) return;
 
          int textBoxWidth = Raven.moduleManager.getLongestActiveModule(mc.fontRendererObj);
          int textBoxHeight = Raven.moduleManager.getBoxHeight(mc.fontRendererObj, margin);
 
-         if(hudX < 0) {
+         if (hudX < 0) {
             hudX = margin;
          }
-         if(hudY < 0) {
+         if (hudY < 0) {
             {
                hudY = margin;
             }
          }
 
-         if(hudX + textBoxWidth > mc.displayWidth/2){
-            hudX = mc.displayWidth/2 - textBoxWidth - margin;
+         if (hudX + textBoxWidth > mc.displayWidth / 2) {
+            hudX = mc.displayWidth / 2 - textBoxWidth - margin;
          }
 
-         if(hudY + textBoxHeight > mc.displayHeight/2){
-            hudY = mc.displayHeight/2 - textBoxHeight;
+         if (hudY + textBoxHeight > mc.displayHeight / 2) {
+            hudY = mc.displayHeight / 2 - textBoxHeight;
          }
 
          for (Module m : en) {
@@ -187,8 +182,8 @@ public class HUD extends Module {
 
       public void drawScreen(int mX, int mY, float pt) {
          drawRect(0, 0, this.width, this.height, -1308622848);
-         drawRect(0, this.height /2, this.width, this.height /2 + 1, 0x9936393f);
-         drawRect(this.width /2, 0, this.width /2 + 1, this.height, 0x9936393f);
+         drawRect(0, this.height / 2, this.width, this.height / 2 + 1, 0x9936393f);
+         drawRect(this.width / 2, 0, this.width / 2 + 1, this.height, 0x9936393f);
          int textBoxStartX = this.marginX;
          int textBoxStartY = this.marginY;
          int textBoxEndX = textBoxStartX + 50;
@@ -207,7 +202,7 @@ public class HUD extends Module {
 
          try {
             this.handleInput();
-         } catch (IOException var12) {
+         } catch (IOException ignored) {
          }
 
          super.drawScreen(mX, mY, pt);
@@ -222,20 +217,19 @@ public class HUD extends Module {
          ArrayList<String> var5 = Utils.Java.toArrayList(var4);
          if (HUD.positionMode == Utils.HUD.PositionMode.UPLEFT || HUD.positionMode == Utils.HUD.PositionMode.UPRIGHT) {
             var5.sort((o1, o2) -> Utils.mc.fontRendererObj.getStringWidth(o2) - Utils.mc.fontRendererObj.getStringWidth(o1));
-         }
-         else if(HUD.positionMode == Utils.HUD.PositionMode.DOWNLEFT || HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT) {
+         } else if (HUD.positionMode == Utils.HUD.PositionMode.DOWNLEFT || HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT) {
             var5.sort(Comparator.comparingInt(o2 -> Utils.mc.fontRendererObj.getStringWidth(o2)));
          }
 
-         if(HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT || HUD.positionMode == Utils.HUD.PositionMode.UPRIGHT){
+         if (HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT || HUD.positionMode == Utils.HUD.PositionMode.UPRIGHT) {
             for (String s : var5) {
                fr.drawString(s, (float) x + (gap - fr.getStringWidth(s)), (float) y, Color.white.getRGB(), HUD.dropShadow.isToggled());
-               y += marginY;
+               y += (int) marginY;
             }
          } else {
             for (String s : var5) {
                fr.drawString(s, (float) x, (float) y, Color.white.getRGB(), HUD.dropShadow.isToggled());
-               y += marginY;
+               y += (int) marginY;
             }
          }
       }
@@ -247,7 +241,7 @@ public class HUD extends Module {
                this.marginX = this.lastMousePosX + (mousePosX - this.sessionMousePosX);
                this.marginY = this.lastMousePosY + (mousePosY - this.sessionMousePosY);
                sr = new ScaledResolution(mc);
-               HUD.positionMode = Utils.HUD.getPostitionMode(marginX, marginY,sr.getScaledWidth(), sr.getScaledHeight());
+               HUD.positionMode = Utils.HUD.getPostitionMode(marginX, marginY, sr.getScaledWidth(), sr.getScaledHeight());
 
                //in the else if statement, we check if the mouse is clicked AND inside the "text box"
             } else if (mousePosX > this.textBoxStartX && mousePosX < this.textBoxEndX && mousePosY > this.textBoxStartY && mousePosY < this.textBoxEndY) {

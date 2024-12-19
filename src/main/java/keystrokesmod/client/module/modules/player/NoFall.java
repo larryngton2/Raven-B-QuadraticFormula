@@ -9,7 +9,7 @@ public class NoFall extends Module {
    }
 
    public void update() {
-      if ((double)mc.thePlayer.fallDistance > 2.5D) {
+      if ((double) mc.thePlayer.fallDistance > 2.5D) {
          mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
       }
 

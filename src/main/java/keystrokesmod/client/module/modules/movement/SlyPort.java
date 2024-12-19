@@ -58,9 +58,9 @@ public class SlyPort extends Module {
         Entity en = null;
         double r = Math.pow(SlyPort.r.getInput(), 2.0D);
         double dist = r + 1.0D;
-        Iterator var6 = mc.theWorld.loadedEntityList.iterator();
+        Iterator<Entity> var6 = mc.theWorld.loadedEntityList.iterator();
 
-        while(true) {
+        while (true) {
             Entity ent;
             do {
                 do {
@@ -70,11 +70,11 @@ public class SlyPort extends Module {
                                 return en;
                             }
 
-                            ent = (Entity)var6.next();
-                        } while(ent == mc.thePlayer);
-                    } while(!(ent instanceof EntityLivingBase));
-                } while(((EntityLivingBase)ent).deathTime != 0);
-            } while(SlyPort.d.isToggled() && !(ent instanceof EntityPlayer));
+                            ent = (Entity) var6.next();
+                        } while (ent == mc.thePlayer);
+                    } while (!(ent instanceof EntityLivingBase));
+                } while (((EntityLivingBase) ent).deathTime != 0);
+            } while (SlyPort.d.isToggled() && !(ent instanceof EntityPlayer));
 
             if (!AntiBot.bot(ent)) {
                 double d = mc.thePlayer.getDistanceSqToEntity(ent);

@@ -60,13 +60,13 @@ public class Xray extends Module {
       return new TimerTask() {
          public void run() {
             Xray.this.ren.clear();
-            int ra = (int)Xray.r.getInput();
+            int ra = (int) Xray.r.getInput();
 
-            for(int y = ra; y >= -ra; --y) {
-               for(int x = -ra; x <= ra; ++x) {
-                  for(int z = -ra; z <= ra; ++z) {
+            for (int y = ra; y >= -ra; --y) {
+               for (int x = -ra; x <= ra; ++x) {
+                  for (int z = -ra; z <= ra; ++z) {
                      if (Utils.Player.isPlayerInGame()) {
-                        BlockPos p = new BlockPos(Module.mc.thePlayer.posX + (double)x, Module.mc.thePlayer.posY + (double)y, Module.mc.thePlayer.posZ + (double)z);
+                        BlockPos p = new BlockPos(Module.mc.thePlayer.posX + (double) x, Module.mc.thePlayer.posY + (double) y, Module.mc.thePlayer.posZ + (double) z);
                         Block bl = Module.mc.theWorld.getBlockState(p).getBlock();
                         if (Xray.a.isToggled() && bl.equals(Blocks.iron_ore) || Xray.b.isToggled() && bl.equals(Blocks.gold_ore) || Xray.c.isToggled() && bl.equals(Blocks.diamond_ore) || Xray.d.isToggled() && bl.equals(Blocks.emerald_ore) || Xray.e.isToggled() && bl.equals(Blocks.lapis_ore) || Xray.f.isToggled() && bl.equals(Blocks.redstone_ore) || Xray.g.isToggled() && bl.equals(Blocks.coal_ore) || Xray.h.isToggled() && bl.equals(Blocks.mob_spawner)) {
                            Xray.this.ren.add(p);

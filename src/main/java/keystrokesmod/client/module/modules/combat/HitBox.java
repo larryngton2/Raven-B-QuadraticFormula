@@ -41,7 +41,7 @@ public class HitBox extends Module {
 
    @SubscribeEvent
    public void m(MouseEvent e) {
-      if(!Utils.Player.isPlayerInGame()) return;
+      if (!Utils.Player.isPlayerInGame()) return;
       if (e.button == 0 && e.buttonstate && mv != null) {
          mc.objectMouseOver = mv;
       }
@@ -50,12 +50,12 @@ public class HitBox extends Module {
    @SubscribeEvent
    public void ef(TickEvent.RenderTickEvent ev) {
       // autoclick event
-      if(!Utils.Player.isPlayerInGame()) return;
+      if (!Utils.Player.isPlayerInGame()) return;
 
       Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
-      if(autoClicker != null && !autoClicker.isEnabled()) return;
+      if (autoClicker != null && !autoClicker.isEnabled()) return;
 
-      if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)){
+      if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
          if (mv != null) {
             mc.objectMouseOver = mv;
          }
@@ -67,7 +67,7 @@ public class HitBox extends Module {
       if (b.isToggled() && Utils.Player.isPlayerInGame()) {
          for (Entity en : mc.theWorld.loadedEntityList) {
             if (en != mc.thePlayer && en instanceof EntityLivingBase && ((EntityLivingBase) en).deathTime == 0 && !(en instanceof EntityArmorStand) && !en.isInvisible()) {
-               this.rh(en, Color.WHITE);
+               this.rh(en);
             }
          }
 
@@ -95,31 +95,30 @@ public class HitBox extends Module {
          Vec3 vec5 = vec3.addVector(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0);
          Vec3 vec6 = null;
          float f1 = 1.0F;
-         List list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0).expand(f1, f1, f1));
+         List<Entity> list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0).expand(f1, f1, f1));
          double d3 = d2;
 
-         for (Object o : list) {
-            Entity entity = (Entity) o;
-            if (entity.canBeCollidedWith()) {
-               float ex = (float) ((double) entity.getCollisionBorderSize() * exp(entity));
-               AxisAlignedBB ax = entity.getEntityBoundingBox().expand(ex, ex, ex);
+         for (Entity o : list) {
+             if (o.canBeCollidedWith()) {
+               float ex = (float) ((double) o.getCollisionBorderSize() * exp(o));
+               AxisAlignedBB ax = o.getEntityBoundingBox().expand(ex, ex, ex);
                MovingObjectPosition mop = ax.calculateIntercept(vec3, vec5);
                if (ax.isVecInside(vec3)) {
                   if (0.0D < d3 || d3 == 0.0D) {
-                     pE = entity;
+                     pE = o;
                      vec6 = mop == null ? vec3 : mop.hitVec;
                      d3 = 0.0D;
                   }
                } else if (mop != null) {
                   double d4 = vec3.distanceTo(mop.hitVec);
                   if (d4 < d3 || d3 == 0.0D) {
-                     if (entity == mc.getRenderViewEntity().ridingEntity && !entity.canRiderInteract()) {
+                     if (o == mc.getRenderViewEntity().ridingEntity && !o.canRiderInteract()) {
                         if (d3 == 0.0D) {
-                           pE = entity;
+                           pE = o;
                            vec6 = mop.hitVec;
                         }
                      } else {
-                        pE = entity;
+                        pE = o;
                         vec6 = mop.hitVec;
                         d3 = d4;
                      }
@@ -138,12 +137,12 @@ public class HitBox extends Module {
 
    }
 
-   private void rh(Entity e, Color c) {
+   private void rh(Entity e) {
       if (e instanceof EntityLivingBase) {
          double x = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double) Utils.Client.getTimer().renderPartialTicks - mc.getRenderManager().viewerPosX;
          double y = e.lastTickPosY + (e.posY - e.lastTickPosY) * (double) Utils.Client.getTimer().renderPartialTicks - mc.getRenderManager().viewerPosY;
          double z = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double) Utils.Client.getTimer().renderPartialTicks - mc.getRenderManager().viewerPosZ;
-         float ex = (float)((double)e.getCollisionBorderSize() * a.getInput());
+         float ex = (float) ((double) e.getCollisionBorderSize() * a.getInput());
          AxisAlignedBB bbox = e.getEntityBoundingBox().expand(ex, ex, ex);
          AxisAlignedBB axis = new AxisAlignedBB(bbox.minX - e.posX + x, bbox.minY - e.posY + y, bbox.minZ - e.posZ + z, bbox.maxX - e.posX + x, bbox.maxY - e.posY + y, bbox.maxZ - e.posZ + z);
          GL11.glBlendFunc(770, 771);
@@ -152,7 +151,7 @@ public class HitBox extends Module {
          GL11.glDisable(2929);
          GL11.glDepthMask(false);
          GL11.glLineWidth(2.0F);
-         GL11.glColor3d(c.getRed(), c.getGreen(), c.getBlue());
+         GL11.glColor3d(Color.WHITE.getRed(), Color.WHITE.getGreen(), Color.WHITE.getBlue());
          RenderGlobal.drawSelectionBoundingBox(axis);
          GL11.glEnable(3553);
          GL11.glEnable(2929);
