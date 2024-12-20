@@ -3,6 +3,8 @@ package keystrokesmod.client.module;
 import keystrokesmod.client.module.modules.HUD;
 import keystrokesmod.client.module.modules.client.*;
 import keystrokesmod.client.module.modules.combat.*;
+import keystrokesmod.client.module.modules.fun.AutoGroomer;
+import keystrokesmod.client.module.modules.fun.Twerk;
 import keystrokesmod.client.module.modules.hotkey.*;
 import keystrokesmod.client.module.modules.minigames.*;
 import keystrokesmod.client.module.modules.movement.*;
@@ -95,13 +97,14 @@ public class ModuleManager {
       addModule(new STap());
       addModule(new AutoWeapon());
       addModule(new BedwarsOverlay());
-
       addModule(new ShiftTap());
       addModule(new FPSSpoofer());
-
       addModule(new ExplicitB9NameTags());
       addModule(new AutoBlock());
       addModule(new MiddleClick());
+      addModule(new SilentAim());
+      addModule(new Twerk());
+      addModule(new AutoGroomer());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.

@@ -211,6 +211,7 @@ public class Module {
       minigames,
       other,
       client,
-      hotkey
+      hotkey,
+      fun
    }
 }

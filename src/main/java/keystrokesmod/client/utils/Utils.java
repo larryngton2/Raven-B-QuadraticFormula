@@ -23,6 +23,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.*;
+import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.Score;
@@ -93,7 +94,38 @@ public class Utils {
                   mc.thePlayer.rotationPitch = p;
                }
             }
+         }
+      }
 
+      // this is shit dont use!!
+      public static void aimSilent(Entity en, float ps) {
+         if (en != null) {
+            double originalPosX = mc.thePlayer.posX;
+            double originalPosY = mc.thePlayer.posY;
+            double originalPosZ = mc.thePlayer.posZ;
+            boolean originalOnGround = mc.thePlayer.onGround;
+            float originalYaw = mc.thePlayer.rotationYaw;
+            float originalPitch = mc.thePlayer.rotationPitch;
+
+            float[] targetRotations = getTargetRotations(en);
+            if (targetRotations != null) {
+               float targetYaw = targetRotations[0];
+               float targetPitch = targetRotations[1] + 4.0F + ps;
+
+               mc.thePlayer.rotationYaw = targetYaw;
+               mc.thePlayer.rotationPitch = targetPitch;
+
+               mc.thePlayer.sendQueue.addToSendQueue(new C05PacketPlayerLook(targetYaw, targetPitch, mc.thePlayer.onGround));
+
+               mc.thePlayer.setPosition(originalPosX, originalPosY, originalPosZ);
+
+               mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(originalPosX, originalPosY, originalPosZ, mc.thePlayer.onGround));
+            }
+
+            mc.thePlayer.setPosition(originalPosX, originalPosY, originalPosZ);
+            mc.thePlayer.rotationYaw = originalYaw;
+            mc.thePlayer.rotationPitch = originalPitch;
+            mc.thePlayer.onGround = originalOnGround;
          }
       }
 
