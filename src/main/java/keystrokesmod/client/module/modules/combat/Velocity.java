@@ -48,7 +48,7 @@ public class Velocity extends Module {
             }
          }
 
-         if (hhh1.isToggled() && mc.thePlayer.hurtTime == 7 && mc.thePlayer.getLastAttackerTime() <= 500) {
+         if (hhh1.isToggled() && mc.thePlayer.hurtTime == 7) {
             mc.thePlayer.motionX *= 0.6;
             mc.thePlayer.motionZ *= 0.6;
          }
