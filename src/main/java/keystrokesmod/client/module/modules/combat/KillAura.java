@@ -1,6 +1,7 @@
 package keystrokesmod.client.module.modules.combat;
 
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.modules.player.Blink;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class KillAura extends Module {
     public static DescriptionSetting desc, desc2, desc3;
-    public static SliderSetting range, autoBlock, rotationMode, attackDelay, rotationDelay;
+    public static SliderSetting range, autoBlock, rotationMode, attackDelay, rotationDelay, pitchOffset;
     public static TickSetting noSwing, forceSprint, onlyWeapon;
 
     private static long lastTargetTime = 0;
@@ -28,12 +29,13 @@ public class KillAura extends Module {
         this.registerSetting(desc = new DescriptionSetting("Attacks nearby players."));
         this.registerSetting(range = new SliderSetting("Attack Range", 4.0, 1.0, 6.0, 0.1));
         this.registerSetting(attackDelay = new SliderSetting("Attack Delay (ms)", 25, 5, 1000, 1));
-        this.registerSetting(rotationDelay = new SliderSetting("Rotation Delay (ms)", 0, 0, 1000, 1));
         this.registerSetting(desc2 = new DescriptionSetting("None, Vanilla, Release, AAC"));
         this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 4, 1));
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
         this.registerSetting(desc3 = new DescriptionSetting("Normal, Packet, None"));
         this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 3, 1));
+        this.registerSetting(rotationDelay = new SliderSetting("Rotation Delay (ms)", 0, 0, 1000, 1));
+        this.registerSetting(pitchOffset = new SliderSetting("Pitch Offet", 0, -15, 30, 1));
         this.registerSetting(forceSprint = new TickSetting("Force Sprint", true));
         this.registerSetting(onlyWeapon = new TickSetting("Only Weapon", false));
     }
@@ -94,9 +96,9 @@ public class KillAura extends Module {
         }
 
         if (rotationMode.getInput() == 1) {
-            Utils.Player.aimSilent(entity, 0.0f, false);
+            Utils.Player.aimSilent(entity, (float) pitchOffset.getInput(), false);
         } else if (rotationMode.getInput() == 2) {
-            Utils.Player.aimSilent(entity, 0.0f, true);
+            Utils.Player.aimSilent(entity, (float) pitchOffset.getInput(), true);
         }
     }
 

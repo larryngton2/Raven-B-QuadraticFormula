@@ -1,11 +1,13 @@
 package keystrokesmod.client.utils;
 
+import lombok.NonNull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -58,6 +60,75 @@ public class RenderUtils {
         color1.getColorComponents(afloat1);
 
         return new Color(afloat[0] * f + afloat1[0] * f1, afloat[1] * f + afloat1[1] * f1, afloat[2] * f + afloat1[2] * f1);
+    }
+
+    public static void drawBoundingBox(AxisAlignedBB abb, float r, float g, float b) {
+        drawBoundingBox(abb, r, g, b, 0.25f);
+    }
+
+    public static void drawBoundingBox(@NonNull AxisAlignedBB abb, float r, float g, float b, float a) {
+        Tessellator ts = Tessellator.getInstance();
+        WorldRenderer vb = ts.getWorldRenderer();
+        vb.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vb.pos(abb.minX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vb.pos(abb.maxX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vb.pos(abb.minX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vb.pos(abb.minX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vb.pos(abb.minX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        ts.draw();
+        vb.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vb.pos(abb.minX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.minX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.minZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.maxY, abb.maxZ).color(r, g, b, a).endVertex();
+        vb.pos(abb.maxX, abb.minY, abb.maxZ).color(r, g, b, a).endVertex();
+        ts.draw();
     }
 
     public static void drawRect(double d0, double d1, double d2, double d3, int i) {

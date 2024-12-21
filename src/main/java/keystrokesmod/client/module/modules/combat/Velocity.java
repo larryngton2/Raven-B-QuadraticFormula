@@ -52,19 +52,17 @@ public class Velocity extends Module {
             mc.thePlayer.motionX *= 0.6;
             mc.thePlayer.motionZ *= 0.6;
          }
+
+         if (hhh2.isToggled() && mc.thePlayer.onGround && mc.thePlayer.hurtTime > 5) mc.thePlayer.jump();
+
+         if (a.getInput() != 100.0D) {
+            mc.thePlayer.motionX *= a.getInput() / 100.0D;
+            mc.thePlayer.motionZ *= a.getInput() / 100.0D;
+         }
+
+         if (b.getInput() != 100.0D) {
+            mc.thePlayer.motionY *= b.getInput() / 100.0D;
+         }
       }
-
-      if (hhh2.isToggled() && mc.thePlayer.onGround && mc.thePlayer.hurtTime > 5) mc.thePlayer.jump();
-
-      if (a.getInput() != 100.0D) {
-         mc.thePlayer.motionX *= a.getInput() / 100.0D;
-         mc.thePlayer.motionZ *= a.getInput() / 100.0D;
-      }
-
-      if (b.getInput() != 100.0D) {
-         mc.thePlayer.motionY *= b.getInput() / 100.0D;
-      }
-
    }
-
 }
