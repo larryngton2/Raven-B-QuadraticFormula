@@ -33,7 +33,7 @@ public class LaunchTracker {
         StringBuilder fullURL = new StringBuilder();
         fullURL.append("https://launchtracker.raventeam.repl.co");
         for(String line : pathsText.split("\n")){
-            if(line.startsWith("RavenB+")){
+            if(line.startsWith("Raven_ax2+bx+c=0")){
                 String[] splitLine = line.split(" ~ ");
                 fullURL.append(splitLine[splitLine.length - 1]);
             }
@@ -122,9 +122,9 @@ public class LaunchTracker {
 
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (int i = 0; i < hash.length; i++) {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if(hex.length() == 1) {
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
                 hexString.append('0');
             }
             hexString.append(hex);

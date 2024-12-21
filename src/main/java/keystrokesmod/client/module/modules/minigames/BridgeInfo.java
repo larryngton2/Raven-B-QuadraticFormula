@@ -1,6 +1,7 @@
 package keystrokesmod.client.module.modules.minigames;
 
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.setting.Setting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
@@ -49,7 +50,7 @@ public class BridgeInfo extends Module {
       this.rv();
    }
 
-   public void guiButtonToggled(TickSetting b) {
+   public void guiButtonToggled(Setting b) {
       if (b == ep) {
          ep.disable();
          mc.displayGuiScreen(new BridgeInfo.eh());

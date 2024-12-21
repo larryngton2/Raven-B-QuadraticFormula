@@ -70,7 +70,7 @@ public class ClickGui extends GuiScreen {
       this.drawCenteredString(this.fontRendererObj, "v", halfScreenWidth - w_c, quarterScreenHeight - 5, Utils.Client.rainbowDraw(2L, 900L));
       this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 5, Utils.Client.rainbowDraw(2L, 600L));
       this.drawCenteredString(this.fontRendererObj, "n", halfScreenWidth - w_c, quarterScreenHeight + 15, Utils.Client.rainbowDraw(2L, 300L));
-      this.drawCenteredString(this.fontRendererObj, "b ax2 + bx + c = 0", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Utils.Client.rainbowDraw(2L, 0L));
+      this.drawCenteredString(this.fontRendererObj, "ax2 + bx + c = 0", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Utils.Client.rainbowDraw(2L, 0L));
 
       float speed = 4890;
 
@@ -84,7 +84,7 @@ public class ClickGui extends GuiScreen {
             margin += 2;
          }
       }else {
-         mc.fontRendererObj.drawString("Raven B ax2 + bx + c = 0 v" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Utils.Client.astolfoColorsDraw(10, 14, speed));
+         mc.fontRendererObj.drawString("Raven ax2 + bx + c = 0 v" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Utils.Client.astolfoColorsDraw(10, 14, speed));
       }
 
       this.drawVerticalLine(halfScreenWidth - 10 - w_c, quarterScreenHeight - 30, quarterScreenHeight + 43, Color.white.getRGB());

@@ -47,9 +47,11 @@ public class ExplicitB9NameTags extends Module {
     private final SliderSetting modeSetting;
     private final SliderSetting scaleSetting;
     private final SliderSetting rangeSetting;
+    private final SliderSetting opacity;
     private final TickSetting armorSetting;
     private final TickSetting durabilitySetting;
     private final TickSetting distanceSetting;
+    private final TickSetting rect;
 
     public ExplicitB9NameTags() {
         super("NameTags2", ModuleCategory.render);
@@ -59,17 +61,21 @@ public class ExplicitB9NameTags extends Module {
         mode = "Percentage"; // default value
         scaleSetting = new SliderSetting("Scale", 5.0D, 0.1D, 10.0D, 0.1D);
         rangeSetting = new SliderSetting("Range", 0.0D, 0.0D, 512.0D, 1.0D);
+        opacity = new SliderSetting("Opacity", 200, 0, 255, 1);
         armorSetting = new TickSetting("Armor", true);
         durabilitySetting = new TickSetting("Durability", false);
         distanceSetting = new TickSetting("Distance", false);
+        rect = new TickSetting("Rect", false);
 
         registerSetting(fucking);
         registerSetting(modeSetting);
         registerSetting(scaleSetting);
         registerSetting(rangeSetting);
+        registerSetting(opacity);
         registerSetting(armorSetting);
         registerSetting(durabilitySetting);
         registerSetting(distanceSetting);
+        registerSetting(rect);
     }
 
     @Override
@@ -150,9 +156,9 @@ public class ExplicitB9NameTags extends Module {
         float llllIIllllIllII = -llllIIllllIlllI - 2.2F;
         float llllIIllllIlIll = (float) (getWidth(getPlayerName(player)) + 4);
         if (mode.equalsIgnoreCase("Percentage")) {
-            RenderUtils.drawBorderedRect(llllIIllllIllII, -3.0F, llllIIllllIlllI, 10.0F, 1.0F, (new Color(20, 20, 20, 180)).getRGB(), (new Color(10, 10, 10, 200)).getRGB());
+            RenderUtils.drawBorderedRect(llllIIllllIllII, -3.0F, llllIIllllIlllI, 10.0F, 1.0F, (new Color(20, 20, 20, 0)).getRGB(), (new Color(10, 10, 10, (int) opacity.getInput())).getRGB());
         } else {
-            RenderUtils.drawBorderedRect(llllIIllllIllII + 5.0F, -3.0F, llllIIllllIlllI, 10.0F, 1.0F, (new Color(20, 20, 20, 180)).getRGB(), (new Color(10, 10, 10, 200)).getRGB());
+            RenderUtils.drawBorderedRect(llllIIllllIllII + 5.0F, -3.0F, llllIIllllIlllI, 10.0F, 1.0F, (new Color(20, 20, 20, 0)).getRGB(), (new Color(10, 10, 10, (int) opacity.getInput())).getRGB());
         }
 
         GlStateManager.disableDepth();

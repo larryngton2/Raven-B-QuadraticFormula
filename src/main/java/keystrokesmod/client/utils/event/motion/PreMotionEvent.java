@@ -1,4 +1,4 @@
-package keystrokesmod.client.utils.motion;
+package keystrokesmod.client.utils.event.motion;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;

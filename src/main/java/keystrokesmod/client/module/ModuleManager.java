@@ -14,12 +14,14 @@ import keystrokesmod.client.module.modules.render.*;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.modules.world.ChatLogger;
 import keystrokesmod.client.utils.Utils;
+import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@Getter
 public class ModuleManager {
    private final List<Module> modules = new ArrayList<>();
 
@@ -102,9 +104,9 @@ public class ModuleManager {
       addModule(new ExplicitB9NameTags());
       addModule(new AutoBlock());
       addModule(new MiddleClick());
-      addModule(new SilentAim());
       addModule(new Twerk());
       addModule(new AutoGroomer());
+      addModule(new KillAura());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.
@@ -139,11 +141,7 @@ public class ModuleManager {
    }
 
 
-   public List<Module> getModules() {
-      return modules;
-   }
-
-   public List<Module> getModulesInCategory(Module.ModuleCategory categ) {
+    public List<Module> getModulesInCategory(Module.ModuleCategory categ) {
       ArrayList<Module> modulesOfCat = new ArrayList<>();
 
       for (Module mod : modules) {

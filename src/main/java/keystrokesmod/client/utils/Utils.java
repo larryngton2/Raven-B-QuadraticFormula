@@ -83,7 +83,7 @@ public class Utils {
 
       public static void aim(Entity en, float ps, boolean pc) {
          if (en != null) {
-            float[] t = getTargetRotations(en);
+            float[] t = getTargetRotations(en, ps);
             if (t != null) {
                float y = t[0];
                float p = t[1] + 4.0F + ps;
@@ -97,36 +97,40 @@ public class Utils {
          }
       }
 
-      // this is shit dont use!!
-      public static void aimSilent(Entity en, float ps) {
+      //todo
+      public static void aimSilent(Entity en, float ps, boolean pc) {
          if (en != null) {
-            double originalPosX = mc.thePlayer.posX;
-            double originalPosY = mc.thePlayer.posY;
-            double originalPosZ = mc.thePlayer.posZ;
-            boolean originalOnGround = mc.thePlayer.onGround;
-            float originalYaw = mc.thePlayer.rotationYaw;
-            float originalPitch = mc.thePlayer.rotationPitch;
-
-            float[] targetRotations = getTargetRotations(en);
-            if (targetRotations != null) {
-               float targetYaw = targetRotations[0];
-               float targetPitch = targetRotations[1] + 4.0F + ps;
-
-               mc.thePlayer.rotationYaw = targetYaw;
-               mc.thePlayer.rotationPitch = targetPitch;
-
-               mc.thePlayer.sendQueue.addToSendQueue(new C05PacketPlayerLook(targetYaw, targetPitch, mc.thePlayer.onGround));
-
-               mc.thePlayer.setPosition(originalPosX, originalPosY, originalPosZ);
-
-               mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(originalPosX, originalPosY, originalPosZ, mc.thePlayer.onGround));
+            float[] t = getTargetRotations(en, ps);
+            if (t != null) {
+               float y = t[0];
+               float p = t[1] + 4.0F + ps;
+               if (pc) {
+                  mc.getNetHandler().addToSendQueue(new C05PacketPlayerLook(y, p, mc.thePlayer.onGround));
+               } else {
+                  mc.thePlayer.rotationYaw = y;
+                  mc.thePlayer.rotationPitch = p;
+               }
             }
-
-            mc.thePlayer.setPosition(originalPosX, originalPosY, originalPosZ);
-            mc.thePlayer.rotationYaw = originalYaw;
-            mc.thePlayer.rotationPitch = originalPitch;
-            mc.thePlayer.onGround = originalOnGround;
          }
+      }
+
+      public static boolean isPlayerNaked(EntityPlayer en) {
+         for (int armorPiece = 0; armorPiece < 4; armorPiece++)
+            if (en.getCurrentArmor(armorPiece) == null)
+               return true;
+         return false;
+      }
+
+      public static List<EntityPlayer> getClosePlayers(double dis) {
+         if (mc.theWorld == null)
+            return null;
+         List<EntityPlayer> players = new ArrayList<>();
+
+         for(EntityPlayer player : mc.theWorld.playerEntities)
+            if(mc.thePlayer.getDistanceToEntity(player) < dis)
+               players.add(player);
+
+         return players;
       }
 
       public static double fovFromEntity(Entity en) {
@@ -248,25 +252,27 @@ public class Utils {
          return Mouse.isButtonDown(0) && Mouse.isButtonDown(1);
       }
 
-      public static float[] getTargetRotations(Entity q) {
-         if (q == null) {
+      public static float[] getTargetRotations(Entity entityIn, float ps) {
+         if (entityIn == null)
             return null;
-         } else {
-            double diffX = q.posX - mc.thePlayer.posX;
-            double diffY;
-            if (q instanceof EntityLivingBase) {
-               EntityLivingBase en = (EntityLivingBase) q;
-               diffY = en.posY + (double) en.getEyeHeight() * 0.9D - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
-            } else {
-               diffY = (q.getEntityBoundingBox().minY + q.getEntityBoundingBox().maxY) / 2.0D - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
-            }
+         double diffX = entityIn.posX - mc.thePlayer.posX;
+         double diffY;
+         if (entityIn instanceof EntityLivingBase) {
+            final EntityLivingBase en = (EntityLivingBase) entityIn;
+            diffY = (en.posY + ((double) en.getEyeHeight() * 0.9D))
+                    - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
+         } else
+            diffY = (((entityIn.getEntityBoundingBox().minY + entityIn.getEntityBoundingBox().maxY) / 2.0D) + ps)
+                    - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
 
-            double diffZ = q.posZ - mc.thePlayer.posZ;
-            double dist = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
-            float yaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / 3.141592653589793D) - 90.0F;
-            float pitch = (float) (-(Math.atan2(diffY, dist) * 180.0D / 3.141592653589793D));
-            return new float[]{mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.thePlayer.rotationYaw), mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float(pitch - mc.thePlayer.rotationPitch)};
-         }
+         double diffZ = entityIn.posZ - mc.thePlayer.posZ;
+         double dist = MathHelper.sqrt_double((diffX * diffX) + (diffZ * diffZ));
+         float yaw = (float) ((Math.atan2(diffZ, diffX) * 180.0D) / 3.141592653589793D) - 90.0F;
+         float pitch = (float) (-((Math.atan2(diffY, dist) * 180.0D) / 3.141592653589793D));
+         return new float[]{
+                 mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.thePlayer.rotationYaw),
+                 mc.thePlayer.rotationPitch
+                         + MathHelper.wrapAngleTo180_float(pitch - mc.thePlayer.rotationPitch)};
       }
 
       public static void fixMovementSpeed(double s, boolean m) {

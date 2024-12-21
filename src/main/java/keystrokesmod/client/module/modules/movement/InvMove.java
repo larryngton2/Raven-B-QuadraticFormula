@@ -1,19 +1,29 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.setting.impl.TickSetting;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 public class InvMove extends Module {
+   public static TickSetting a;
+
    public InvMove() {
       super("InvMove", ModuleCategory.movement);
+
+      this.registerSetting(a = new TickSetting("Only in Chest", false));
    }
 
    public void update() {
       if (mc.currentScreen != null) {
          if (mc.currentScreen instanceof GuiChat) {
+            return;
+         }
+
+         if (a.isToggled() && !(mc.currentScreen instanceof GuiChest)) {
             return;
          }
 

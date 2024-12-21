@@ -35,6 +35,8 @@ dependencies {
     implementation 'org.ow2.asm:asm:5.2'
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
     implementation files('libs/discord-rpc.jar')
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
 }
 
 version = "1.2"

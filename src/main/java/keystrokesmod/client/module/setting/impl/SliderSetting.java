@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.setting.Setting;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,7 +12,9 @@ import java.math.RoundingMode;
 public class SliderSetting extends Setting {
    private final String name;
    private double value;
+   @Getter
    private final double max;
+   @Getter
    private final double min;
    private final double interval;
    private final double defaultVal;
@@ -26,6 +29,7 @@ public class SliderSetting extends Setting {
       this.defaultVal = defaultValue;
    }
 
+   @Override
    public String getName() {
       return this.name;
    }
@@ -65,15 +69,7 @@ public class SliderSetting extends Setting {
       return r(this.value, 2);
    }
 
-   public double getMin() {
-      return this.min;
-   }
-
-   public double getMax() {
-      return this.max;
-   }
-
-   public void setValue(double n) {
+    public void setValue(double n) {
       n = check(n, this.min, this.max);
       n = (double) Math.round(n * (1.0D / this.interval)) / (1.0D / this.interval);
       this.value = n;
@@ -86,12 +82,10 @@ public class SliderSetting extends Setting {
    }
 
    public static double r(double v, int p) {
-      if (p < 0) {
+      if (p < 0)
          return 0.0D;
-      } else {
-         BigDecimal bd = new BigDecimal(v);
-         bd = bd.setScale(p, RoundingMode.HALF_UP);
-         return bd.doubleValue();
-      }
+      BigDecimal bd = new BigDecimal(v);
+      bd = bd.setScale(p, RoundingMode.HALF_UP);
+      return bd.doubleValue();
    }
 }

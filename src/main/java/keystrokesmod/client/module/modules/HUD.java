@@ -2,6 +2,7 @@ package keystrokesmod.client.module.modules;
 
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.*;
+import keystrokesmod.client.module.setting.Setting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -50,7 +51,7 @@ public class HUD extends Module {
       Raven.moduleManager.sort();
    }
 
-   public void guiButtonToggled(TickSetting b) {
+   public void guiButtonToggled(Setting b) {
       if (b == editPosition) {
          editPosition.disable();
          mc.displayGuiScreen(new EditHudPositionScreen());

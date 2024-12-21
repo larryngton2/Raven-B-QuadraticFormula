@@ -2,7 +2,7 @@ package keystrokesmod.client.module;
 
 import com.google.gson.JsonObject;
 import keystrokesmod.client.module.setting.Setting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -10,11 +10,14 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 
 public class Module {
+   @Getter
    protected ArrayList<Setting> settings;
    private final String moduleName;
    private final ModuleCategory moduleCategory;
+   @Getter
    protected boolean enabled = false;
    protected boolean defaultEnabled = false;
+   @Getter
    protected int keycode = 0;
    protected int defualtKeyCode = keycode;
 
@@ -126,11 +129,7 @@ public class Module {
       return this.moduleName;
    }
 
-   public ArrayList<Setting> getSettings() {
-      return this.settings;
-   }
-
-   public Setting getSettingByName(String name) {
+    public Setting getSettingByName(String name) {
       for (Setting setting : this.settings) {
          if (setting.getName().equalsIgnoreCase(name))
             return setting;
@@ -146,11 +145,7 @@ public class Module {
       return this.moduleCategory;
    }
 
-   public boolean isEnabled() {
-      return this.enabled;
-   }
-
-   public void onEnable() {
+    public void onEnable() {
    }
 
    public void onDisable() {
@@ -170,14 +165,10 @@ public class Module {
    public void guiUpdate() {
    }
 
-   public void guiButtonToggled(TickSetting b) {
+   public void guiButtonToggled(Setting b) {
    }
 
-   public int getKeycode() {
-      return this.keycode;
-   }
-
-   public void setbind(int keybind) {
+    public void setbind(int keybind) {
       this.keycode = keybind;
    }
 
