@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.modules.combat.KillAura;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -97,7 +98,6 @@ public class Utils {
          }
       }
 
-      //todo
       public static void aimSilent(Entity en, float ps, boolean pc) {
          if (en != null) {
             float[] t = getTargetRotations(en, ps);

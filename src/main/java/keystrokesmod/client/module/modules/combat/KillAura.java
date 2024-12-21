@@ -5,8 +5,6 @@ import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
-import keystrokesmod.client.utils.event.GameLoopEvent;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,14 +13,13 @@ import net.minecraft.network.play.client.C02PacketUseEntity.Action;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class KillAura extends Module {
     public static DescriptionSetting desc, desc2, desc3;
-    public static SliderSetting range, autoBlock, rotationMode, attackDelay;
+    public static SliderSetting range, autoBlock, rotationMode, attackDelay, rotationDelay;
     public static TickSetting noSwing, forceSprint, onlyWeapon;
 
-    private long lastAttackTime = 0;
+    private static long lastTargetTime = 0;
 
     public KillAura() {
         super("KillAura", ModuleCategory.combat);
@@ -31,6 +28,7 @@ public class KillAura extends Module {
         this.registerSetting(desc = new DescriptionSetting("Attacks nearby players."));
         this.registerSetting(range = new SliderSetting("Attack Range", 4.0, 1.0, 6.0, 0.1));
         this.registerSetting(attackDelay = new SliderSetting("Attack Delay (ms)", 25, 5, 1000, 1));
+        this.registerSetting(rotationDelay = new SliderSetting("Rotation Delay (ms)", 0, 0, 1000, 1));
         this.registerSetting(desc2 = new DescriptionSetting("None, Vanilla, Release, AAC"));
         this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 4, 1));
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
@@ -46,8 +44,7 @@ public class KillAura extends Module {
             return;
         }
 
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastAttackTime < attackDelay.getInput()) {
+        if (!Utils.Player.isPlayerHoldingWeapon() && onlyWeapon.isToggled()) {
             return;
         }
 
@@ -60,10 +57,12 @@ public class KillAura extends Module {
         if (closestEntity != null) {
             handleRotation(closestEntity);
             handleAutoBlock(closestEntity);
-            if (autoBlock.getInput() != 2 || autoBlock.getInput() != 4) {
+            if (System.currentTimeMillis() - lastTargetTime >= attackDelay.getInput() && (autoBlock.getInput() != 2 || autoBlock.getInput() != 4)) {
                 attack(closestEntity);
+                lastTargetTime = System.currentTimeMillis();
             }
-            lastAttackTime = currentTime;
+        } else {
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
         }
     }
 
@@ -84,6 +83,16 @@ public class KillAura extends Module {
     }
 
     private void handleRotation(Entity entity) {
+        Entity ce = findClosestEntity();
+
+        if (ce == null) {
+            return;
+        }
+
+        if (System.currentTimeMillis() - lastTargetTime < rotationDelay.getInput()) {
+            return;
+        }
+
         if (rotationMode.getInput() == 1) {
             Utils.Player.aimSilent(entity, 0.0f, false);
         } else if (rotationMode.getInput() == 2) {
@@ -121,7 +130,10 @@ public class KillAura extends Module {
 
     private void abRelease(Entity e) {
         KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-        attack(e);
+        if (System.currentTimeMillis() - lastTargetTime >= attackDelay.getInput()) {
+            attack(e);
+            lastTargetTime = System.currentTimeMillis();
+        }
         KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
     }
 
@@ -134,16 +146,18 @@ public class KillAura extends Module {
     }
 
     private void attack(Entity e) {
-        if (!Utils.Player.isPlayerHoldingWeapon() && onlyWeapon.isToggled()) {
-            return;
-        }
-
         if (e != null) {
             if (!noSwing.isToggled()) {
                 mc.thePlayer.swingItem();
             }
             mc.getNetHandler().addToSendQueue(new C02PacketUseEntity(e, Action.ATTACK));
         }
+    }
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        lastTargetTime = System.currentTimeMillis();
     }
 
     @Override
