@@ -90,7 +90,6 @@ public class STap extends Module {
                         return;
                     }
 
-
                     if (hitCoolDown && !alreadyHit) {
                         hitsWaited++;
                         if (hitsWaited >= hitTimeout) {

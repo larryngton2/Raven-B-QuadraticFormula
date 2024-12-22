@@ -1,7 +1,6 @@
 package keystrokesmod.client.module.modules.combat;
 
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.player.Blink;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -18,7 +17,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class KillAura extends Module {
     public static DescriptionSetting desc, desc2, desc3;
     public static SliderSetting range, autoBlock, rotationMode, attackDelay, rotationDelay, pitchOffset;
-    public static TickSetting noSwing, forceSprint, onlyWeapon;
+    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprint;
 
     private static long lastTargetTime = 0;
 
@@ -38,6 +37,7 @@ public class KillAura extends Module {
         this.registerSetting(pitchOffset = new SliderSetting("Pitch Offet", 0, -15, 30, 1));
         this.registerSetting(forceSprint = new TickSetting("Force Sprint", true));
         this.registerSetting(onlyWeapon = new TickSetting("Only Weapon", false));
+        this.registerSetting(keepSprint = new TickSetting("Keep Sprint", true));
     }
 
     @SubscribeEvent
@@ -61,6 +61,10 @@ public class KillAura extends Module {
             handleAutoBlock(closestEntity);
             if (System.currentTimeMillis() - lastTargetTime >= attackDelay.getInput() && (autoBlock.getInput() != 2 || autoBlock.getInput() != 4)) {
                 attack(closestEntity);
+                if (!keepSprint.isToggled()) {
+                    mc.thePlayer.motionX *= 0.6;
+                    mc.thePlayer.motionZ *= 0.6;
+                }
                 lastTargetTime = System.currentTimeMillis();
             }
         } else {
