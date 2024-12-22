@@ -13,7 +13,6 @@ import keystrokesmod.client.module.modules.player.*;
 import keystrokesmod.client.module.modules.render.*;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.modules.world.ChatLogger;
-import keystrokesmod.client.module.modules.world.Stealer;
 import keystrokesmod.client.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
@@ -109,7 +108,6 @@ public class ModuleManager {
       addModule(new AutoGroomer());
       addModule(new Blink());
       addModule(new Strafe());
-      addModule(new Stealer());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.
