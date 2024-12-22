@@ -2,8 +2,10 @@ package keystrokesmod.client.module.modules.combat;
 
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
+import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.utils.MathUtils;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -17,7 +19,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class KillAura extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack;
     public static DescriptionSetting a, b, c, d;
-    public static SliderSetting range, autoBlock, rotationMode, attackDelay, rotationDelay, pitchOffset, attackMode;
+    public static SliderSetting range, autoBlock, rotationMode, rotationDelay, pitchOffset, attackMode;
+    public static DoubleSliderSetting attackDelay;
     public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir;
 
     private static long lastTargetTime = 0;
@@ -30,7 +33,7 @@ public class KillAura extends Module {
 
         //attack options
         this.registerSetting(range = new SliderSetting("Attack Range", 4.0, 1.0, 6.0, 0.1));
-        this.registerSetting(attackDelay = new SliderSetting("Attack Delay (ms)", 25, 5, 1000, 1));
+        this.registerSetting(attackDelay = new DoubleSliderSetting("Attack Delay (ms)", 25, 50, 25, 1000, 25));
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
         this.registerSetting(dAttack = new DescriptionSetting("Packet, Legit"));
         this.registerSetting(attackMode = new SliderSetting("Attack Mode", 1, 1, 2, 1));
@@ -73,7 +76,7 @@ public class KillAura extends Module {
         if (closestEntity != null) {
             handleRotation(closestEntity);
             handleAutoBlock(closestEntity);
-            if (System.currentTimeMillis() - lastTargetTime >= attackDelay.getInput() && (autoBlock.getInput() != 2 || autoBlock.getInput() != 4)) {
+            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax()) && (autoBlock.getInput() != 2 || autoBlock.getInput() != 4)) {
                 attack(closestEntity);
                 if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
                     mc.thePlayer.motionX *= 0.6;
@@ -117,7 +120,7 @@ public class KillAura extends Module {
             Utils.Player.aimSilent(entity, (float) pitchOffset.getInput());
         } else if (rotationMode.getInput() == 2) {
             // using the attack delay on here to only rotate when needed in order to not flag less.
-            if (System.currentTimeMillis() - lastTargetTime >= attackDelay.getInput()) {
+            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                 Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());
             }
         }
@@ -153,7 +156,7 @@ public class KillAura extends Module {
 
     private void abRelease(Entity e) {
         KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-        if (System.currentTimeMillis() - lastTargetTime >= attackDelay.getInput()) {
+        if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
             attack(e);
             lastTargetTime = System.currentTimeMillis();
         }
