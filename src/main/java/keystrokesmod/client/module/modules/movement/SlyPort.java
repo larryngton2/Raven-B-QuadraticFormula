@@ -49,7 +49,7 @@ public class SlyPort extends Module {
         double z = en.posZ - vec.zCoord * 2.5D;
         mc.thePlayer.setPosition(x, mc.thePlayer.posY, z);
         if (e.isToggled()) {
-            Utils.Player.aim(en, 0.0F, false);
+            Utils.Player.aim(en, 0.0F);
         }
 
     }

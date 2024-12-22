@@ -82,34 +82,37 @@ public class Utils {
          return mc.thePlayer.moveForward != 0.0F || mc.thePlayer.moveStrafing != 0.0F;
       }
 
-      public static void aim(Entity en, float ps, boolean pc) {
+      public static void aim(Entity en, float ps) {
          if (en != null) {
             float[] t = getTargetRotations(en, ps);
             if (t != null) {
                float y = t[0];
                float p = t[1] + 4.0F + ps;
-               if (pc) {
-                  mc.getNetHandler().addToSendQueue(new C05PacketPlayerLook(y, p, mc.thePlayer.onGround));
-               } else {
-                  mc.thePlayer.rotationYaw = y;
-                  mc.thePlayer.rotationPitch = p;
-               }
+               mc.thePlayer.rotationYaw = y;
+               mc.thePlayer.rotationPitch = p;
             }
          }
       }
 
-      public static void aimSilent(Entity en, float ps, boolean pc) {
+      public static void aimPacket(Entity en, float ps) {
          if (en != null) {
             float[] t = getTargetRotations(en, ps);
             if (t != null) {
                float y = t[0];
                float p = t[1] + 4.0F + ps;
-               if (pc) {
-                  mc.getNetHandler().addToSendQueue(new C05PacketPlayerLook(y, p, mc.thePlayer.onGround));
-               } else {
-                  mc.thePlayer.rotationYaw = y;
-                  mc.thePlayer.rotationPitch = p;
-               }
+               mc.getNetHandler().addToSendQueue(new C05PacketPlayerLook(y, p, mc.thePlayer.onGround));
+            }
+         }
+      }
+
+      public static void aimSilent(Entity en, float ps) {
+         if (en != null) {
+            float[] t = getTargetRotations(en, ps);
+            if (t != null) {
+               float y = t[0];
+               float p = t[1] + 4.0F + ps;
+               mc.thePlayer.rotationYaw = y;
+               mc.thePlayer.rotationPitch = p;
             }
          }
       }

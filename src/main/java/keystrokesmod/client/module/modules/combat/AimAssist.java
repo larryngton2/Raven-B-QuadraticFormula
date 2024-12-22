@@ -77,7 +77,7 @@ public class AimAssist extends Module {
                }
 
                if (blatantMode.isToggled()) {
-                  Utils.Player.aim(en, 0.0F, false);
+                  Utils.Player.aim(en, 0.0F);
                } else {
                   double n = Utils.Player.fovFromEntity(en);
                   if (n > 1.0D || n < -1.0D) {
