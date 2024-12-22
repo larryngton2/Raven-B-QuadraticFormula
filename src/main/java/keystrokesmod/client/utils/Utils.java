@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.*;
 
 public class Utils {
-   private static final Random rand = new Random();
+   static final Random rand = new Random();
    public static final Minecraft mc = Minecraft.getMinecraft();
    public static final String md = "Mode: ";
 

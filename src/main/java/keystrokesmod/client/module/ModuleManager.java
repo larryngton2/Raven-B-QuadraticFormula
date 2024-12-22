@@ -13,6 +13,7 @@ import keystrokesmod.client.module.modules.player.*;
 import keystrokesmod.client.module.modules.render.*;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.modules.world.ChatLogger;
+import keystrokesmod.client.module.modules.world.Stealer;
 import keystrokesmod.client.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
@@ -33,6 +34,7 @@ public class ModuleManager {
       addModule(new LeftClicker());
       addModule(new RightClicker());
       addModule(new AimAssist());
+      addModule(new KillAura());
       addModule(new BurstClicker());
       addModule(new ClickAssist());
       addModule(new DelayRemover());
@@ -105,9 +107,9 @@ public class ModuleManager {
       addModule(new MiddleClick());
       addModule(new Twerk());
       addModule(new AutoGroomer());
-      addModule(new KillAura());
       addModule(new Blink());
       addModule(new Strafe());
+      addModule(new Stealer());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.
