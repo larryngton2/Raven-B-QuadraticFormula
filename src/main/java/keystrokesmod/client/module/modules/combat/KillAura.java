@@ -92,14 +92,19 @@ public class KillAura extends Module {
     }
 
     public static Entity findClosestEntity() {
-        return mc.theWorld.loadedEntityList.stream()
-                .filter(KillAura::isValidTarget)
-                .min(Comparator.comparingDouble(e -> mc.thePlayer.getDistanceToEntity(e)))
-                .orElse(null);
-    }
+        Entity closestEntity = null;
+        double closestDistance = range.getInput();
 
-    private static boolean isValidTarget(Entity entity) {
-        return entity instanceof EntityPlayer && entity != mc.thePlayer;
+        for (Entity entity : mc.theWorld.loadedEntityList) {
+            if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
+                double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
+                if (distanceToEntity <= range.getInput() && distanceToEntity < closestDistance) {
+                    closestEntity = entity;
+                    closestDistance = distanceToEntity;
+                }
+            }
+        }
+        return closestEntity;
     }
 
     private boolean canAttack() {
