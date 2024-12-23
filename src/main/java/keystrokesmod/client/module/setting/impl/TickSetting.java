@@ -4,8 +4,10 @@ import com.google.gson.JsonObject;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.setting.Setting;
+import lombok.Getter;
 
 public class TickSetting extends Setting {
+   @Getter
    private final String name;
    private boolean isEnabled;
    private final boolean defaultValue;
@@ -17,11 +19,7 @@ public class TickSetting extends Setting {
       this.defaultValue = isEnabled;
    }
 
-   public String getName() {
-      return this.name;
-   }
-
-   @Override
+    @Override
    public void resetToDefaults() {
       this.isEnabled = defaultValue;
    }

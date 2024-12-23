@@ -4,14 +4,18 @@ import com.google.gson.JsonObject;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.setting.Setting;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class DoubleSliderSetting extends Setting {
+    @Getter
     private final String name;
     private double valMax, valMin;
+    @Getter
     private final double max;
+    @Getter
     private final double min;
     private final double interval;
 
@@ -27,10 +31,6 @@ public class DoubleSliderSetting extends Setting {
         this.interval = intervals;
         this.defaultValMin = valMin;
         this.defaultValMax = valMax;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     @Override
@@ -73,14 +73,6 @@ public class DoubleSliderSetting extends Setting {
 
     public double getInputMax() {
         return round(this.valMax, 2);
-    }
-
-    public double getMin() {
-        return this.min;
-    }
-
-    public double getMax() {
-        return this.max;
     }
 
     public void setValueMin(double n) {

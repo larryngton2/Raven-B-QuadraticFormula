@@ -16,6 +16,8 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.Comparator;
+
 public class KillAura extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack;
     public static DescriptionSetting a, b, c, d;
@@ -38,9 +40,9 @@ public class KillAura extends Module {
         this.registerSetting(dAttack = new DescriptionSetting("Packet, Legit"));
         this.registerSetting(attackMode = new SliderSetting("Attack Mode", 1, 1, 2, 1));
 
-        //auto block options
-        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC"));
-        this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 4, 1));
+        //auto blocking options
+        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock"));
+        this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 5, 1));
 
         //rotation options
         this.registerSetting(dRotation = new DescriptionSetting("Normal, Packet, None"));
@@ -76,7 +78,7 @@ public class KillAura extends Module {
         if (closestEntity != null) {
             handleRotation(closestEntity);
             handleAutoBlock(closestEntity);
-            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax()) && (autoBlock.getInput() != 2 || autoBlock.getInput() != 4)) {
+            if (canAttack()) {
                 attack(closestEntity);
                 if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
                     mc.thePlayer.motionX *= 0.6;
@@ -85,24 +87,23 @@ public class KillAura extends Module {
                 lastTargetTime = System.currentTimeMillis();
             }
         } else {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+            blocking(false);
         }
     }
 
     public static Entity findClosestEntity() {
-        Entity closestEntity = null;
-        double closestDistance = range.getInput();
+        return mc.theWorld.loadedEntityList.stream()
+                .filter(KillAura::isValidTarget)
+                .min(Comparator.comparingDouble(e -> mc.thePlayer.getDistanceToEntity(e)))
+                .orElse(null);
+    }
 
-        for (Entity entity : mc.theWorld.loadedEntityList) {
-            if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
-                double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
-                if (distanceToEntity <= range.getInput() && distanceToEntity < closestDistance) {
-                    closestEntity = entity;
-                    closestDistance = distanceToEntity;
-                }
-            }
-        }
-        return closestEntity;
+    private static boolean isValidTarget(Entity entity) {
+        return entity instanceof EntityPlayer && entity != mc.thePlayer;
+    }
+
+    private boolean canAttack() {
+        return System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax());
     }
 
     private void handleRotation(Entity entity) {
@@ -120,55 +121,59 @@ public class KillAura extends Module {
             Utils.Player.aimSilent(entity, (float) pitchOffset.getInput());
         } else if (rotationMode.getInput() == 2) {
             // using the attack delay on here to only rotate when needed in order to not flag less.
-            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
+            if (canAttack()) {
                 Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());
             }
         }
     }
 
     private void handleAutoBlock(Entity entity) {
-        if (Utils.Player.isPlayerHoldingWeapon()) {
-            if (autoBlock.getInput() == 1) {
-                abNone();
-            } else if (autoBlock.getInput() == 2) {
-                abVanilla();
-            } else if (autoBlock.getInput() == 3) {
-                abRelease(entity);
-            } else if (autoBlock.getInput() == 4) {
-                abAAC(entity);
-            }
-        } else {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+        if (!Utils.Player.isPlayerHoldingWeapon()) {
+            blocking(false);
+            return;
+        }
+
+        switch ((int) autoBlock.getInput()) {
+            case 1: abNone(); break;
+            case 2: abVanilla(); break;
+            case 3: abRelease(); break;
+            case 4: abAAC(entity); break;
+            case 5: abVanillaReblock(); break;
+            default: blocking(false); break;
         }
     }
 
     private void abNone() {
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+        blocking(false);
     }
 
     private void abVanilla() {
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+        blocking(true);
+    }
 
-        if (!mc.gameSettings.keyBindUseItem.isKeyDown()) {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+    private void abVanillaReblock() {
+        blocking(true);
+
+        if (!mc.gameSettings.keyBindUseItem.isKeyDown() || !mc.thePlayer.isBlocking()) {
+            blocking(true);
         }
     }
 
-    private void abRelease(Entity e) {
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-        if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-            attack(e);
-            lastTargetTime = System.currentTimeMillis();
-        }
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+    private void abRelease() {
+        blocking(false);
+        mc.addScheduledTask(() -> blocking(true));
     }
 
     private void abAAC(Entity e) {
-        abRelease(e);
+        abRelease();
         if (mc.thePlayer.ticksExisted % 2 == 0) {
             mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
             mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
         }
+    }
+
+    private void blocking(boolean state) {
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
     }
 
     private void attack(Entity e) {
@@ -179,8 +184,7 @@ public class KillAura extends Module {
                 }
                 mc.getNetHandler().addToSendQueue(new C02PacketUseEntity(e, Action.ATTACK));
             } else if (attackMode.getInput() == 2) {
-                KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
-                KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
+                KeyBinding.onTick(mc.gameSettings.keyBindAttack.getKeyCode());
             }
         }
     }
@@ -194,6 +198,6 @@ public class KillAura extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+        blocking(false);
     }
 }
