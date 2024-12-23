@@ -16,8 +16,6 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.Comparator;
-
 public class KillAura extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack;
     public static DescriptionSetting a, b, c, d;
@@ -78,8 +76,10 @@ public class KillAura extends Module {
         if (closestEntity != null) {
             handleRotation(closestEntity);
             handleAutoBlock(closestEntity);
-            if (canAttack()) {
-                attack(closestEntity);
+            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
+                if (autoBlock.getInput() != 3 || autoBlock.getInput() != 4) {
+                    attack(closestEntity);
+                }
                 if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
                     mc.thePlayer.motionX *= 0.6;
                     mc.thePlayer.motionZ *= 0.6;
@@ -107,10 +107,6 @@ public class KillAura extends Module {
         return closestEntity;
     }
 
-    private boolean canAttack() {
-        return System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax());
-    }
-
     private void handleRotation(Entity entity) {
         Entity ce = findClosestEntity();
 
@@ -126,13 +122,13 @@ public class KillAura extends Module {
             Utils.Player.aimSilent(entity, (float) pitchOffset.getInput());
         } else if (rotationMode.getInput() == 2) {
             // using the attack delay on here to only rotate when needed in order to not flag less.
-            if (canAttack()) {
+            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                 Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());
             }
         }
     }
 
-    private void handleAutoBlock(Entity entity) {
+    private void handleAutoBlock(Entity e) {
         if (!Utils.Player.isPlayerHoldingWeapon()) {
             blocking(false);
             return;
@@ -141,8 +137,8 @@ public class KillAura extends Module {
         switch ((int) autoBlock.getInput()) {
             case 1: abNone(); break;
             case 2: abVanilla(); break;
-            case 3: abRelease(); break;
-            case 4: abAAC(entity); break;
+            case 3: abRelease(e); break;
+            case 4: abAAC(e); break;
             case 5: abVanillaReblock(); break;
             default: blocking(false); break;
         }
@@ -164,13 +160,18 @@ public class KillAura extends Module {
         }
     }
 
-    private void abRelease() {
-        blocking(false);
+    //todo: make this not suck ass
+    private void abRelease(Entity e) {
+        if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
+            blocking(false);
+            attack(e);
+            lastTargetTime = System.currentTimeMillis();
+        }
         mc.addScheduledTask(() -> blocking(true));
     }
 
     private void abAAC(Entity e) {
-        abRelease();
+        abRelease(e);
         if (mc.thePlayer.ticksExisted % 2 == 0) {
             mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
             mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
@@ -184,10 +185,10 @@ public class KillAura extends Module {
     private void attack(Entity e) {
         if (e != null) {
             if (attackMode.getInput() == 1) {
+                mc.getNetHandler().addToSendQueue(new C02PacketUseEntity(e, Action.ATTACK));
                 if (!noSwing.isToggled()) {
                     mc.thePlayer.swingItem();
                 }
-                mc.getNetHandler().addToSendQueue(new C02PacketUseEntity(e, Action.ATTACK));
             } else if (attackMode.getInput() == 2) {
                 KeyBinding.onTick(mc.gameSettings.keyBindAttack.getKeyCode());
             }
