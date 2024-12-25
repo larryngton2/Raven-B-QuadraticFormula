@@ -24,9 +24,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class KillAura extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack;
     public static DescriptionSetting a, b, c, d;
-    public static SliderSetting range, autoBlock, rotationMode, rotationDelay, pitchOffset, attackMode;
+    public static SliderSetting attackRange, autoBlock, rotationMode, rotationDelay, pitchOffset, attackMode, pauseRange, autoBlockRange, searchRange;
     public static DoubleSliderSetting attackDelay;
-    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir, packet;
+    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir, packet, pauseRotation;
 
     private static long lastTargetTime = 0;
     private static boolean isBlocking = false;
@@ -37,14 +37,18 @@ public class KillAura extends Module {
 
         this.registerSetting(desc = new DescriptionSetting("Attacks nearby players."));
 
+        //range options
+        this.registerSetting(attackRange = new SliderSetting("Attack Range", 3.0, 1, 8, 0.1));
+        this.registerSetting(searchRange = new SliderSetting("Search Range", 4.0, 1, 8, 0.1));
+        this.registerSetting(autoBlockRange = new SliderSetting("AutoBlock Range", 3.5, 1, 8, 0.1));
+
         //attack options
-        this.registerSetting(range = new SliderSetting("Attack Range", 4.0, 1.0, 6.0, 0.1));
         this.registerSetting(attackDelay = new DoubleSliderSetting("Attack Delay (ms)", 25, 50, 25, 1000, 25));
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
         this.registerSetting(dAttack = new DescriptionSetting("Packet, Legit"));
         this.registerSetting(attackMode = new SliderSetting("Attack Mode", 1, 1, 2, 1));
 
-        //auto blocking options
+        //auto block options
         this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock"));
         this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 5, 1));
         this.registerSetting(packet = new TickSetting("Packet Block", true));
@@ -54,6 +58,8 @@ public class KillAura extends Module {
         this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 4, 1));
         this.registerSetting(rotationDelay = new SliderSetting("Rotation Delay (ms)", 0, 0, 85, 1));
         this.registerSetting(pitchOffset = new SliderSetting("Pitch Offset", 0, -15, 30, 1));
+        this.registerSetting(pauseRotation = new TickSetting("Pause Rotation", true));
+        this.registerSetting(pauseRange = new SliderSetting("Pause Range", 0.5, 0, 6, 0.1));
 
         //movement options
         this.registerSetting(forceSprint = new TickSetting("Force Sprint", true));
@@ -85,6 +91,10 @@ public class KillAura extends Module {
         Entity closestEntity = findClosestEntity();
 
         if (closestEntity != null) {
+            if (mc.thePlayer.getDistanceToEntity(closestEntity) <= pauseRange.getInput() && pauseRotation.isToggled()) {
+                return;
+            }
+
             if (rotationMode.getInput() == 3) {
                 float[] rotations = Utils.Player.getTargetRotations(findClosestEntity(), (float) pitchOffset.getInput());
 
@@ -92,21 +102,29 @@ public class KillAura extends Module {
             } else {
                 handleRotation(closestEntity);
             }
-            handleAutoBlock(closestEntity);
-            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-                if (autoBlock.getInput() != 3 || autoBlock.getInput() != 4) {
-                    attack(closestEntity);
-                }
-                if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
-                    if (attackMode.getInput() == 2) {
-                        mc.thePlayer.motionX *= 1.0;
-                        mc.thePlayer.motionZ *= 1.0;
-                    } else if (attackMode.getInput() == 1) {
-                        mc.thePlayer.motionX *= 0.6;
-                        mc.thePlayer.motionZ *= 0.6;
+
+            if (mc.thePlayer.getDistanceToEntity(closestEntity) <= autoBlockRange.getInput()) {
+                handleAutoBlock(closestEntity);
+            } else {
+                setBlockingState(false);
+            }
+
+            if (mc.thePlayer.getDistanceToEntity(closestEntity) <= attackRange.getInput()) {
+                if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
+                    if (autoBlock.getInput() != 3 || autoBlock.getInput() != 4) {
+                        attack(closestEntity);
                     }
+                    if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
+                        if (attackMode.getInput() == 2) {
+                            mc.thePlayer.motionX *= 1.0;
+                            mc.thePlayer.motionZ *= 1.0;
+                        } else if (attackMode.getInput() == 1) {
+                            mc.thePlayer.motionX *= 0.6;
+                            mc.thePlayer.motionZ *= 0.6;
+                        }
+                    }
+                    lastTargetTime = System.currentTimeMillis();
                 }
-                lastTargetTime = System.currentTimeMillis();
             }
         } else {
             setBlockingState(false);
@@ -115,12 +133,12 @@ public class KillAura extends Module {
 
     public static Entity findClosestEntity() {
         Entity closestEntity = null;
-        double closestDistance = range.getInput();
+        double closestDistance = searchRange.getInput();
 
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
-                if (distanceToEntity <= range.getInput() && distanceToEntity < closestDistance) {
+                if (distanceToEntity <= searchRange.getInput() && distanceToEntity < closestDistance) {
                     closestEntity = entity;
                     closestDistance = distanceToEntity;
                 }
