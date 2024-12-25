@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.combat.KillAura;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -24,7 +23,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.*;
-import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C03PacketPlayer.C05PacketPlayerLook;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.Score;
@@ -101,18 +99,6 @@ public class Utils {
                float y = t[0];
                float p = t[1] + 4.0F + ps;
                mc.getNetHandler().addToSendQueue(new C05PacketPlayerLook(y, p, mc.thePlayer.onGround));
-            }
-         }
-      }
-
-      public static void aimSilent(Entity en, float ps) {
-         if (en != null) {
-            float[] t = getTargetRotations(en, ps);
-            if (t != null) {
-               float y = t[0];
-               float p = t[1] + 4.0F + ps;
-               mc.thePlayer.rotationYaw = y;
-               mc.thePlayer.rotationPitch = p;
             }
          }
       }

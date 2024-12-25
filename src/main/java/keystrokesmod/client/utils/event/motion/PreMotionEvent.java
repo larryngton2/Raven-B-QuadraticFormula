@@ -1,42 +1,50 @@
 package keystrokesmod.client.utils.event.motion;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Cancelable
 public class PreMotionEvent extends Event {
-    private static boolean setRenderYaw;
+    @Setter
+    @Getter
+    private double posX;
+    @Setter
+    @Getter
     public double posY;
-
-    /** todo:
-     * private double posX;
-     * private double posZ;
-     * private float yaw;
-     * private float pitch;
-     * private boolean onGround;
-     */
-
+    @Setter
+    @Getter
+    private double posZ;
+    @Getter
+    @Setter
+    private float yaw;
+    @Setter
+    @Getter
+    private float pitch;
+    @Setter
+    @Getter
+    private boolean onGround;
+    private static boolean setRenderYaw;
     private boolean isSprinting;
     private boolean isSneaking;
 
     public PreMotionEvent(double posX, double posY, double posZ, float yaw, float pitch, boolean onGround, boolean isSprinting, boolean isSneaking) {
-        //this.posX = posX;
+        this.posX = posX;
         this.posY = posY;
-        //this.posZ = posZ;
-        //this.yaw = yaw;
-        //this.pitch = pitch;
-        //this.onGround = onGround;
+        this.posZ = posZ;
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.onGround = onGround;
         this.isSprinting = isSprinting;
         this.isSneaking = isSneaking;
     }
 
-    public static boolean setRenderYaw() {
-        return setRenderYaw;
+    public void setYaw(float yaw, boolean renderYaw) {
+        this.yaw = yaw;
+        setRenderYaw = renderYaw;
     }
 
-    public void setYaw(float yaw) {
-        //this.yaw = yaw;
-        setRenderYaw = true;
+    public static boolean setRenderYaw() {
+        return setRenderYaw;
     }
 
     public void setRenderYaw(boolean setRenderYaw) {
@@ -59,4 +67,11 @@ public class PreMotionEvent extends Event {
         this.isSneaking = sneaking;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PreMotionEvent e = (PreMotionEvent) obj;
+        return Double.compare(e.posX, posX) == 0 && Double.compare(e.posY, posY) == 0 && Double.compare(e.posZ, posZ) == 0 && Float.compare(e.yaw, yaw) == 0 && Float.compare(e.pitch, pitch) == 0 && onGround == e.onGround && isSprinting == e.isSprinting && isSneaking == e.isSneaking;
+    }
 }

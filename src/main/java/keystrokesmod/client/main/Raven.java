@@ -1,5 +1,6 @@
 package keystrokesmod.client.main;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import keystrokesmod.client.utils.version.VersionManager;
 import keystrokesmod.client.clickgui.raven.ClickGui;
@@ -62,6 +63,7 @@ public class Raven {
 
    public static final ModuleManager moduleManager = new ModuleManager();
 
+
    public static ClickGui clickGui;
    //public static TabGui tabGui;
 
@@ -83,6 +85,7 @@ public class Raven {
       MinecraftForge.EVENT_BUS.register(new DebugInfoRenderer());
       MinecraftForge.EVENT_BUS.register(new MouseManager());
       MinecraftForge.EVENT_BUS.register(new ChatHelper());
+      FMLCommonHandler.instance().bus().register(new Utils());
 
       Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
 
