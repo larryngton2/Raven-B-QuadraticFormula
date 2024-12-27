@@ -3,6 +3,7 @@ package keystrokesmod.client.module.modules.fun;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
+import net.minecraft.client.settings.KeyBinding;
 
 public class Twerk extends Module {
     public static DescriptionSetting desc;
@@ -17,6 +18,8 @@ public class Twerk extends Module {
     }
 
     public void update() {
-        mc.thePlayer.setSneaking(mc.thePlayer.ticksExisted % (delay.getInput() * 2) < delay.getInput());
+        KeyBinding.setKeyBindState(
+                mc.gameSettings.keyBindSneak.getKeyCode(), mc.thePlayer.ticksExisted % (delay.getInput() * 2) < delay.getInput()
+        );
     }
 }
