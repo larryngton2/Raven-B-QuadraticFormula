@@ -203,6 +203,7 @@ public class Module {
       other,
       client,
       hotkey,
-      fun
+      fun,
+      rage
    }
 }

@@ -30,7 +30,6 @@ public class AimAssist extends Module {
    public static TickSetting weaponOnly;
    public static TickSetting aimInvis;
    public static TickSetting breakBlocks;
-   public static TickSetting blatantMode;
    public static TickSetting ignoreFriends;
    public static ArrayList<Entity> friends = new ArrayList<>();
 
@@ -46,11 +45,9 @@ public class AimAssist extends Module {
       this.registerSetting(ignoreFriends = new TickSetting("Ignore Friends", true));
       this.registerSetting(weaponOnly = new TickSetting("Weapon only", false));
       this.registerSetting(aimInvis = new TickSetting("Aim invis", false));
-      this.registerSetting(blatantMode = new TickSetting("Blatant mode", false));
    }
 
    public void update() {
-
       if (!Utils.Client.currentScreenMinecraft()) {
          return;
       }
@@ -76,9 +73,6 @@ public class AimAssist extends Module {
                   Utils.Player.sendMessageToSelf(this.getName() + " &e" + en.getName());
                }
 
-               if (blatantMode.isToggled()) {
-                  Utils.Player.aim(en, 0.0F);
-               } else {
                   double n = Utils.Player.fovFromEntity(en);
                   if (n > 1.0D || n < -1.0D) {
                      double complimentSpeed = n * (ThreadLocalRandom.current().nextDouble(compliment.getInput() - 1.47328, compliment.getInput() + 2.48293) / 100);
@@ -86,7 +80,6 @@ public class AimAssist extends Module {
                      float val = (float) (-(complimentSpeed + n / (101.0D - (float) ThreadLocalRandom.current().nextDouble(speed.getInput() - 4.723847, speed.getInput()))));
                      mc.thePlayer.rotationYaw += val;
                   }
-               }
             }
 
          }
@@ -144,7 +137,7 @@ public class AimAssist extends Module {
                } while (!aimInvis.isToggled() && en.isInvisible());
             } while ((double) mc.thePlayer.getDistanceToEntity(en) > distance.getInput());
          } while (AntiBot.bot(en));
-      } while (!blatantMode.isToggled() && !Utils.Player.fov(en, (float) fov));
+      } while (!Utils.Player.fov(en, (float) fov));
 
       return en;
    }

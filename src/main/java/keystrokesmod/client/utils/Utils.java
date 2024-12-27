@@ -47,10 +47,14 @@ import java.io.OutputStream;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static keystrokesmod.client.utils.Utils.Java.rand;
 
 public class Utils {
    static final Random rand = new Random();
@@ -89,6 +93,95 @@ public class Utils {
                mc.thePlayer.rotationYaw = y;
                mc.thePlayer.rotationPitch = p;
             }
+         }
+      }
+
+      public static void aim(Entity en, float ps, float rotationSpeed) {
+         if (en != null) {
+            float[] t = getTargetRotations(en, ps);
+            if (t != null) {
+               float targetYaw = t[0];
+               float targetPitch = t[1] + 4.0F + ps;
+
+               mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, targetYaw, rotationSpeed);
+               mc.thePlayer.rotationPitch = interpolate(mc.thePlayer.rotationPitch, targetPitch, rotationSpeed);
+            }
+         }
+      }
+
+      public static RandomizedAim randomizedAim = new RandomizedAim();
+
+      public static void aim(Entity entity, float ps, float rotationSpeed, boolean offset, float yawFactor, float pitchFactor, float speed, float tolerance) {
+         if (entity != null) {
+            float[] t = getTargetRotations(entity, ps);
+            if (t != null) {
+               randomizedAim.updateOffset(yawFactor, pitchFactor, speed, tolerance);
+
+               float randomizedYaw = randomizedAim.getRandomYaw(t[0]);
+               float randomizedPitch = randomizedAim.getRandomPitch(t[1] + 4.0F + ps);
+               float targetYaw = t[0];
+               float targetPitch = t[1] + 4.0F + ps;
+
+               if (offset) {
+                  mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, randomizedYaw, rotationSpeed);
+                  mc.thePlayer.rotationPitch = interpolate(mc.thePlayer.rotationPitch, randomizedPitch, rotationSpeed);
+               } else {
+                  mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, targetYaw, rotationSpeed);
+                  mc.thePlayer.rotationPitch = interpolate(mc.thePlayer.rotationPitch, targetPitch, rotationSpeed);
+               }
+            }
+         }
+      }
+
+      private static float interpolate(float current, float target, float speed) {
+         if (speed < 0.0f) speed = 0.0f;
+         if (speed > 1.0f) speed = 1.0f;
+         return current + (target - current) * speed;
+      }
+
+      private static class RandomizedAim {
+         private Vec3 currentOffset = new Vec3(0, 0, 0);
+         private Vec3 targetOffset = new Vec3(0, 0, 0);
+         private final SecureRandom random = new SecureRandom();
+
+         private final float yawFactor = 8f;
+         private final float pitchFactor = 6f;
+         private final float speed = 0.5f;
+         private final float tolerance = 0.05f;
+
+         private boolean hasReachedTarget(Vec3 current, Vec3 target, float tolerance) {
+            return Math.abs(current.xCoord - target.xCoord) < tolerance &&
+                    Math.abs(current.yCoord - target.yCoord) < tolerance &&
+                    Math.abs(current.zCoord - target.zCoord) < tolerance;
+         }
+
+         private double interpolate(double start, double end, double factor) {
+            return start + (end - start) * factor;
+         }
+
+         public void updateOffset(float yawFactor, float pitchFactor, float speed, float tolerance) {
+            if (hasReachedTarget(currentOffset, targetOffset, tolerance)) {
+                rand().nextInt(100);
+                targetOffset = new Vec3(
+                        random.nextGaussian() * yawFactor,
+                        random.nextGaussian() * pitchFactor,
+                        0
+                );
+            } else {
+               currentOffset = new Vec3(
+                       interpolate(currentOffset.xCoord, targetOffset.xCoord, speed),
+                       interpolate(currentOffset.yCoord, targetOffset.yCoord, speed),
+                       0
+               );
+            }
+         }
+
+         public float getRandomYaw(float baseYaw) {
+            return (float) (baseYaw + currentOffset.xCoord);
+         }
+
+         public float getRandomPitch(float basePitch) {
+            return (float) (basePitch + currentOffset.yCoord);
          }
       }
 

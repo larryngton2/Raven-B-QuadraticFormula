@@ -21,4 +21,8 @@ public class MathUtils {
     public static int randomInt(double inputMin, double inputMax) {
         return (int) (Math.random() * (inputMax - inputMin) + inputMin);
     }
+
+    public static float randomFloat(double inputMin, double inputMax) {
+        return rand().nextFloat() * ((float) inputMax - (float) inputMin) + (float) inputMin;
+    }
 }

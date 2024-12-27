@@ -1,6 +1,7 @@
 package keystrokesmod.client.module;
 
 import keystrokesmod.client.module.modules.HUD;
+import keystrokesmod.client.module.modules.blatant.KillAura;
 import keystrokesmod.client.module.modules.client.*;
 import keystrokesmod.client.module.modules.combat.*;
 import keystrokesmod.client.module.modules.fun.AutoGroomer;
