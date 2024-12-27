@@ -204,6 +204,7 @@ public class Module {
       client,
       hotkey,
       fun,
-      rage
+      rage,
+      exploit
    }
 }

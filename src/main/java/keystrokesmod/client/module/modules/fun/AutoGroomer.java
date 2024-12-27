@@ -15,7 +15,8 @@ import static keystrokesmod.client.utils.Utils.Java.randomInt;
 public class AutoGroomer extends Module {
     public static DescriptionSetting desc;
     public static SliderSetting delay;
-    private final List<String> messages = Arrays.asList("can I have some tittie pics?",
+    private final List<String> messages = Arrays.asList(
+            "can I have some tittie pics?",
             "do you wanna be above or below?",
             "I am gonna be pounding you 24/7",
             "I am gonna send you something okay? no sharing :wink:",
