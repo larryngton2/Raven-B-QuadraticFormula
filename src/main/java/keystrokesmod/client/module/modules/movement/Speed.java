@@ -12,7 +12,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class Speed extends Module {
    public static DescriptionSetting dc;
-   public static SliderSetting mode, timer, speedIncrement;
+   public static SliderSetting mode, timer;
    public static DoubleSliderSetting speed;
 
    public Speed() {
@@ -20,7 +20,6 @@ public class Speed extends Module {
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 4, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.1, 5, 0.05));
-      this.registerSetting(speedIncrement = new SliderSetting("Speed Increment", 0.01, 0.01, 5, 0.05));
       this.registerSetting(timer = new SliderSetting("Timer", 1.0, 0.1, 10, 0.1));
    }
 
