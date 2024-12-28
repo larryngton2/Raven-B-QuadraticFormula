@@ -19,7 +19,7 @@ public class Speed extends Module {
       super("Speed", ModuleCategory.movement);
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 4, 1));
-      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.1, 5, 0.05));
+      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.05, 5, 0.05));
       this.registerSetting(timer = new SliderSetting("Timer", 1.0, 0.1, 10, 0.1));
    }
 
@@ -53,7 +53,7 @@ public class Speed extends Module {
             }
 
             mc.thePlayer.setSprinting(true);
-            double spd = 0.0025D * MathUtils.randomInt(speed.getInputMin(), speed.getInputMax());
+            double spd = 0.0025D * MathUtils.randomFloat(speed.getInputMin(), speed.getInputMax());
             double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
             Utils.Player.bop(m);
          }
