@@ -11,8 +11,8 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class TickComponent implements Component {
-   private final int c = (new Color(20, 255, 0)).getRGB();
-   private final int boxC = (new Color(169,169,169)).getRGB();
+   private final int c = (new Color(255, 255, 255)).getRGB();
+   private final int boxC = (new Color(135, 135, 135)).getRGB();
    private final Module mod;
    private final TickSetting cl1ckbUtt0n;
    private final ModuleComponent module;

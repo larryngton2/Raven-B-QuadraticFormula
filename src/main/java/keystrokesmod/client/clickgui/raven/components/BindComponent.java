@@ -89,6 +89,6 @@ public class BindComponent implements Component {
     }
 
     private void dr(String s) {
-        Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(s, (float)((this.p.category.getX() + 4) * 2), (float)((this.p.category.getY() + this.o + 3) * 2), Color.HSBtoRGB((float)(System.currentTimeMillis() % 3750L) / 3750.0F, 0.8F, 0.8F));
+        Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(s, (float)((this.p.category.getX() + 4) * 2), (float)((this.p.category.getY() + this.o + 3) * 2), Color.gray.getRGB());
     }
 }

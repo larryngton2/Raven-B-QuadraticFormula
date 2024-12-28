@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class DescriptionComponent implements Component {
-   private final int c = (new Color(226, 83, 47)).getRGB();
+   private final int c = (new Color(188, 188, 188)).getRGB();
    private final DescriptionSetting desc;
    private final ModuleComponent p;
    private int o;

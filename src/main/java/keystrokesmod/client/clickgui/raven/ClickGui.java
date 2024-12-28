@@ -7,6 +7,7 @@ import keystrokesmod.client.module.Module;
 import keystrokesmod.client.utils.Timer;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.version.Version;
+import lombok.Getter;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -24,6 +25,7 @@ public class ClickGui extends GuiScreen {
    private Timer aL;
    private Timer aE;
    private Timer aR;
+   @Getter
    private final  ArrayList<CategoryComponent> categoryList;
    public final Terminal terminal;
 
@@ -226,7 +228,4 @@ public class ClickGui extends GuiScreen {
       return false;
    }
 
-   public ArrayList<CategoryComponent> getCategoryList() {
-      return categoryList;
-   }
 }

@@ -6,6 +6,7 @@ import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -40,7 +41,7 @@ public class RangeSliderComponent implements Component {
         int middleThing = (int)Utils.Java.round(this.barWidth/2, 0) + this.module.category.getX() + (int) this.blankWidth + boxMargin - 1;
 
         //drwing the main colourded bar
-        net.minecraft.client.gui.Gui.drawRect(startToDrawFrom, this.module.category.getY() + this.moduleStartY + textSize, finishDrawingAt, this.module.category.getY() + this.moduleStartY + textSize + boxHeight, Utils.Client.astolfoColorsDraw(14, 10));
+        net.minecraft.client.gui.Gui.drawRect(startToDrawFrom, this.module.category.getY() + this.moduleStartY + textSize, finishDrawingAt, this.module.category.getY() + this.moduleStartY + textSize + boxHeight, Color.lightGray.getRGB());
         net.minecraft.client.gui.Gui.drawRect(middleThing, this.module.category.getY() + this.moduleStartY + textSize - 1, middleThing+(middleThing%2==0? 2:1), this.module.category.getY() + this.moduleStartY + textSize + boxHeight + 1, 0xff1D1D1F);
         //drawing le text
         GL11.glPushMatrix();

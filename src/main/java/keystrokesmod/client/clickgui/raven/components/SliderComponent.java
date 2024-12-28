@@ -1,4 +1,3 @@
-
 package keystrokesmod.client.clickgui.raven.components;
 
 import keystrokesmod.client.clickgui.raven.Component;
@@ -36,7 +35,7 @@ public class SliderComponent implements Component {
          r = l + 84;
       }
 
-      net.minecraft.client.gui.Gui.drawRect(l, this.p.category.getY() + this.o + 11, r, this.p.category.getY() + this.o + 15, Color.getHSBColor((float)(System.currentTimeMillis() % 11000L) / 11000.0F, 0.75F, 0.9F).getRGB());
+      net.minecraft.client.gui.Gui.drawRect(l, this.p.category.getY() + this.o + 11, r, this.p.category.getY() + this.o + 15, Color.lightGray.getRGB());
       GL11.glPushMatrix();
       GL11.glScaled(0.5D, 0.5D, 0.5D);
       Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(this.v.getName() + ": " + this.v.getInput(), (float)((int)((float)(this.p.category.getX() + 4) * 2.0F)), (float)((int)((float)(this.p.category.getY() + this.o + 3) * 2.0F)), -1);

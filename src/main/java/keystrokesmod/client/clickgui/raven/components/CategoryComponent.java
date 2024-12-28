@@ -5,6 +5,7 @@ import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.client.GuiModule;
+import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
 import org.lwjgl.opengl.GL11;
 
@@ -16,8 +17,11 @@ public class CategoryComponent {
    public ArrayList<Component> modulesInCategory = new ArrayList<>();
    public Module.ModuleCategory categoryName;
    private boolean categoryOpened;
+   @Getter
    private int width;
+   @Getter
    private int y;
+   @Getter
    private int x;
    private final int bh;
    public boolean inUse;
@@ -109,7 +113,7 @@ public class CategoryComponent {
 
       if (GuiModule.categoryBackground.isToggled())
          TickComponent.renderMain((float) (this.x - 2), (float) this.y, (float) (this.x + this.width + 2), (float) (this.y + this.bh + 3), -1);
-      renderer.drawString(this.n4m ? this.pvp : this.categoryName.name(), (float) (this.x + 2), (float) (this.y + 4), Color.getHSBColor((float) (System.currentTimeMillis() % (7500L / (long) this.chromaSpeed)) / (7500.0F / (float) this.chromaSpeed), 1.0F, 1.0F).getRGB(), false);
+      renderer.drawString(this.n4m ? this.pvp : this.categoryName.name(), (float) (this.x + 2), (float) (this.y + 4), Color.white.getRGB(), false);
       //renderer.drawString(this.n4m ? this.pvp : this.categoryName.name(), (float)(this.x + 2), (float)(this.y + 4), ay.astolfoColorsDraw(10, 14), false);
       if (!this.n4m) {
          GL11.glPushMatrix();
@@ -118,9 +122,9 @@ public class CategoryComponent {
          GL11.glPopMatrix();
          if (this.categoryOpened && !this.modulesInCategory.isEmpty()) {
 
-             for (Component c2 : this.modulesInCategory) {
-                 c2.draw();
-             }
+            for (Component c2 : this.modulesInCategory) {
+               c2.draw();
+            }
          }
 
       }
@@ -135,18 +139,6 @@ public class CategoryComponent {
          c.setComponentStartAt(o);
       }
 
-   }
-
-   public int getX() {
-      return this.x;
-   }
-
-   public int getY() {
-      return this.y;
-   }
-
-   public int getWidth() {
-      return this.width;
    }
 
    public void up(int x, int y) {
