@@ -5,6 +5,7 @@ import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.utils.MathUtils;
 import keystrokesmod.client.utils.MoveUtil;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.settings.KeyBinding;
@@ -41,7 +42,7 @@ public class Speed extends Module {
 
       if (mode.getInput() == 1 || mode.getInput() == 2) {
          if (mode.getInput() == 1 || mode.getInput() == 2 && mc.thePlayer.onGround) {
-            MoveUtil.Strafe(speed.getInputMin(), speed.getInputMax(), speedIncrement.getInput());
+            MoveUtil.Strafe(speed.getInputMin(), speed.getInputMax());
          }
       } else if (mode.getInput() == 3) {
          Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
@@ -53,13 +54,23 @@ public class Speed extends Module {
             }
 
             mc.thePlayer.setSprinting(true);
-            double spd = 0.0025D * (speed.getInputMin() + speed.getInputMax()) / 2;
+            double spd = 0.0025D * MathUtils.randomInt(speed.getInputMin(), speed.getInputMax());
             double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
             Utils.Player.bop(m);
          }
       } else if (mode.getInput() == 4) {
+         int airTicks = 0;
+
          if (mc.thePlayer.onGround) {
-            MoveUtil.Strafe(speed.getInputMin(), speed.getInputMax(), speedIncrement.getInput());
+            MoveUtil.Strafe(speed.getInputMin(), speed.getInputMax());
+            airTicks = 0;
+         } else {
+            airTicks++;
+         }
+
+         // fuck you intellij, this is NOT always false.
+         if (airTicks == 5) {
+            mc.thePlayer.motionY -= 0.1523351824467155;
          }
 
          if (mc.thePlayer.hurtTime >= 5 && mc.thePlayer.motionY >= 0) {

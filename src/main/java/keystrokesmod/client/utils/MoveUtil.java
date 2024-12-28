@@ -5,7 +5,7 @@ import net.minecraft.util.MovementInput;
 import static keystrokesmod.client.utils.Utils.mc;
 
 public class MoveUtil {
-    public static void Strafe(double MinSpeed, double MaxSpeed, double Increment) {
+    public static void Strafe(double MinSpeed, double MaxSpeed) {
         MovementInput input = mc.thePlayer.movementInput;
 
         float yaw = mc.thePlayer.rotationYaw;
@@ -33,7 +33,7 @@ public class MoveUtil {
             if (angleOffset > Math.toRadians(60)) {
                 FinalSpeed = MinSpeed;
             } else {
-                FinalSpeed = Math.min(MinSpeed + Increment, MaxSpeed);
+                FinalSpeed = Math.min(MinSpeed + MaxSpeed, MaxSpeed);
             }
 
             mc.thePlayer.motionX = intendedMotionX * FinalSpeed;
