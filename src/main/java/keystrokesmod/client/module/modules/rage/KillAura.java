@@ -19,12 +19,15 @@ import net.minecraft.util.*;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class KillAura extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack;
     public static DescriptionSetting a, b, c, d;
-    public static SliderSetting attackRange, autoBlock, rotationMode, rotationDelay, pitchOffset, attackMode, pauseRange, autoBlockRange, searchRange, yawFactor, pitchFactor, gSpeed, tolerance;
+    public static SliderSetting attackRange, autoBlock, rotationMode, rotationDelay, pitchOffset, attackMode, pauseRange, autoBlockRange, searchRange, yawFactor, pitchFactor, gSpeed, tolerance, targetSwitchDelay;
     public static DoubleSliderSetting attackDelay, rotationSpeed;
-    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir, packet, pauseRotation, rotationOffset;
+    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir, packet, pauseRotation, rotationOffset, targetSwitch;
 
     private static long lastTargetTime = 0;
     private static boolean isBlocking = false;
@@ -55,6 +58,8 @@ public class KillAura extends Module {
         this.registerSetting(dRotation = new DescriptionSetting("Normal, Packet, Test, None"));
         this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 4, 1));
         this.registerSetting(rotationSpeed = new DoubleSliderSetting("Rotation Speed", 1.0, 1.0, 0.01, 1, 0.01));
+        this.registerSetting(targetSwitch = new TickSetting("Target Switch", false));
+        this.registerSetting(targetSwitchDelay = new SliderSetting("Target Switch Delay (ms)", 500, 50, 1000, 50));
         this.registerSetting(rotationDelay = new SliderSetting("Rotation Delay (ms)", 0, 0, 50, 1));
         this.registerSetting(pitchOffset = new SliderSetting("Pitch Offset", 0, -15, 30, 1));
         this.registerSetting(pauseRotation = new TickSetting("Pause Rotation", false));
@@ -75,6 +80,21 @@ public class KillAura extends Module {
         this.registerSetting(onlyWeapon = new TickSetting("Only Weapon", false));
     }
 
+    private Entity currentTarget = null;
+    private long lastSwitchTime = 0;
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        lastTargetTime = lastSwitchTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        setBlockingState(false);
+    }
+
     public void update() {
         if (mc.thePlayer == null || mc.theWorld == null) {
             return;
@@ -88,31 +108,37 @@ public class KillAura extends Module {
             mc.thePlayer.setSprinting(true);
         }
 
-        Entity closestEntity = findClosestEntity();
+        if (!targetSwitch.isToggled()) {
+            currentTarget = findClosestEntity();
+            lastSwitchTime = System.currentTimeMillis();
+        } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
+            currentTarget = findNextTarget();
+            lastSwitchTime = System.currentTimeMillis();
+        }
 
-        if (closestEntity != null) {
-            if (mc.thePlayer.getDistanceToEntity(closestEntity) <= pauseRange.getInput() && pauseRotation.isToggled()) {
+        if (currentTarget != null) {
+            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= pauseRange.getInput() && pauseRotation.isToggled()) {
                 return;
             }
 
             if (rotationMode.getInput() == 3) {
-                float[] rotations = Utils.Player.getTargetRotations(findClosestEntity(), (float) pitchOffset.getInput());
+                float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
 
                 mc.thePlayer.rotationYawHead = rotations[0];
             } else {
-                handleRotation(closestEntity);
+                handleRotation(currentTarget);
             }
 
-            if (mc.thePlayer.getDistanceToEntity(closestEntity) <= autoBlockRange.getInput()) {
-                handleAutoBlock(closestEntity);
+            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput()) {
+                handleAutoBlock(currentTarget);
             } else {
                 setBlockingState(false);
             }
 
-            if (mc.thePlayer.getDistanceToEntity(closestEntity) <= attackRange.getInput()) {
+            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput()) {
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                     if (autoBlock.getInput() != 3 || autoBlock.getInput() != 4) {
-                        attack(closestEntity);
+                        attack(currentTarget);
                     }
                     if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
                         if (attackMode.getInput() == 2) {
@@ -129,6 +155,24 @@ public class KillAura extends Module {
         } else {
             setBlockingState(false);
         }
+    }
+
+    private Entity findNextTarget() {
+        List<Entity> targets = new ArrayList<>();
+        for (Entity entity : mc.theWorld.loadedEntityList) {
+            if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
+                double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
+                if (distanceToEntity <= searchRange.getInput()) {
+                    targets.add(entity);
+                }
+            }
+        }
+        if (targets.isEmpty()) {
+            return null;
+        }
+
+        int index = targets.indexOf(currentTarget);
+        return targets.get((index + 1) % targets.size());
     }
 
     public static Entity findClosestEntity() {
@@ -148,9 +192,7 @@ public class KillAura extends Module {
     }
 
     private void handleRotation(Entity entity) {
-        Entity ce = findClosestEntity();
-
-        if (ce == null) {
+        if (currentTarget == null) {
             return;
         }
 
@@ -170,13 +212,11 @@ public class KillAura extends Module {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPreMotion(PreMotionEvent e) {
-        Entity target = findClosestEntity();
-
-        if (rotationMode.getInput() != 3 || target == null || (System.currentTimeMillis() - lastTargetTime < rotationDelay.getInput())) {
+        if (rotationMode.getInput() != 3 || currentTarget == null || (System.currentTimeMillis() - lastTargetTime < rotationDelay.getInput())) {
             return;
         }
 
-        float[] rotations = Utils.Player.getTargetRotations(target, (float) pitchOffset.getInput());
+        float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
 
         e.setYaw(rotations[0]);
         e.setPitch(rotations[1]);
@@ -281,17 +321,5 @@ public class KillAura extends Module {
                     break;
             }
         }
-    }
-
-    @Override
-    public void onEnable() {
-        super.onEnable();
-        lastTargetTime = System.currentTimeMillis();
-    }
-
-    @Override
-    public void onDisable() {
-        super.onDisable();
-        setBlockingState(false);
     }
 }

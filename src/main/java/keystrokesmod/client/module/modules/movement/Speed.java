@@ -19,7 +19,7 @@ public class Speed extends Module {
       super("Speed", ModuleCategory.movement);
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 4, 1));
-      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.05, 5, 0.05));
+      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.01, 5, 0.01));
       this.registerSetting(timer = new SliderSetting("Timer", 1.0, 0.1, 10, 0.1));
    }
 
