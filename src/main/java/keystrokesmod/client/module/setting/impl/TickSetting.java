@@ -5,23 +5,37 @@ import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.setting.Setting;
 import lombok.Getter;
+import lombok.Setter;
 
 public class TickSetting extends Setting {
    @Getter
    private final String name;
    private boolean isEnabled;
    private final boolean defaultValue;
+   @Setter
+   @Getter
+   private boolean visible;
 
    public TickSetting(String name, boolean isEnabled) {
       super(name);
       this.name = name;
       this.isEnabled = isEnabled;
       this.defaultValue = isEnabled;
+      this.visible = true;
    }
 
-    @Override
+   public TickSetting(String name, boolean isEnabled, boolean isVisible) {
+      super(name);
+      this.name = name;
+      this.isEnabled = isEnabled;
+      this.defaultValue = isEnabled;
+      this.visible = isVisible;
+   }
+
+   @Override
    public void resetToDefaults() {
       this.isEnabled = defaultValue;
+      this.visible = true;
    }
 
    @Override
@@ -29,6 +43,7 @@ public class TickSetting extends Setting {
       JsonObject data = new JsonObject();
       data.addProperty("type", getSettingType());
       data.addProperty("value", isToggled());
+      data.addProperty("visible", isVisible()); // Save visibility
       return data;
    }
 
@@ -43,6 +58,9 @@ public class TickSetting extends Setting {
          return;
 
       setEnabled(data.get("value").getAsBoolean());
+      if (data.has("visible")) {
+         setVisible(data.get("visible").getAsBoolean());
+      }
    }
 
    @Override

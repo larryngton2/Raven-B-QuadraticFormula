@@ -27,7 +27,7 @@ public class KillAura extends Module {
     public static DescriptionSetting a, b, c, d;
     public static SliderSetting attackRange, autoBlock, rotationMode, rotationDelay, pitchOffset, attackMode, pauseRange, autoBlockRange, searchRange, yawFactor, pitchFactor, gSpeed, tolerance, targetSwitchDelay;
     public static DoubleSliderSetting attackDelay, rotationSpeed;
-    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir, packet, pauseRotation, rotationOffset, targetSwitch;
+    public static TickSetting noSwing, forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir, packet, pauseRotation, rotationOffset, targetSwitch, safeTargetSwitch;
 
     private static long lastTargetTime = 0;
     private static boolean isBlocking = false;
@@ -60,6 +60,7 @@ public class KillAura extends Module {
         this.registerSetting(rotationSpeed = new DoubleSliderSetting("Rotation Speed", 1.0, 1.0, 0.01, 1, 0.01));
         this.registerSetting(targetSwitch = new TickSetting("Target Switch", false));
         this.registerSetting(targetSwitchDelay = new SliderSetting("Target Switch Delay (ms)", 500, 50, 1000, 50));
+        this.registerSetting(safeTargetSwitch = new TickSetting("Safe Target Switch", true));
         this.registerSetting(rotationDelay = new SliderSetting("Rotation Delay (ms)", 0, 0, 50, 1));
         this.registerSetting(pitchOffset = new SliderSetting("Pitch Offset", 0, -15, 30, 1));
         this.registerSetting(pauseRotation = new TickSetting("Pause Rotation", false));
@@ -112,8 +113,15 @@ public class KillAura extends Module {
             currentTarget = findClosestEntity();
             lastSwitchTime = System.currentTimeMillis();
         } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
-            currentTarget = findNextTarget();
-            lastSwitchTime = System.currentTimeMillis();
+            if (safeTargetSwitch.isToggled()) {
+                if (System.currentTimeMillis() - lastTargetTime < 10) {
+                    currentTarget = findNextTarget();
+                    lastSwitchTime = System.currentTimeMillis();
+                }
+            } else {
+                currentTarget = findNextTarget();
+                lastSwitchTime = System.currentTimeMillis();
+            }
         }
 
         if (currentTarget != null) {
