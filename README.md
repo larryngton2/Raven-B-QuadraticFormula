@@ -16,7 +16,7 @@ A Raven fork based off of Raven B+, for forge 1.8.9.
 > 
 > [IntelliJ](https://projectlombok.org/setup/intellij), [Other](https://projectlombok.org).
 1. Clone the repository.
-2. In IntelliJ, make sure your Gradle jvm version is set to 1.8, add execute the `build` task.
+2. In IntelliJ, make sure your Gradle jvm version is set to 1.8, and execute gradle's `build` task.
 3. The built jar file will be `BetterKeystrokes-1.2.jar` in `build/libs`.
 
 ---
