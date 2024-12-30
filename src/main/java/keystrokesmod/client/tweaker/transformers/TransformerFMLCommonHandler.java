@@ -20,18 +20,18 @@ public class TransformerFMLCommonHandler implements Transformer {
     }
 
     public void transform(ClassNode classNode, String transformedName) {
-        for (MethodNode methodNode : classNode.methods) {
-            String mappedMethodName = this.mapMethodName(classNode, methodNode);
+        for (Object methodNode : classNode.methods) {
+            String mappedMethodName = this.mapMethodName(classNode, (MethodNode) methodNode);
 
             // locate the method by its name
             if (mappedMethodName.equalsIgnoreCase("getModName")) {
                 // empty the method
-                for (AbstractInsnNode insnNode : methodNode.instructions.toArray()) {
-                    methodNode.instructions.remove(insnNode);
+                for (AbstractInsnNode insnNode : ((MethodNode) methodNode).instructions.toArray()) {
+                    ((MethodNode) methodNode).instructions.remove(insnNode);
                 }
 
                 // add our new instructions
-                methodNode.instructions.insert(getInsn());
+                ((MethodNode) methodNode).instructions.insert(getInsn());
 
                 return;
             }

@@ -9,17 +9,17 @@ public class TransformerEntity implements Transformer {
    }
 
    public void transform(ClassNode classNode, String transformedName) {
-      for (MethodNode methodNode : classNode.methods) {
-         String n = this.mapMethodName(classNode, methodNode);
+      for (Object methodNode : classNode.methods) {
+         String n = this.mapMethodName(classNode, (MethodNode) methodNode);
          if (n.equalsIgnoreCase("moveEntity") || n.equalsIgnoreCase("func_70091_d")) {
-            AbstractInsnNode[] arr = methodNode.instructions.toArray();
+            AbstractInsnNode[] arr = ((MethodNode) methodNode).instructions.toArray();
 
             for (int i = 0; i < arr.length; ++i) {
                AbstractInsnNode ins = arr[i];
                if (i >= 99 && i <= 117) {
-                  methodNode.instructions.remove(ins);
+                  ((MethodNode) methodNode).instructions.remove(ins);
                } else if (i == 118) {
-                  methodNode.instructions.insertBefore(ins, this.getEventInsn());
+                  ((MethodNode) methodNode).instructions.insertBefore(ins, this.getEventInsn());
                   return;
                }
             }

@@ -18,6 +18,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.*;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +115,7 @@ public class KillAura extends Module {
             lastSwitchTime = System.currentTimeMillis();
         } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
             if (safeTargetSwitch.isToggled()) {
-                if (System.currentTimeMillis() - lastTargetTime < 10) {
+                if (System.currentTimeMillis() - lastTargetTime == 0) {
                     currentTarget = findNextTarget();
                     lastSwitchTime = System.currentTimeMillis();
                 }
@@ -218,6 +219,26 @@ public class KillAura extends Module {
         }
     }
 
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        if (rotationMode.getInput() == 3) {
+            if (!Utils.Player.isPlayerInGame()) {
+                return;
+            }
+
+            if (ev.phase != TickEvent.Phase.START) {
+                return;
+            }
+
+            if (currentTarget != null && rotationMode.getInput() == 2) {
+                float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
+
+                mc.thePlayer.rotationYaw = rotations[0];
+                mc.thePlayer.rotationPitch = rotations[1];
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPreMotion(PreMotionEvent e) {
         if (rotationMode.getInput() != 3 || currentTarget == null || (System.currentTimeMillis() - lastTargetTime < rotationDelay.getInput())) {
@@ -228,9 +249,6 @@ public class KillAura extends Module {
 
         e.setYaw(rotations[0]);
         e.setPitch(rotations[1]);
-
-        mc.thePlayer.rotationYawHead = rotations[0];
-        mc.thePlayer.renderYawOffset = rotations[0];
     }
 
     private void handleAutoBlock(Entity entity) {

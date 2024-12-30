@@ -11,15 +11,15 @@ public class TransformerEntityPlayerSP implements Transformer {
    }
 
    public void transform(ClassNode classNode, String transformedName) {
-      for (MethodNode methodNode : classNode.methods) {
-         String mappedMethodName = this.mapMethodName(classNode, methodNode);
+      for (Object methodNode : classNode.methods) {
+         String mappedMethodName = this.mapMethodName(classNode, (MethodNode) methodNode);
          if (mappedMethodName.equalsIgnoreCase("onLivingUpdate") || mappedMethodName.equalsIgnoreCase("func_70636_d")) {
             int i = 0;
             ArrayList<AbstractInsnNode> to_remove = new ArrayList<>();
-            AbstractInsnNode[] arr = methodNode.instructions.toArray();
+            AbstractInsnNode[] arr = ((MethodNode) methodNode).instructions.toArray();
             boolean isASMEvntHandlerAdded = false;
 
-            while (i < methodNode.instructions.toArray().length) {
+            while (i < ((MethodNode) methodNode).instructions.toArray().length) {
                if (arr[i].getOpcode() == ALOAD) {
                   to_remove.add(arr[i]);
                   i++;
@@ -45,10 +45,10 @@ public class TransformerEntityPlayerSP implements Transformer {
                                        to_remove.add(arr[i]);
                                        if (!isASMEvntHandlerAdded) {
                                           isASMEvntHandlerAdded = true;
-                                          methodNode.instructions.insert(arr[i], getEventInsn());
+                                          ((MethodNode) methodNode).instructions.insert(arr[i], getEventInsn());
                                        }
                                        for (AbstractInsnNode abstractInsnNode : to_remove) {
-                                          methodNode.instructions.remove(abstractInsnNode);
+                                          ((MethodNode) methodNode).instructions.remove(abstractInsnNode);
                                        }
                                     }
                                  }

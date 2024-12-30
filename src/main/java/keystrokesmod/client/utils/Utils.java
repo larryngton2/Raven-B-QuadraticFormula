@@ -52,7 +52,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static keystrokesmod.client.utils.Utils.Java.rand;
 
@@ -60,8 +59,16 @@ public class Utils {
    static final Random rand = new Random();
    public static final Minecraft mc = Minecraft.getMinecraft();
    public static final String md = "Mode: ";
+   public static float renderPitch;
+   public static float prevRenderPitch;
+   public static float renderYaw;
+   public static float prevRenderYaw;
 
    public static class Player {
+      public static void setRenderYaw(float yaw) {
+         mc.thePlayer.rotationYawHead = yaw;
+      }
+
       public static void hotkeyToSlot(int slot) {
          if (!isPlayerInGame())
             return;

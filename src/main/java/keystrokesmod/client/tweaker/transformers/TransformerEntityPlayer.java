@@ -9,17 +9,17 @@ public class TransformerEntityPlayer implements Transformer {
    }
 
    public void transform(ClassNode classNode, String transformedName) {
-      for (MethodNode methodNode : classNode.methods) {
-         String mappedMethodName = this.mapMethodName(classNode, methodNode);
+      for (Object methodNode : classNode.methods) {
+         String mappedMethodName = this.mapMethodName(classNode, (MethodNode) methodNode);
          if (mappedMethodName.equalsIgnoreCase("attackTargetEntityWithCurrentItem") || mappedMethodName.equalsIgnoreCase("func_71059_n")) {
-            AbstractInsnNode[] arr = methodNode.instructions.toArray();
+            AbstractInsnNode[] arr = ((MethodNode) methodNode).instructions.toArray();
 
             for (int i = 0; i < arr.length; ++i) {
                AbstractInsnNode ins = arr[i];
                if (i == 232) {
-                  methodNode.instructions.insert(ins, this.h());
+                  ((MethodNode) methodNode).instructions.insert(ins, this.h());
                } else if (i >= 233 && i <= 248) {
-                  methodNode.instructions.remove(ins);
+                  ((MethodNode) methodNode).instructions.remove(ins);
                } else if (i == 249) {
                   return;
                }

@@ -10,17 +10,17 @@ public class TransformerMinecraft implements Transformer {
    }
 
    public void transform(ClassNode classNode, String transformedName) {
-      for (MethodNode m : classNode.methods) {
-         String n = this.mapMethodName(classNode, m);
+      for (Object m : classNode.methods) {
+         String n = this.mapMethodName(classNode, (MethodNode) m);
          if (n.equalsIgnoreCase("runTick") || n.equalsIgnoreCase("func_71407_l")) {
-            AbstractInsnNode[] arr = m.instructions.toArray();
+            AbstractInsnNode[] arr = ((MethodNode) m).instructions.toArray();
 
             for (int i = 0; i < arr.length; ++i) {
                AbstractInsnNode ins = arr[i];
                if (i == 39) {
-                  m.instructions.insert(ins, this.getEventInsn());
+                  ((MethodNode) m).instructions.insert(ins, this.getEventInsn());
                } else if (i >= 40 && i <= 45) {
-                  m.instructions.remove(ins);
+                  ((MethodNode) m).instructions.remove(ins);
                } else if (i == 46) {
                   return;
                }

@@ -9,12 +9,12 @@ public class TransformerSplashProgress implements Transformer {
     }
 
     public void transform(ClassNode classNode, String transformedName) {
-        for (MethodNode methodNode : classNode.methods) {
-            String n = this.mapMethodName(classNode, methodNode);
-            if (n.equalsIgnoreCase("getString") && methodNode.desc.equals("(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")) {
-                for (AbstractInsnNode insnNode : methodNode.instructions.toArray()) {
+        for (Object methodNode : classNode.methods) {
+            String n = this.mapMethodName(classNode, (MethodNode) methodNode);
+            if (n.equalsIgnoreCase("getString") && ((MethodNode) methodNode).desc.equals("(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")) {
+                for (AbstractInsnNode insnNode : ((MethodNode) methodNode).instructions.toArray()) {
                     if (insnNode.getOpcode() == ARETURN)
-                        methodNode.instructions.insertBefore(insnNode, this.getEventInsn());
+                        ((MethodNode) methodNode).instructions.insertBefore(insnNode, this.getEventInsn());
                 }
                 return;
             }

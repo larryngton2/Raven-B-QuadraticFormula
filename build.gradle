@@ -1,7 +1,9 @@
 buildscript {
     repositories {
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
+
+        // we need more repos
         maven {
             url 'https://maven.minecraftforge.net'
         }
@@ -11,11 +13,15 @@ buildscript {
         maven {
             url 'https://libraries.minecraft.net'
         }
+        maven {
+            url = "https://repo.spongepowered.org/repository/maven-public/"
+        }
     }
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 
@@ -25,10 +31,22 @@ plugins {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
 
 compileJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
+}
+
+repositories {
+    maven {
+        url 'https://repo.spongepowered.org/maven/'
+    }
+}
+
+configurations {
+    embed
+    compile.extendsFrom embed
 }
 
 dependencies {
@@ -37,6 +55,17 @@ dependencies {
     implementation files('libs/discord-rpc.jar')
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    implementation "org.spongepowered:mixin:0.6-SNAPSHOT"
+    embed('org.spongepowered:mixin:0.6-SNAPSHOT') {
+        exclude module: 'gson'
+        exclude module: 'guava'
+        exclude module: 'jarjar'
+        exclude module: 'commons-codec'
+        exclude module: 'commons-io'
+        exclude module: 'launchwrapper'
+        exclude module: 'asm-commons'
+        exclude module: 'slf4j-api'
+    }
 }
 
 version = "1.2"
@@ -48,12 +77,22 @@ minecraft {
     runDir = "run"
 
     mappings = "stable_20"
-    //clientJvmArgs += "-Dfml.coreMods.load=keystrokesmod.sToNkS.tweaker.FMLLoadingPlugin"
+    makeObfSourceJar = false
+    clientJvmArgs += '-Dfml.coreMods.load=keystrokesmod.mixins.MixinLoader'
 }
 
 jar {
     enabled = false
     dependsOn(shadowJar { classifier = null })
+}
+
+mixin {
+    defaultObfuscationEnv searge
+    sourceSets {
+        main {
+            ext.refMap = 'mixins.raven.refmap.json'
+        }
+    }
 }
 
 shadowJar {
@@ -86,3 +125,21 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+tasks.register('configureMixin') {
+    doLast {
+        def mixinConfig = file('src/main/resources/mixins.keystrokesmod.json')
+        if (!mixinConfig.exists()) {
+            mixinConfig.parentFile.mkdirs()
+            mixinConfig.text = '{\n' +
+                    '  "required": true,\n' +
+                    '  "minVersion": "0.8",\n' +
+                    '  "package": "keystrokesmod.mixins",\n' +
+                    '  "refmap": "mixins.keystrokesmod.refmap.json",\n' +
+                    '  "mixins": [],\n' +
+                    '  "client": []\n' +
+                    '}\n'
+        }
+    }
+}
+build.dependsOn configureMixin

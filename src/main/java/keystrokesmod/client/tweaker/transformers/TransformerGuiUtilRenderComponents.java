@@ -14,10 +14,10 @@ public class TransformerGuiUtilRenderComponents implements Transformer {
    }
 
    public void transform(ClassNode classNode, String transformedName) {
-      for (MethodNode methodNode : classNode.methods) {
-         String mappedMethodName = this.mapMethodName(classNode, methodNode);
+      for (Object methodNode : classNode.methods) {
+         String mappedMethodName = this.mapMethodName(classNode, (MethodNode) methodNode);
          if (mappedMethodName.equalsIgnoreCase("splitText") || mappedMethodName.equalsIgnoreCase("func_178908_a")) {
-            ListIterator<AbstractInsnNode> i = methodNode.instructions.iterator();
+            ListIterator<AbstractInsnNode> i = ((MethodNode) methodNode).instructions.iterator();
 
             while (true) {
                MethodInsnNode mn;
