@@ -81,11 +81,6 @@ minecraft {
     clientJvmArgs += '-Dfml.coreMods.load=keystrokesmod.mixins.MixinLoader'
 }
 
-jar {
-    enabled = false
-    dependsOn(shadowJar { classifier = null })
-}
-
 mixin {
     defaultObfuscationEnv searge
     sourceSets {
@@ -126,20 +121,42 @@ processResources {
     }
 }
 
-tasks.register('configureMixin') {
-    doLast {
-        def mixinConfig = file('src/main/resources/mixins.keystrokesmod.json')
-        if (!mixinConfig.exists()) {
-            mixinConfig.parentFile.mkdirs()
-            mixinConfig.text = '{\n' +
-                    '  "required": true,\n' +
-                    '  "minVersion": "0.8",\n' +
-                    '  "package": "keystrokesmod.mixins",\n' +
-                    '  "refmap": "mixins.keystrokesmod.refmap.json",\n' +
-                    '  "mixins": [],\n' +
-                    '  "client": []\n' +
-                    '}\n'
-        }
+jar {
+    from(configurations.embed.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }) {
+        exclude 'dummyThing',
+                'LICENSE.txt',
+                'META-INF/MUMFREY.RSA',
+                'META-INF/maven/**',
+                'org/**/*.html'
+        exclude 'LICENSE.md'
+        exclude 'pack.mcmeta'
+        exclude '**/module-info.class'
+        exclude '*.so'
+        exclude '*.dylib'
+        exclude '*.dll'
+        exclude '*.jnilib'
+        exclude 'ibxm/**'
+        exclude 'com/jcraft/**'
+        exclude 'org/lwjgl/**'
+        exclude 'net/java/**'
+
+        exclude 'META-INF/proguard/**'
+        exclude 'META-INF/versions/**'
+        exclude 'META-INF/com.android.tools/**'
+
+        exclude 'fabric.mod.json'
+    }
+    manifest {
+        attributes(
+                'MixinConfigs': 'mixins.raven.json',
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+                'TweakOrder': 0,
+                "FMLCorePlugin": "keystrokesmod.mixins.MixinLoader",
+                "ForceLoadAsMod": true,
+                'FMLCorePluginContainsFMLMod': true,
+                "ModSide": "CLIENT"
+        )
     }
 }
-build.dependsOn configureMixin

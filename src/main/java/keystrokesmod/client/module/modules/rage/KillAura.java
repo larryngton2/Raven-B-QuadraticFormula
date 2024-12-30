@@ -230,7 +230,7 @@ public class KillAura extends Module {
                 return;
             }
 
-            if (currentTarget != null && rotationMode.getInput() == 2) {
+            if (currentTarget != null && rotationMode.getInput() == 3) {
                 float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
 
                 mc.thePlayer.rotationYaw = rotations[0];
