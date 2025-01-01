@@ -51,6 +51,9 @@ public class Speed extends Module {
 
       switch ((int) mode.getInput()) {
          case 1:
+            MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+            break;
+
          case 2: {
             if (mc.thePlayer.onGround) {
                MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
@@ -87,7 +90,7 @@ public class Speed extends Module {
 
             double BOOST_CONSTANT = 0.00718;
 
-            if (mc.thePlayer.moveForward != 0f) {
+            if (MoveUtil.isMoving()) {
                mc.thePlayer.motionX *= 1f + BOOST_CONSTANT;
                mc.thePlayer.motionZ *= 1f + BOOST_CONSTANT;
             }
