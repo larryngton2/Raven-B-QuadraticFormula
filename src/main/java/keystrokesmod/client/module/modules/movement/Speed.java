@@ -15,16 +15,26 @@ public class Speed extends Module {
    public static SliderSetting mode, timer;
    public static DoubleSliderSetting speed;
 
+   private int offGroundTicks, onGroundTicks;
+
    public Speed() {
       super("Speed", ModuleCategory.movement);
-      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP"));
-      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 4, 1));
+      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox"));
+      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 5, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.01, 5, 0.01));
       this.registerSetting(timer = new SliderSetting("Timer", 1.0, 0.1, 10, 0.1));
    }
 
    @Override
    public void update() {
+      if (mc.thePlayer.onGround) {
+         offGroundTicks = 0;
+         onGroundTicks++;
+      } else {
+         onGroundTicks = 0;
+         offGroundTicks++;
+      }
+
       if (mc.thePlayer.moveForward == 0 && mc.thePlayer.moveStrafing == 0) {
          return;
       }
@@ -35,52 +45,70 @@ public class Speed extends Module {
          Utils.Client.getTimer().timerSpeed = (float) timer.getInput();
       }
 
-      if (mc.thePlayer.onGround) {
+      if (mc.thePlayer.onGround && MoveUtil.isMoving()) {
          mc.thePlayer.jump();
       }
 
-      if (mode.getInput() == 1 || mode.getInput() == 2) {
-         if (mode.getInput() == 1 || mode.getInput() == 2 && mc.thePlayer.onGround) {
-            MoveUtil.Strafe(speed.getInputMin(), speed.getInputMax());
-         }
-      } else if (mode.getInput() == 3) {
-         Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
-         if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
-            mc.thePlayer.noClip = true;
+      switch ((int) mode.getInput()) {
+         case 1:
+         case 2: {
             if (mc.thePlayer.onGround) {
-               mc.thePlayer.jump();
+               MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+            }
+         }
+         break;
+
+         case 3: {
+            Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
+            if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
+               KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
+               mc.thePlayer.noClip = true;
+
+               mc.thePlayer.setSprinting(true);
+               double spd = 0.0025D * MathUtils.randomFloat(speed.getInputMin(), speed.getInputMax());
+               double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
+               Utils.Player.bop(m);
+            }
+         }
+         break;
+
+         case 4: {
+            if (mc.thePlayer.onGround) {
+               MoveUtil.strafe();
             }
 
-            mc.thePlayer.setSprinting(true);
-            double spd = 0.0025D * MathUtils.randomFloat(speed.getInputMin(), speed.getInputMax());
-            double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
-            Utils.Player.bop(m);
+            if (offGroundTicks == 5) {
+               mc.thePlayer.motionY -= 0.1523351824467155;
+            }
+
+            if (mc.thePlayer.hurtTime >= 5 && mc.thePlayer.motionY >= 0) {
+               mc.thePlayer.motionY -= 0.1;
+            }
+
+            double BOOST_CONSTANT = 0.00718;
+
+            if (mc.thePlayer.moveForward != 0f) {
+               mc.thePlayer.motionX *= 1f + BOOST_CONSTANT;
+               mc.thePlayer.motionZ *= 1f + BOOST_CONSTANT;
+            }
          }
-      } else if (mode.getInput() == 4) {
-         int airTicks = 0;
+         break;
 
-         if (mc.thePlayer.onGround) {
-            MoveUtil.Strafe(speed.getInputMin(), speed.getInputMax());
-            airTicks = 0;
-         } else {
-            airTicks++;
-         }
+         case 5: {
+            switch (offGroundTicks) {
+               case 3:
+                  mc.thePlayer.motionY -= 0.1523351824467155;
+                  break;
+               case 5:
+                  mc.thePlayer.motionY -= 0.232335182447;
+                  break;
+            }
 
-         // fuck you intellij, this is NOT always false.
-         if (airTicks == 5) {
-            mc.thePlayer.motionY -= 0.1523351824467155;
-         }
-
-         if (mc.thePlayer.hurtTime >= 5 && mc.thePlayer.motionY >= 0) {
-            mc.thePlayer.motionY -= 0.1;
-         }
-
-         double BOOST_CONSTANT = 0.00718;
-
-         if (mc.thePlayer.moveForward != 0f) {
-            mc.thePlayer.motionX *= 1f + BOOST_CONSTANT;
-            mc.thePlayer.motionZ *= 1f + BOOST_CONSTANT;
+            if (mc.thePlayer.onGround) {
+               MoveUtil.strafe(0.155f);
+            } else {
+               MoveUtil.strafe(0.35f);
+            }
          }
       }
    }
