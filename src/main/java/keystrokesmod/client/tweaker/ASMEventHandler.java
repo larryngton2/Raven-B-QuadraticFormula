@@ -103,7 +103,7 @@ public class ASMEventHandler {
 
    /**
     * called every tick
-    * ASM Modules : AutoClicker, Reach, NoSlow
+    * ASM Modules : AutoClicker, Reach
     */
    public static void onTick() {
       Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);

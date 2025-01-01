@@ -14,7 +14,7 @@ buildscript {
             url 'https://libraries.minecraft.net'
         }
         maven {
-            url = "https://repo.spongepowered.org/repository/maven-public/"
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
     }
 
@@ -55,7 +55,7 @@ dependencies {
     implementation files('libs/discord-rpc.jar')
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
-    implementation "org.spongepowered:mixin:0.6-SNAPSHOT"
+    //implementation 'org.spongepowered:mixin:0.6-SNAPSHOT'
     embed('org.spongepowered:mixin:0.6-SNAPSHOT') {
         exclude module: 'gson'
         exclude module: 'guava'
@@ -68,15 +68,15 @@ dependencies {
     }
 }
 
-version = "1.2"
-group = "keystrokesmod"
-archivesBaseName = "BetterKeystrokes"
+version = '1.2'
+group = 'keystrokesmod'
+archivesBaseName = 'BetterKeystrokes'
 
 minecraft {
-    version = "1.8.9-11.15.1.2318-1.8.9"
-    runDir = "run"
+    version = '1.8.9-11.15.1.2318-1.8.9'
+    runDir = 'run'
 
-    mappings = "stable_20"
+    mappings = 'stable_20'
     makeObfSourceJar = false
     clientJvmArgs += '-Dfml.coreMods.load=keystrokesmod.mixins.MixinLoader'
 }
@@ -94,10 +94,10 @@ shadowJar {
     classifier = ''
     manifest {
         attributes(
-                "FMLCorePlugin": "keystrokesmod.client.tweaker.FMLLoadingPlugin",
-                "ForceLoadAsMod": true,
-                "FMLCorePluginContainsFMLMod": true,
-                "ModSide": "CLIENT"
+                'FMLCorePlugin': 'keystrokesmod.client.tweaker.FMLLoadingPlugin',
+                'ForceLoadAsMod': true,
+                'FMLCorePluginContainsFMLMod': true,
+                'ModSide': 'CLIENT'
         )
     }
 }
@@ -107,8 +107,8 @@ reobfJar {
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -153,10 +153,10 @@ jar {
                 'MixinConfigs': 'mixins.raven.json',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
                 'TweakOrder': 0,
-                "FMLCorePlugin": "keystrokesmod.mixins.MixinLoader",
-                "ForceLoadAsMod": true,
+                'FMLCorePlugin': 'keystrokesmod.mixins.MixinLoader',
+                'ForceLoadAsMod': true,
                 'FMLCorePluginContainsFMLMod': true,
-                "ModSide": "CLIENT"
+                'ModSide': 'CLIENT'
         )
     }
 }

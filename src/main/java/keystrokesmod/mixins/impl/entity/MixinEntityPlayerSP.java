@@ -12,6 +12,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.client.C0CPacketInput;
@@ -20,77 +21,45 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 
 @Mixin(EntityPlayerSP.class)
 public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
-    @Shadow
-    public int sprintingTicksLeft;
-
     public MixinEntityPlayerSP(World p_i45074_1_, GameProfile p_i45074_2_) {
         super(p_i45074_1_, p_i45074_2_);
     }
 
-    @Override
-    @Shadow
-    public abstract void setSprinting(boolean p_setSprinting_1_);
-
-    @Shadow
-    protected int sprintToggleTimer;
-    @Shadow
-    public float prevTimeInPortal;
-    @Shadow
-    public float timeInPortal;
-    @Shadow
-    protected Minecraft mc;
-    @Shadow
-    public MovementInput movementInput;
+    public int field_71157_e;
+    protected int field_71156_d;
+    public float field_71080_cy;
+    public float field_71086_bY;
+    protected Minecraft field_71159_c;
+    public MovementInput field_71158_b;
+    private int field_110320_a;
+    private float field_110321_bQ;
+    private boolean field_175171_bO;
+    private boolean field_175170_bN;
+    private double 	field_175172_bI;
+    private double field_175166_bJ;
+    private double field_175167_bK;
+    private float field_175164_bL;
+    private float field_175165_bM;
+    private int field_175168_bP;
 
     @Override
     @Shadow
     public abstract void sendPlayerAbilities();
 
+    @Override
     @Shadow
-    protected abstract boolean isCurrentViewEntity();
+    public abstract void setSprinting(boolean p_setSprinting_1_);
 
-    @Shadow
-    public abstract boolean isRidingHorse();
-
-    @Shadow
-    private int horseJumpPowerCounter;
-    @Shadow
-    private float horseJumpPower;
-
-    @Shadow
-    protected abstract void sendHorseJump();
-
-    @Shadow
-    private boolean serverSprintState;
-    @Shadow
     @Final
-    public NetHandlerPlayClient sendQueue;
+    public NetHandlerPlayClient field_71174_a;
 
     @Override
     @Shadow
     public abstract boolean isSneaking();
-
-    @Shadow
-    private boolean serverSneakState;
-    @Shadow
-    private double lastReportedPosX;
-    @Shadow
-    private double lastReportedPosY;
-    @Shadow
-    private double lastReportedPosZ;
-    @Shadow
-    private float lastReportedYaw;
-    @Shadow
-    private float lastReportedPitch;
-    @Shadow
-    private int positionUpdateTicks;
 
     /**
      * @author no
@@ -107,22 +76,18 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             super.onUpdate();
 
             if (this.isRiding()) {
-                this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
-                this.sendQueue.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward, this.movementInput.jump, this.movementInput.sneak));
+                this.field_71174_a.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
+                this.field_71174_a.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward, this.field_71158_b.jump, this.field_71158_b.sneak));
             } else {
-                this.onUpdateWalkingPlayer();
+                this.func_175161_p();
             }
 
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostUpdateEvent());
         }
     }
 
-    /**
-     * @author
-     * @reason
-     */
-    @Overwrite
-    public void onUpdateWalkingPlayer() {
+    @Unique
+    public void func_175161_p() {
         PreMotionEvent preMotionEvent = new PreMotionEvent(
                 this.posX,
                 this.getEntityBoundingBox().minY,
@@ -137,28 +102,28 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(preMotionEvent);
 
         boolean flag = preMotionEvent.isSprinting();
-        if (flag != this.serverSprintState) {
+        if (flag != this.field_175171_bO) {
             if (flag) {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SPRINTING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SPRINTING));
             } else {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SPRINTING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SPRINTING));
             }
 
-            this.serverSprintState = flag;
+            this.field_175171_bO = flag;
         }
 
         boolean flag1 = preMotionEvent.isSneaking();
-        if (flag1 != this.serverSneakState) {
+        if (flag1 != this.field_175170_bN) {
             if (flag1) {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SNEAKING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SNEAKING));
             } else {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SNEAKING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SNEAKING));
             }
 
-            this.serverSneakState = flag1;
+            this.field_175170_bN = flag1;
         }
 
-        if (this.isCurrentViewEntity()) {
+        if (this.field_71159_c.getRenderViewEntity() == this) {
             if (PreMotionEvent.setRenderYaw()) {
                 Utils.Player.setRenderYaw(preMotionEvent.getYaw());
                 preMotionEvent.setRenderYaw(false);
@@ -167,91 +132,87 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             Utils.renderPitch = preMotionEvent.getPitch();
             Utils.renderYaw = preMotionEvent.getYaw();
 
-            double d0 = preMotionEvent.getPosX() - this.lastReportedPosX;
-            double d1 = preMotionEvent.getPosY() - this.lastReportedPosY;
-            double d2 = preMotionEvent.getPosZ() - this.lastReportedPosZ;
-            double d3 = preMotionEvent.getYaw() - this.lastReportedYaw;
-            double d4 = preMotionEvent.getPitch() - this.lastReportedPitch;
-            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4 || this.positionUpdateTicks >= 20;
+            double d0 = preMotionEvent.getPosX() - this.field_175172_bI;
+            double d1 = preMotionEvent.getPosY() - this.field_175166_bJ;
+            double d2 = preMotionEvent.getPosZ() - this.field_175167_bK;
+            double d3 = preMotionEvent.getYaw() - this.field_175164_bL;
+            double d4 = preMotionEvent.getPitch() - this.field_175165_bM;
+            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4 || this.field_175168_bP >= 20;
             boolean flag3 = d3 != 0.0 || d4 != 0.0;
             if (this.ridingEntity == null) {
                 if (flag2 && flag3) {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
                 } else if (flag2) {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.isOnGround()));
                 } else if (flag3) {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
                 } else {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer(preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer(preMotionEvent.isOnGround()));
                 }
             } else {
-                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
+                this.field_71174_a.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
                 flag2 = false;
             }
 
-            ++this.positionUpdateTicks;
+            ++this.field_175168_bP;
 
             if (flag2) {
-                this.lastReportedPosX = preMotionEvent.getPosX();
-                this.lastReportedPosY = preMotionEvent.getPosY();
-                this.lastReportedPosZ = preMotionEvent.getPosZ();
-                this.positionUpdateTicks = 0;
+                this.field_175172_bI = preMotionEvent.getPosX();
+                this.field_175166_bJ = preMotionEvent.getPosY();
+                this.field_175167_bK = preMotionEvent.getPosZ();
+                this.field_175168_bP = 0;
             }
 
             if (flag3) {
-                this.lastReportedYaw = preMotionEvent.getYaw();
-                this.lastReportedPitch = preMotionEvent.getPitch();
+                this.field_175164_bL = preMotionEvent.getYaw();
+                this.field_175165_bM = preMotionEvent.getPitch();
             }
         }
 
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostMotionEvent());
     }
 
-    /**
-     * @author a
-     * @reason g
-     */
-    @Overwrite
-    public void onLivingUpdate() {
-        if (this.sprintingTicksLeft > 0) {
-            --this.sprintingTicksLeft;
-            if (this.sprintingTicksLeft == 0) {
+    @Unique
+    public void func_70636_d() {
+        if (this.field_71157_e > 0) {
+            --this.field_71157_e;
+            if (this.field_71157_e == 0) {
                 this.setSprinting(false);
             }
         }
 
-        if (this.sprintToggleTimer > 0) {
-            --this.sprintToggleTimer;
+        if (this.field_71156_d > 0) {
+            --this.field_71156_d;
         }
 
-        this.prevTimeInPortal = this.timeInPortal;
+        this.field_71080_cy = this.field_71086_bY;
         if (this.inPortal) {
-            if (this.mc.currentScreen != null && !this.mc.currentScreen.doesGuiPauseGame()) {
-                this.mc.displayGuiScreen((GuiScreen) null);
+            if (this.field_71159_c.currentScreen != null && !this.field_71159_c.currentScreen.doesGuiPauseGame()) {
+                this.field_71159_c.displayGuiScreen((GuiScreen) null);
             }
 
-            if (this.timeInPortal == 0.0F) {
-                this.mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("portal.trigger"), this.rand.nextFloat() * 0.4F + 0.8F));
+            if (this.field_71086_bY == 0.0F) {
+                this.field_71159_c.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("portal.trigger"), this.rand.nextFloat() * 0.4F + 0.8F));
             }
 
-            this.timeInPortal += 0.0125F;
-            if (this.timeInPortal >= 1.0F) {
-                this.timeInPortal = 1.0F;
+            this.field_71086_bY += 0.0125F;
+            if (this.field_71086_bY >= 1.0F) {
+                this.field_71086_bY = 1.0F;
             }
 
             this.inPortal = false;
         } else if (this.isPotionActive(Potion.confusion) && this.getActivePotionEffect(Potion.confusion).getDuration() > 60) {
-            this.timeInPortal += 0.006666667F;
-            if (this.timeInPortal > 1.0F) {
-                this.timeInPortal = 1.0F;
+            this.field_71086_bY += 0.006666667F;
+            if (this.field_71086_bY > 1.0F) {
+                this.field_71086_bY = 1.0F;
             }
         } else {
-            if (this.timeInPortal > 0.0F) {
-                this.timeInPortal -= 0.05F;
+            if (this.field_71086_bY > 0.0F) {
+                this.field_71086_bY -= 0.05F;
             }
 
-            if (this.timeInPortal < 0.0F) {
-                this.timeInPortal = 0.0F;
+            if (this.field_71086_bY < 0.0F) {
+                this.field_71086_bY = 0.0F;
             }
         }
 
@@ -259,9 +220,9 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             --this.timeUntilPortal;
         }
 
-        boolean flag = this.movementInput.jump;
+        boolean flag = this.field_71158_b.jump;
         float f = 0.8F;
-        this.movementInput.updatePlayerMoveState();
+        this.field_71158_b.updatePlayerMoveState();
 
         this.pushOutOfBlocks(this.posX - (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
         this.pushOutOfBlocks(this.posX - (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ - (double) this.width * 0.35);
@@ -270,12 +231,12 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
 
         if (this.capabilities.allowFlying) {
-            if (this.mc.playerController.isSpectatorMode()) {
+            if (this.field_71159_c.playerController.isSpectatorMode()) {
                 if (!this.capabilities.isFlying) {
                     this.capabilities.isFlying = true;
                     this.sendPlayerAbilities();
                 }
-            } else if (!flag && this.movementInput.jump) {
+            } else if (!flag && this.field_71158_b.jump) {
                 if (this.flyToggleTimer == 0) {
                     this.flyToggleTimer = 7;
                 } else {
@@ -286,44 +247,44 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             }
         }
 
-        if (this.capabilities.isFlying && this.isCurrentViewEntity()) {
-            if (this.movementInput.sneak) {
+        if (this.capabilities.isFlying && this.field_71159_c.getRenderViewEntity() == this) {
+            if (this.field_71158_b.sneak) {
                 this.motionY -= (double) (this.capabilities.getFlySpeed() * 3.0F);
             }
 
-            if (this.movementInput.jump) {
+            if (this.field_71158_b.jump) {
                 this.motionY += (double) (this.capabilities.getFlySpeed() * 3.0F);
             }
         }
 
-        if (this.isRidingHorse()) {
-            if (this.horseJumpPowerCounter < 0) {
-                ++this.horseJumpPowerCounter;
-                if (this.horseJumpPowerCounter == 0) {
-                    this.horseJumpPower = 0.0F;
+        if (this.ridingEntity != null && this.ridingEntity instanceof EntityHorse && ((EntityHorse)this.ridingEntity).isHorseSaddled()) {
+            if (this.field_110320_a < 0) {
+                ++this.field_110320_a;
+                if (this.field_110320_a == 0) {
+                    this.field_110321_bQ = 0.0F;
                 }
             }
 
-            if (flag && !this.movementInput.jump) {
-                this.horseJumpPowerCounter = -10;
-                this.sendHorseJump();
-            } else if (!flag && this.movementInput.jump) {
-                this.horseJumpPowerCounter = 0;
-                this.horseJumpPower = 0.0F;
+            if (flag && !this.field_71158_b.jump) {
+                this.field_110320_a = -10;
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.RIDING_JUMP, (int)(this.field_110321_bQ * 100.0F)));
+            } else if (!flag && this.field_71158_b.jump) {
+                this.field_110320_a = 0;
+                this.field_110321_bQ = 0.0F;
             } else if (flag) {
-                ++this.horseJumpPowerCounter;
-                if (this.horseJumpPowerCounter < 10) {
-                    this.horseJumpPower = (float) this.horseJumpPowerCounter * 0.1F;
+                ++this.field_110320_a;
+                if (this.field_110320_a < 10) {
+                    this.field_110321_bQ = (float) this.field_110320_a * 0.1F;
                 } else {
-                    this.horseJumpPower = 0.8F + 2.0F / (float) (this.horseJumpPowerCounter - 9) * 0.1F;
+                    this.field_110321_bQ = 0.8F + 2.0F / (float) (this.field_110320_a - 9) * 0.1F;
                 }
             }
         } else {
-            this.horseJumpPower = 0.0F;
+            this.field_110321_bQ = 0.0F;
         }
 
         super.onLivingUpdate();
-        if (this.onGround && this.capabilities.isFlying && !this.mc.playerController.isSpectatorMode()) {
+        if (this.onGround && this.capabilities.isFlying && !this.field_71159_c.playerController.isSpectatorMode()) {
             this.capabilities.isFlying = false;
             this.sendPlayerAbilities();
         }
