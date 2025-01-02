@@ -70,7 +70,11 @@ public class TickComponent implements Component {
 
    public void draw() {
       if (!this.cl1ckbUtt0n.isVisible()) return;
-
+      int boxSize = 6;
+      net.minecraft.client.gui.Gui.drawRect(this.module.category.getX() + 4, this.module.category.getY() + this.o + 4, this.module.category.getX() + 4 + boxSize, this.module.category.getY() + this.o + 4 + boxSize, this.boxC);
+      if (this.cl1ckbUtt0n.isToggled()) {
+         net.minecraft.client.gui.Gui.drawRect(this.module.category.getX() + 5, this.module.category.getY() + this.o + 5, this.module.category.getX() + 5 + boxSize - 2, this.module.category.getY() + this.o + 5 + boxSize - 2, this.c);
+      }
       GL11.glPushMatrix();
       GL11.glScaled(0.5D, 0.5D, 0.5D);
       Minecraft.getMinecraft().fontRendererObj.drawString("     " + this.cl1ckbUtt0n.getName(), (float) ((this.module.category.getX() + 4) * 2), (float) ((this.module.category.getY() + this.o + 5) * 2), this.cl1ckbUtt0n.isToggled() ? this.c : -1, false);
