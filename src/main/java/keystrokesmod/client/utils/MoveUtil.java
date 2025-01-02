@@ -68,8 +68,8 @@ public class MoveUtil {
 
         float direction = (float) getDirection();
 
-        mc.thePlayer.motionX = -Math.sin(direction);
-        mc.thePlayer.motionZ = Math.cos(direction);
+        mc.thePlayer.motionX = -Math.sin(direction) * sqrtSpeed();
+        mc.thePlayer.motionZ = Math.cos(direction) * sqrtSpeed();
     }
 
     public static void strafe(final double speed) {
@@ -86,7 +86,7 @@ public class MoveUtil {
         if (!isMoving())
             return;
 
-        float direction = (float) getDirection();
+        float direction = (float) yaw;
 
         mc.thePlayer.motionX = -Math.sin(direction) * speed;
         mc.thePlayer.motionZ = Math.cos(direction) * speed;
@@ -116,6 +116,10 @@ public class MoveUtil {
 
     public static double speed() {
         return Math.hypot(mc.thePlayer.motionX, mc.thePlayer.motionZ);
+    }
+
+    public static double sqrtSpeed() {
+        return Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ);
     }
 
 }

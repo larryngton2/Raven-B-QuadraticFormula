@@ -11,6 +11,7 @@ import lombok.Getter;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class ClickGui extends GuiScreen {
    private Timer aE;
    private Timer aR;
    @Getter
-   private final  ArrayList<CategoryComponent> categoryList;
+   private final ArrayList<CategoryComponent> categoryList;
    public final Terminal terminal;
 
    public ClickGui() {
@@ -36,7 +37,7 @@ public class ClickGui extends GuiScreen {
       Module.ModuleCategory[] values;
       int categoryAmount = (values = Module.ModuleCategory.values()).length;
 
-      for(int category = 0; category < categoryAmount; ++category) {
+      for (int category = 0; category < categoryAmount; ++category) {
          Module.ModuleCategory moduleCategory = values[category];
          CategoryComponent currentModuleCategory = new CategoryComponent(moduleCategory);
          currentModuleCategory.setY(topOffset);
@@ -63,30 +64,28 @@ public class ClickGui extends GuiScreen {
       Version clientVersion = Raven.versionManager.getClientVersion();
       Version latestVersion = Raven.versionManager.getLatestVersion();
 
-      drawRect(0, 0, this.width, this.height, (int)(this.aR.getValueFloat(0.0F, 0.7F, 2) * 255.0F) << 24);
+      drawRect(0, 0, this.width, this.height, (int) (this.aR.getValueFloat(0.0F, 0.7F, 2) * 255.0F) << 24);
       int quarterScreenHeight = this.height / 4;
       int halfScreenWidth = this.width / 2;
       int w_c = 30 - this.aT.getValueInt(0, 30, 3);
-      this.drawCenteredString(this.fontRendererObj, "r", halfScreenWidth + 1 - w_c, quarterScreenHeight - 25, Utils.Client.rainbowDraw(2L, 1500L));
-      this.drawCenteredString(this.fontRendererObj, "a", halfScreenWidth - w_c, quarterScreenHeight - 15, Utils.Client.rainbowDraw(2L, 1200L));
-      this.drawCenteredString(this.fontRendererObj, "v", halfScreenWidth - w_c, quarterScreenHeight - 5, Utils.Client.rainbowDraw(2L, 900L));
-      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 5, Utils.Client.rainbowDraw(2L, 600L));
-      this.drawCenteredString(this.fontRendererObj, "n", halfScreenWidth - w_c, quarterScreenHeight + 15, Utils.Client.rainbowDraw(2L, 300L));
-      this.drawCenteredString(this.fontRendererObj, "ax2 + bx + c = 0", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Utils.Client.rainbowDraw(2L, 0L));
+      this.drawCenteredString(this.fontRendererObj, "r", halfScreenWidth + 1 - w_c, quarterScreenHeight - 25, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "a", halfScreenWidth - w_c, quarterScreenHeight - 15, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "v", halfScreenWidth - w_c, quarterScreenHeight - 5, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 5, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "n", halfScreenWidth - w_c, quarterScreenHeight + 15, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "ax2 + bx + c = 0", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Color.WHITE.getRGB());
 
-      float speed = 4890;
-
-      if(latestVersion.isNewerThan(clientVersion)){
+      if (latestVersion.isNewerThan(clientVersion)) {
          int margin = 2;
          int rows = 1;
-         for (int i = Raven.updateText.length-1; i >= 0; i--) {
+         for (int i = Raven.updateText.length - 1; i >= 0; i--) {
             String up = Raven.updateText[i];
-            mc.fontRendererObj.drawString(up, halfScreenWidth - this.fontRendererObj.getStringWidth(up) / 2, this.height - this.fontRendererObj.FONT_HEIGHT * rows - margin, Utils.Client.astolfoColorsDraw(10, 28, speed));
+            mc.fontRendererObj.drawString(up, halfScreenWidth - this.fontRendererObj.getStringWidth(up) / 2, this.height - this.fontRendererObj.FONT_HEIGHT * rows - margin, Color.lightGray.getRGB());
             rows++;
             margin += 2;
          }
-      }else {
-         mc.fontRendererObj.drawString("Raven ax2 + bx + c = 0 v" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Utils.Client.astolfoColorsDraw(10, 14, speed));
+      } else {
+         mc.fontRendererObj.drawString("Raven ax2 + bx + c = 0 v" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
       }
 
       this.drawVerticalLine(halfScreenWidth - 10 - w_c, quarterScreenHeight - 30, quarterScreenHeight + 43, Color.white.getRGB());
@@ -107,9 +106,8 @@ public class ClickGui extends GuiScreen {
          }
       }
 
-
       // PLAYER
-      GuiInventory.drawEntityOnScreen(this.width + 15 - this.aE.getValueInt(0, 40, 2), this.height - 19 - this.fontRendererObj.FONT_HEIGHT, 40, (float)(this.width - 25 - x), (float)(this.height - 50 - y), this.mc.thePlayer);
+      GuiInventory.drawEntityOnScreen(this.width + 15 - this.aE.getValueInt(0, 40, 2), this.height - 19 - this.fontRendererObj.FONT_HEIGHT, 40, (float) (this.width - 25 - x), (float) (this.height - 50 - y), this.mc.thePlayer);
 
       terminal.update(x, y);
       terminal.draw();
@@ -119,9 +117,9 @@ public class ClickGui extends GuiScreen {
       Iterator<CategoryComponent> btnCat = categoryList.iterator();
 
       terminal.mouseDown(x, y, mouseButton);
-      if(terminal.overPosition(x, y)) return;
+      if (terminal.overPosition(x, y)) return;
 
-      while(true) {
+      while (true) {
          CategoryComponent category;
          do {
             do {
@@ -143,8 +141,8 @@ public class ClickGui extends GuiScreen {
                if (category.i(x, y) && mouseButton == 0) {
                   category.cv(!category.p());
                }
-            } while(!category.isOpened());
-         } while(category.getModules().isEmpty());
+            } while (!category.isOpened());
+         } while (category.getModules().isEmpty());
 
          for (Component c : category.getModules()) {
             c.mouseDown(x, y, mouseButton);
@@ -154,20 +152,20 @@ public class ClickGui extends GuiScreen {
 
    public void mouseReleased(int x, int y, int s) {
       terminal.mouseReleased(x, y, s);
-      if(terminal.overPosition(x, y)) return;
+      if (terminal.overPosition(x, y)) return;
 
       if (s == 0) {
          Iterator<CategoryComponent> btnCat = categoryList.iterator();
 
          CategoryComponent c4t;
-         while(btnCat.hasNext()) {
+         while (btnCat.hasNext()) {
             c4t = btnCat.next();
             c4t.mousePressed(false);
          }
 
          btnCat = categoryList.iterator();
 
-         while(true) {
+         while (true) {
             do {
                do {
                   if (!btnCat.hasNext()) {
@@ -175,15 +173,15 @@ public class ClickGui extends GuiScreen {
                   }
 
                   c4t = btnCat.next();
-               } while(!c4t.isOpened());
-            } while(c4t.getModules().isEmpty());
+               } while (!c4t.isOpened());
+            } while (c4t.getModules().isEmpty());
 
             for (Component c : c4t.getModules()) {
                c.mouseReleased(x, y, s);
             }
          }
       }
-      if(Raven.clientConfig != null){
+      if (Raven.clientConfig != null) {
          Raven.clientConfig.saveConfig();
       }
    }
@@ -195,7 +193,7 @@ public class ClickGui extends GuiScreen {
       } else {
          Iterator<CategoryComponent> btnCat = categoryList.iterator();
 
-         while(true) {
+         while (true) {
             CategoryComponent cat;
             do {
                do {
@@ -204,8 +202,8 @@ public class ClickGui extends GuiScreen {
                   }
 
                   cat = btnCat.next();
-               } while(!cat.isOpened());
-            } while(cat.getModules().isEmpty());
+               } while (!cat.isOpened());
+            } while (cat.getModules().isEmpty());
 
             for (Component c : cat.getModules()) {
                c.keyTyped(t, k);

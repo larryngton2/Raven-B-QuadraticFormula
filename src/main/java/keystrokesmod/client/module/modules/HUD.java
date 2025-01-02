@@ -7,6 +7,7 @@ import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
+import lombok.Getter;
 import net.minecraft.client.gui.*;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,20 +26,21 @@ public class HUD extends Module {
    public static TickSetting alphabeticalSort;
    public static SliderSetting colourMode;
    public static DescriptionSetting colourModeDesc;
+   @Getter
    private static int hudX = 5;
+   @Getter
    private static int hudY = 70;
    public static Utils.HUD.PositionMode positionMode;
    public static boolean showedError;
    public static final String HUDX_prefix = "HUDX~ ";
    public static final String HUDY_prefix = "HUDY~ ";
 
-
    public HUD() {
       super("HUD", ModuleCategory.render);
       this.registerSetting(editPosition = new TickSetting("Edit position", false));
       this.registerSetting(dropShadow = new TickSetting("Drop shadow", true));
       this.registerSetting(alphabeticalSort = new TickSetting("Alphabetical sort", false));
-      this.registerSetting(colourMode = new SliderSetting("Value: ", 1, 1, 5, 1));
+      this.registerSetting(colourMode = new SliderSetting("Value: ", 1, 1, 6, 1));
       this.registerSetting(colourModeDesc = new DescriptionSetting("Mode: RAVEN"));
       showedError = false;
    }
@@ -148,6 +150,9 @@ public class HUD extends Module {
                      mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
                      y += mc.fontRendererObj.FONT_HEIGHT + margin;
                      del -= 10;
+                  } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.WHITE) {
+                     mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Color.WHITE.getRGB(), dropShadow.isToggled());
+                     y += mc.fontRendererObj.FONT_HEIGHT + margin;
                   }
                }
             }
@@ -283,18 +288,10 @@ public class HUD extends Module {
       ASTOLFO,
       ASTOLFO2,
       ASTOLFO3,
-      KOPAMED
+      WHITE
    }
 
-   public static int getHudX() {
-      return hudX;
-   }
-
-   public static int getHudY() {
-      return hudY;
-   }
-
-   public static void setHudX(int hudX) {
+    public static void setHudX(int hudX) {
       HUD.hudX = hudX;
    }
 

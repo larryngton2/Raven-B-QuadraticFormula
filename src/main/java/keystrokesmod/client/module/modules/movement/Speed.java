@@ -108,7 +108,7 @@ public class Speed extends Module {
             }
 
             if (mc.thePlayer.onGround) {
-               MoveUtil.strafe(0.155f);
+               MoveUtil.strafe(0.175f);
             } else {
                MoveUtil.strafe(0.35f);
             }
