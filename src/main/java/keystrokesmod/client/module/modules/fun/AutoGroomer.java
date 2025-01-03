@@ -60,7 +60,7 @@ public class AutoGroomer extends Module {
     @SubscribeEvent
     public void playerTickEvent(PlayerTickEvent event) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastMessageTime > (delay.getInput() * 50)) { // Approx. 69 ticks = 3.45 seconds
+        if (currentTime - lastMessageTime > (delay.getInput() * 50)) {
             String message = messages.get(randomInt(0, messages.size()));
             mc.thePlayer.sendChatMessage(message);
             lastMessageTime = currentTime;
