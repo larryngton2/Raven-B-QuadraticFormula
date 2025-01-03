@@ -112,18 +112,13 @@ public class KillAura extends Module {
 
             if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput()) {
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-                    if (autoBlock.getInput() != 3 || autoBlock.getInput() != 4) {
+                    if (autoBlock.getInput() != 3 && autoBlock.getInput() != 4) {
                         attack(currentTarget);
                     }
 
                     if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
-                        if (attackMode.getInput() == 3) {
-                            mc.thePlayer.motionX *= 1.66;
-                            mc.thePlayer.motionZ *= 1.66;
-                        } else if (attackMode.getInput() == 1) {
-                            mc.thePlayer.motionX *= 0.6;
-                            mc.thePlayer.motionZ *= 0.6;
-                        }
+                        mc.thePlayer.motionX *= 0.6;
+                        mc.thePlayer.motionZ *= 0.6;
                     }
                     lastTargetTime = System.currentTimeMillis();
                 }
