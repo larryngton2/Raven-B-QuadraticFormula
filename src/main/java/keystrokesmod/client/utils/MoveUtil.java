@@ -1,7 +1,9 @@
 package keystrokesmod.client.utils;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovementInput;
 
 import static java.lang.Math.toRadians;
@@ -54,44 +56,6 @@ public class MoveUtil {
         return player != null && (player.moveForward != 0F || player.moveStrafing != 0F);
     }
 
-    public static double getSpeed(EntityPlayer player) {
-        return Math.sqrt(player.motionX * player.motionX + player.motionZ * player.motionZ);
-    }
-
-    public static double getSpeed() {
-        return getSpeed(mc.thePlayer);
-    }
-
-    public static void strafe() {
-        if (!isMoving())
-            return;
-
-        float direction = (float) getDirection();
-
-        mc.thePlayer.motionX = -Math.sin(direction) * sqrtSpeed();
-        mc.thePlayer.motionZ = Math.cos(direction) * sqrtSpeed();
-    }
-
-    public static void strafe(final double speed) {
-        if (!isMoving())
-            return;
-
-        float direction = (float) getDirection();
-
-        mc.thePlayer.motionX = -Math.sin(direction) * speed;
-        mc.thePlayer.motionZ = Math.cos(direction) * speed;
-    }
-
-    public static void strafe(final double speed, double yaw) {
-        if (!isMoving())
-            return;
-
-        float direction = (float) yaw;
-
-        mc.thePlayer.motionX = -Math.sin(direction) * speed;
-        mc.thePlayer.motionZ = Math.cos(direction) * speed;
-    }
-
     public static double getDirection() {
         float rotationYaw = mc.thePlayer.rotationYaw;
 
@@ -118,8 +82,36 @@ public class MoveUtil {
         return Math.hypot(mc.thePlayer.motionX, mc.thePlayer.motionZ);
     }
 
-    public static double sqrtSpeed() {
-        return Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ);
+
+    public static void strafe() {
+        strafe(speed(), mc.thePlayer);
     }
 
+    public static void strafe(Entity entity) {
+        strafe(speed(), entity);
+    }
+
+    public static void strafe(final double speed) {
+        strafe(speed, mc.thePlayer);
+    }
+
+    public static void strafe(final double speed, Entity entity) {
+        if (!isMoving()) {
+            return;
+        }
+
+        final double yaw = getDirection();
+        entity.motionX = -MathHelper.sin((float) yaw) * speed;
+        entity.motionZ = MathHelper.cos((float) yaw) * speed;
+    }
+
+    public static void strafe(final double speed, float yaw) {
+        if (!isMoving()) {
+            return;
+        }
+
+        yaw = (float) Math.toRadians(yaw);
+        mc.thePlayer.motionX = -MathHelper.sin(yaw) * speed;
+        mc.thePlayer.motionZ = MathHelper.cos(yaw) * speed;
+    }
 }

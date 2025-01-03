@@ -31,22 +31,40 @@ public class AutoGroomer extends Module {
             "fly up here and you can have as much as you want",
             "lick it off like that, until I ram your mouth.",
             "daddy wants your mouth on all of this tonight",
-            "I bet you like daddy pounding you so hard that your knees give out and drag your face forward as I literally pound you flat into the bed.");
+            "I bet you like daddy pounding you so hard that your knees give out and drag your face forward as I literally pound you flat into the bed.",
+            "I'm so hard rn",
+            "I'm dripping",
+            "Just wait until we get home",
+            "I want to taste you",
+            "I love how hard you can make me come",
+            "Get your ass on that bed.",
+            "Daddy's gonna eat that pussy tonight.",
+            "Daddy's all bricked up now."
+    );
 
     public AutoGroomer() {
         super("AutoGroomer", ModuleCategory.fun);
         withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("1zuna."));
-        this.registerSetting(delay = new SliderSetting("Delay", 1, 0, 20, 1));
+        this.registerSetting(delay = new SliderSetting("Delay", 1, 0, 200, 1));
+    }
+
+    private long lastMessageTime = 0;
+
+    @Override
+    public void onEnable() {
+        lastMessageTime = System.currentTimeMillis();
     }
 
     @SubscribeEvent
     public void playerTickEvent(PlayerTickEvent event) {
-        if (mc.thePlayer.ticksExisted % 60 == 0) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastMessageTime > (delay.getInput() * 50)) { // Approx. 69 ticks = 3.45 seconds
             String message = messages.get(randomInt(0, messages.size()));
-
             mc.thePlayer.sendChatMessage(message);
+            lastMessageTime = currentTime;
         }
     }
+
 }

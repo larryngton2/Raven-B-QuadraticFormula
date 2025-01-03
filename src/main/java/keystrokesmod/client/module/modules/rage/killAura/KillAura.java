@@ -168,6 +168,20 @@ public class KillAura extends Module {
             return;
         }
 
+        switch ((int) rotationMode.getInput()) {
+            case 1:
+                Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
+                break;
+            case 2:
+                if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
+                    Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());
+                }
+                break;
+            case 3:
+                Utils.Player.sendMessageToSelf("izuna - Today at 21:06\n" + "no i suck");
+                break;
+        }
+
         if (rotationMode.getInput() == 1) {
             Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
         } else if (rotationMode.getInput() == 2) {
@@ -232,7 +246,7 @@ public class KillAura extends Module {
             case 5: // VanillaReblock
                 vanillaReblockAB();
                 break;
-            case 6:
+            case 6: // Smart
                 smartAB(entity);
                 break;
             default:

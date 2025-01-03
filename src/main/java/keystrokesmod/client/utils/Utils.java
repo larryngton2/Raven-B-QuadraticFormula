@@ -9,6 +9,9 @@ import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockLadder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -441,6 +444,68 @@ public class Utils {
             p.isSwingInProgress = true;
          }
 
+      }
+
+      public static String formatColor(String txt) {
+         return txt.replaceAll("&", "§");
+      }
+
+      public static String stripColor(final String s) {
+         if (s.isEmpty()) {
+            return s;
+         }
+         final char[] array = StringUtils.stripControlCodes(s).toCharArray();
+         final StringBuilder sb = new StringBuilder();
+         for (final char c : array) {
+            if (c < '\u007f' && c > '\u0014') {
+               sb.append(c);
+            }
+         }
+         return sb.toString();
+      }
+
+      public static boolean nullCheck() {
+         return mc.thePlayer != null && mc.theWorld != null;
+      }
+
+      public static boolean overVoid(double posX, double posY, double posZ) {
+         for (int i = (int) posY; i > -1; i--) {
+            if (!(mc.theWorld.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
+               return false;
+            }
+         }
+         return true;
+      }
+
+      public static boolean isPlaceable(BlockPos blockPos) {
+         return BlockUtils.replaceable(blockPos) || BlockUtils.isFluid(BlockUtils.getBlock(blockPos));
+      }
+
+      public static double distanceToGround(Entity entity) {
+         if (entity.onGround) {
+            return 0;
+         }
+         double fallDistance = -1;
+         double y = entity.posY;
+         if (entity.posY % 1 == 0) {
+            y--;
+         }
+         for (int i = (int) Math.floor(y); i > -1; i--) {
+            if (!isPlaceable(new BlockPos(entity.posX, i, entity.posZ))) {
+               fallDistance = y - i;
+               break;
+            }
+         }
+         return fallDistance - 1;
+      }
+
+      public static boolean onLadder(Entity entity) {
+         int posX = MathHelper.floor_double(entity.posX);
+         int posY = MathHelper.floor_double(entity.posY - 0.20000000298023224D);
+         int posZ = MathHelper.floor_double(entity.posZ);
+         BlockPos blockpos = new BlockPos(posX, posY, posZ);
+         Block block1 = Minecraft.getMinecraft().theWorld.getBlockState(blockpos).getBlock();
+         return block1 instanceof BlockLadder && !entity.onGround;
       }
    }
 

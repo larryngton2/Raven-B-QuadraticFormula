@@ -73,7 +73,7 @@ public class ClickGui extends GuiScreen {
       this.drawCenteredString(this.fontRendererObj, "v", halfScreenWidth - w_c, quarterScreenHeight - 5, Color.WHITE.getRGB());
       this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 5, Color.WHITE.getRGB());
       this.drawCenteredString(this.fontRendererObj, "n", halfScreenWidth - w_c, quarterScreenHeight + 15, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "ax2 + bx + c = 0", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "b quadratic", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Color.WHITE.getRGB());
 
       if (latestVersion.isNewerThan(clientVersion)) {
          int margin = 2;
@@ -85,7 +85,7 @@ public class ClickGui extends GuiScreen {
             margin += 2;
          }
       } else {
-         mc.fontRendererObj.drawString("Raven ax2 + bx + c = 0 v" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
+         mc.fontRendererObj.drawString("Raven b quadratic" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
       }
 
       this.drawVerticalLine(halfScreenWidth - 10 - w_c, quarterScreenHeight - 30, quarterScreenHeight + 43, Color.white.getRGB());

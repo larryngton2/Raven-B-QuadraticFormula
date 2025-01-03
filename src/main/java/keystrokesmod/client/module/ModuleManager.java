@@ -115,6 +115,7 @@ public class ModuleManager {
       addModule(new AutoBan());
       addModule(new KillAura());
       addModule(new KillAuraAdditions());
+      addModule(new Anticheat());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.
