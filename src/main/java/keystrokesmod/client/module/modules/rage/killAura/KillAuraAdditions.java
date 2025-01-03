@@ -23,8 +23,8 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
 
         //auto block options
-        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock"));
-        this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 5, 1));
+        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock, Smart"));
+        this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 6, 1));
         this.registerSetting(packet = new TickSetting("Packet Block", true));
 
         //rotation options
@@ -56,7 +56,8 @@ public class KillAuraAdditions extends Module {
         VANILLA,
         RELEASE,
         AAC,
-        VANILLAREBLOCK
+        VANILLAREBLOCK,
+        SMART
     }
 
     public void guiUpdate() {
@@ -66,6 +67,7 @@ public class KillAuraAdditions extends Module {
     }
 
     public void update() {
+        //not as shitty as some other things I saw on here
         if (this.isEnabled()) {
             this.disable();
         }

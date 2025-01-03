@@ -10,6 +10,7 @@ import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.event.motion.PreMotionEvent;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C02PacketUseEntity.Action;
@@ -105,7 +106,7 @@ public class KillAura extends Module {
             }
 
             if (mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput()) {
-                handleAutoBlock(currentTarget);
+                handleAutoBlock((EntityLivingBase) currentTarget);
             } else {
                 setBlockingState(false);
             }
@@ -128,7 +129,7 @@ public class KillAura extends Module {
         }
     }
 
-    private Entity findNextTarget() {
+    private EntityLivingBase findNextTarget() {
         List<Entity> targets = new ArrayList<>();
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
@@ -143,18 +144,18 @@ public class KillAura extends Module {
         }
 
         int index = targets.indexOf(currentTarget);
-        return targets.get((index + 1) % targets.size());
+        return (EntityLivingBase) targets.get((index + 1) % targets.size());
     }
 
-    public static Entity findClosestEntity() {
-        Entity closestEntity = null;
+    public static EntityLivingBase findClosestEntity() {
+        EntityLivingBase closestEntity = null;
         double closestDistance = searchRange.getInput();
 
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
                 if (distanceToEntity <= searchRange.getInput() && distanceToEntity < closestDistance) {
-                    closestEntity = entity;
+                    closestEntity = (EntityLivingBase) entity;
                     closestDistance = distanceToEntity;
                 }
             }
@@ -209,7 +210,7 @@ public class KillAura extends Module {
         e.setPitch(rotations[1]);
     }
 
-    private void handleAutoBlock(Entity entity) {
+    private void handleAutoBlock(EntityLivingBase entity) {
         if (!Utils.Player.isPlayerHoldingWeapon()) {
             setBlockingState(false);
             return;
@@ -223,13 +224,16 @@ public class KillAura extends Module {
                 setBlockingState(true);
                 break;
             case 3: // Release
-                handleReleaseBlocking(entity);
+                releaseAb(entity);
                 break;
             case 4: // AAC
-                handleAACBlocking(entity);
+                AACAb(entity);
                 break;
             case 5: // VanillaReblock
-                handleVanillaReblockBlocking();
+                vanillaReblockAB();
+                break;
+            case 6:
+                smartAB(entity);
                 break;
             default:
                 setBlockingState(false);
@@ -237,7 +241,7 @@ public class KillAura extends Module {
         }
     }
 
-    private void handleReleaseBlocking(Entity e) {
+    private void releaseAb(Entity e) {
         if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
             setBlockingState(false);
             attack(e);
@@ -246,8 +250,8 @@ public class KillAura extends Module {
         mc.addScheduledTask(() -> setBlockingState(true));
     }
 
-    private void handleAACBlocking(Entity e) {
-        handleReleaseBlocking(e);
+    private void AACAb(Entity e) {
+        releaseAb(e);
 
         if (mc.thePlayer.ticksExisted % 2 == 0) {
             mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
@@ -255,12 +259,16 @@ public class KillAura extends Module {
         }
     }
 
-    private void handleVanillaReblockBlocking() {
+    private void vanillaReblockAB() {
         setBlockingState(true);
 
         if (!mc.gameSettings.keyBindUseItem.isKeyDown() || !mc.thePlayer.isBlocking()) {
             setBlockingState(true);
         }
+    }
+
+    private void smartAB(EntityLivingBase e) {
+        setBlockingState((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) || e.hurtTime >= 5);
     }
 
     private void setBlockingState(boolean state) {

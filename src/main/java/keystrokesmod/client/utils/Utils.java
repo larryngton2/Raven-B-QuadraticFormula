@@ -122,7 +122,7 @@ public class Utils {
          if (entity != null) {
             float[] t = getTargetRotations(entity, ps);
             if (t != null) {
-               randomizedAim.updateOffset(2.5f, 2.5f, 1.0f, 0.1f);
+               randomizedAim.updateOffset(3.5f, 2.75f, 1.0f, 0.01f);
 
                float randomizedYaw = randomizedAim.getRandomYaw(t[0]);
                float randomizedPitch = randomizedAim.getRandomPitch(t[1] + 4.0F + ps);
