@@ -53,8 +53,6 @@ public class AntiBot extends Module {
          Module antiBot = Raven.moduleManager.getModuleByClazz(AntiBot.class);
          if (antiBot != null && !antiBot.isEnabled()) {
             return false;
-         } else if (!Utils.Client.isHyp()) {
-            return false;
          } else if (a.isToggled() && !newEnt.isEmpty() && newEnt.containsKey(en)) {
             return true;
          } else if (en.getName().startsWith("§c")) {
@@ -62,7 +60,7 @@ public class AntiBot extends Module {
          } else {
             String n = en.getDisplayName().getUnformattedText();
             if (n.contains("§")) {
-               return n.contains("[NPC] ");
+               return n.contains("[NPC] ") || n.contains("NPC ");
             } else {
                if (n.isEmpty() && en.getName().isEmpty()) {
                   return true;

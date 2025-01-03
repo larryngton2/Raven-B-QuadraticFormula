@@ -1,6 +1,7 @@
 package keystrokesmod.client.module.modules.rage.killAura;
 
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -132,7 +133,7 @@ public class KillAura extends Module {
     private EntityLivingBase findNextTarget() {
         List<Entity> targets = new ArrayList<>();
         for (Entity entity : mc.theWorld.loadedEntityList) {
-            if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
+            if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity)) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
                 if (distanceToEntity <= searchRange.getInput()) {
                     targets.add(entity);
@@ -152,7 +153,7 @@ public class KillAura extends Module {
         double closestDistance = searchRange.getInput();
 
         for (Entity entity : mc.theWorld.loadedEntityList) {
-            if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
+            if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity)) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
                 if (distanceToEntity <= searchRange.getInput() && distanceToEntity < closestDistance) {
                     closestEntity = (EntityLivingBase) entity;

@@ -2,7 +2,6 @@ package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.rage.killAura.KillAuraAdditions;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -32,8 +31,8 @@ public class Speed extends Module {
       BHOP,
       NCP,
       MINIBLOX,
-      VULCAN,
-      VULCAN_VCLIP
+      VULCAN_DEPRECATED,
+      VULCAN_VCLIP_DEPRECATED
    }
 
    public void guiUpdate() {
