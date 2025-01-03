@@ -118,11 +118,11 @@ public class Utils {
 
       public static RandomizedAim randomizedAim = new RandomizedAim();
 
-      public static void aim(Entity entity, float ps, float rotationSpeed, boolean offset, float yawFactor, float pitchFactor, float speed, float tolerance) {
+      public static void aim(Entity entity, float ps, float rotationSpeed, boolean offset) {
          if (entity != null) {
             float[] t = getTargetRotations(entity, ps);
             if (t != null) {
-               randomizedAim.updateOffset(yawFactor, pitchFactor, speed, tolerance);
+               randomizedAim.updateOffset(2.5f, 2.5f, 1.0f, 0.1f);
 
                float randomizedYaw = randomizedAim.getRandomYaw(t[0]);
                float randomizedPitch = randomizedAim.getRandomPitch(t[1] + 4.0F + ps);

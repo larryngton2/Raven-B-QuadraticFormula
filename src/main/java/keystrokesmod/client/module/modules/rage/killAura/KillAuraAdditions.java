@@ -1,7 +1,6 @@
 package keystrokesmod.client.module.modules.rage.killAura;
 
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.HUD;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -9,19 +8,19 @@ import keystrokesmod.client.utils.Utils;
 
 public class KillAuraAdditions extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack;
-    public static SliderSetting autoBlock, rotationMode, pitchOffset, attackMode, pauseRange, yawFactor, pitchFactor, gSpeed, tolerance, targetSwitchDelay;
+    public static SliderSetting autoBlock, rotationMode, pitchOffset, attackMode, pauseRange, targetSwitchDelay;
     public static TickSetting noSwing, packet, pauseRotation, rotationOffset, targetSwitch;
 
     public KillAuraAdditions() {
-        super("KillAura Additions", ModuleCategory.rage);
+        super("KA Additions", ModuleCategory.rage);
         withEnabled();
 
-        this.registerSetting(desc = new DescriptionSetting("Additions to the base KillAura module."));
+        this.registerSetting(desc = new DescriptionSetting("Additions to the KillAura module."));
 
         //attack options
-        this.registerSetting(noSwing = new TickSetting("NoSwing", false));
         this.registerSetting(dAttack = new DescriptionSetting("Packet, PlayerController, Legit"));
         this.registerSetting(attackMode = new SliderSetting("Attack Mode", 3, 1, 3, 1));
+        this.registerSetting(noSwing = new TickSetting("NoSwing", false));
 
         //auto block options
         this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock"));
@@ -36,12 +35,7 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(pitchOffset = new SliderSetting("Pitch Offset", 0, -15, 30, 1));
         this.registerSetting(pauseRotation = new TickSetting("Pause Rotation", false));
         this.registerSetting(pauseRange = new SliderSetting("Pause Range", 0.5, 0, 6, 0.1));
-        //it's not skidding if I wrote the original code.
         this.registerSetting(rotationOffset = new TickSetting("Rotation Offset", false));
-        this.registerSetting(yawFactor = new SliderSetting("Yaw Offset Factor", 5, 0.01, 10, 0.05));
-        this.registerSetting(pitchFactor = new SliderSetting("Pitch Offset Factor", 5, 0.01, 10, 0.05));
-        this.registerSetting(gSpeed = new SliderSetting("Offset Speed", 0.5, 0.01, 1.0, 0.05));
-        this.registerSetting(tolerance = new SliderSetting("Offset Tolerance", 0.05, 0.01, 0.1, 0.01));
     }
 
     public enum rotModes {

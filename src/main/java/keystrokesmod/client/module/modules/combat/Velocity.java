@@ -15,7 +15,6 @@ public class Velocity extends Module {
    public static SliderSetting c;
    public static TickSetting d;
    public static TickSetting e;
-   public static ComboSetting mode;
    public static TickSetting hhh1;
    public static TickSetting hhh2;
 
@@ -23,8 +22,8 @@ public class Velocity extends Module {
       super("Velocity", ModuleCategory.combat);
       this.registerSetting(hhh1 = new TickSetting("IntaveReduce", false));
       this.registerSetting(hhh2 = new TickSetting("JumpReset", false));
-      this.registerSetting(a = new SliderSetting("Horizontal", 90.0D, 0.0D, 100.0D, 1.0D));
-      this.registerSetting(b = new SliderSetting("Vertical", 100.0D, 0.0D, 100.0D, 1.0D));
+      this.registerSetting(a = new SliderSetting("Horizontal", 90.0D, -100.0D, 100.0D, 1.0D));
+      this.registerSetting(b = new SliderSetting("Vertical", 100.0D, -100.0D, 100.0D, 1.0D));
       this.registerSetting(c = new SliderSetting("Chance", 100.0D, 0.0D, 100.0D, 1.0D));
       this.registerSetting(d = new TickSetting("Only while targeting", false));
       this.registerSetting(e = new TickSetting("Disable while holding S", false));
@@ -48,7 +47,7 @@ public class Velocity extends Module {
             }
          }
 
-         if (hhh1.isToggled() && mc.thePlayer.hurtTime == 7) {
+         if (hhh1.isToggled() && mc.thePlayer.hurtTime == 7 && mc.objectMouseOver.entityHit != null) {
             mc.thePlayer.motionX *= 0.6;
             mc.thePlayer.motionZ *= 0.6;
          }

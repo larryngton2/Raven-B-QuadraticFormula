@@ -115,8 +115,9 @@ public class KillAura extends Module {
                     if (autoBlock.getInput() != 3 || autoBlock.getInput() != 4) {
                         attack(currentTarget);
                     }
+
                     if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
-                        if (attackMode.getInput() == 2) {
+                        if (attackMode.getInput() == 3) {
                             mc.thePlayer.motionX *= 1.66;
                             mc.thePlayer.motionZ *= 1.66;
                         } else if (attackMode.getInput() == 1) {
@@ -172,7 +173,7 @@ public class KillAura extends Module {
         }
 
         if (rotationMode.getInput() == 1) {
-            Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled(), (float) yawFactor.getInput(), (float) pitchFactor.getInput(), (float) gSpeed.getInput(), (float) tolerance.getInput());
+            Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
         } else if (rotationMode.getInput() == 2) {
             // using the attack delay on here to only rotate when needed in order to not flag less.
             if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
