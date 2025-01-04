@@ -111,7 +111,18 @@ public class KillAura extends Module {
             } else {
                 setBlockingState(false);
             }
+        } else {
+            setBlockingState(false);
+        }
+    }
 
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent event) {
+        if (mc.thePlayer == null || mc.theWorld == null || event.phase == TickEvent.Phase.END) {
+            return;
+        }
+
+        if (currentTarget != null) {
             if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput()) {
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                     if (autoBlock.getInput() != 3 && autoBlock.getInput() != 4) {
@@ -125,8 +136,6 @@ public class KillAura extends Module {
                     lastTargetTime = System.currentTimeMillis();
                 }
             }
-        } else {
-            setBlockingState(false);
         }
     }
 
@@ -140,6 +149,7 @@ public class KillAura extends Module {
                 }
             }
         }
+
         if (targets.isEmpty()) {
             return null;
         }
@@ -179,7 +189,7 @@ public class KillAura extends Module {
                 }
                 break;
             case 3:
-                Utils.Player.sendMessageToSelf("izuna - Today at 21:06\n" + "no i suck");
+                Utils.Player.sendMessageToSelf("izuna - Today at 21:06" + "no i suck");
                 break;
         }
 
@@ -245,10 +255,10 @@ public class KillAura extends Module {
                 AACAb(entity);
                 break;
             case 5: // VanillaReblock
-                vanillaReblockAB();
+                vanillaReblockAb();
                 break;
             case 6: // Smart
-                smartAB(entity);
+                smartAb(entity);
                 break;
             default:
                 setBlockingState(false);
@@ -274,7 +284,7 @@ public class KillAura extends Module {
         }
     }
 
-    private void vanillaReblockAB() {
+    private void vanillaReblockAb() {
         setBlockingState(true);
 
         if (!mc.gameSettings.keyBindUseItem.isKeyDown() || !mc.thePlayer.isBlocking()) {
@@ -282,8 +292,8 @@ public class KillAura extends Module {
         }
     }
 
-    private void smartAB(EntityLivingBase e) {
-        setBlockingState((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) || e.hurtTime >= 5);
+    private void smartAb(EntityLivingBase e) {
+        setBlockingState(((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) && mc.thePlayer.motionY >= 0) || e.hurtTime >= 5);
     }
 
     private void setBlockingState(boolean state) {

@@ -22,7 +22,7 @@ public class Speed extends Module {
       super("Speed", ModuleCategory.movement);
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 7, 1));
-      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0.01, 5, 0.01));
+      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
    }
 
    public enum modes {
@@ -37,6 +37,11 @@ public class Speed extends Module {
 
    public void guiUpdate() {
       dc.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+   }
+
+   @Override
+   public void onDisable() {
+      Utils.Client.getTimer().timerSpeed = 1.0f;
    }
 
    @Override
@@ -55,22 +60,26 @@ public class Speed extends Module {
 
       Module vroom = Raven.moduleManager.getModuleByClazz(Speed.class);
 
-      if (!vroom.isEnabled()) {
-         Utils.Client.getTimer().timerSpeed = 1.0f;
-      }
-
       if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
          mc.thePlayer.jump();
       }
 
       switch ((int) mode.getInput()) {
          case 1:
-            MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+            if (speed.getInputMin() <= 0.05f && speed.getInputMax() <= 0.05f) {
+               MoveUtil.strafe();
+            } else {
+               MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+            }
             break;
 
          case 2: {
             if (mc.thePlayer.onGround) {
-               MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+               if (speed.getInputMin() <= 0.05f && speed.getInputMax() <= 0.05f) {
+                  MoveUtil.strafe();
+               } else {
+                  MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+               }
             }
          }
          break;

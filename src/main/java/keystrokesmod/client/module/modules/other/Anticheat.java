@@ -82,7 +82,7 @@ public class Anticheat extends Module {
         }
     }
 
-    public void onUpdate() {
+    public void update() {
         if (mc.isSingleplayer()) {
             return;
         }
