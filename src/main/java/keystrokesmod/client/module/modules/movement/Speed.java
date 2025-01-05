@@ -20,8 +20,8 @@ public class Speed extends Module {
 
    public Speed() {
       super("Speed", ModuleCategory.movement);
-      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip"));
-      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 7, 1));
+      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip, BMC"));
+      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 8, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
    }
 
@@ -29,10 +29,11 @@ public class Speed extends Module {
       STRAFE,
       GROUNDSTRAFE,
       BHOP,
-      NCP,
+      NCP_TICK_5,
       MINIBLOX,
       VULCAN_DEPRECATED,
-      VULCAN_VCLIP_DEPRECATED
+      VULCAN_VCLIP_DEPRECATED,
+      NCP_TICK_4
    }
 
    public void guiUpdate() {
@@ -42,6 +43,10 @@ public class Speed extends Module {
    @Override
    public void onDisable() {
       Utils.Client.getTimer().timerSpeed = 1.0f;
+
+      if (mode.getInput() == 8) {
+         MoveUtil.stopXZ();
+      }
    }
 
    @Override
@@ -60,7 +65,7 @@ public class Speed extends Module {
 
       Module vroom = Raven.moduleManager.getModuleByClazz(Speed.class);
 
-      if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
+      if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7 && mode.getInput() != 8) {
          mc.thePlayer.jump();
       }
 
@@ -235,6 +240,38 @@ public class Speed extends Module {
             }
 
             burstMovement(mc.thePlayer.posZ, mc.thePlayer.posX, offGroundTicks);
+         }
+         break;
+
+         case 8: {
+            switch (offGroundTicks) {
+               case 4: {
+                  if (mc.thePlayer.posY % 1.0 == 0.16610926093821377) {
+                     mc.thePlayer.motionY = -0.09800000190734863;
+                  }
+               }
+               break;
+
+               case 6: {
+                  if (MoveUtil.isMoving()) MoveUtil.strafe();
+               }
+               break;
+            }
+
+            if (mc.thePlayer.hurtTime >= 1 && mc.thePlayer.motionY > 0) {
+               mc.thePlayer.motionY -= 0.15;
+            }
+
+            if (mc.thePlayer.onGround) {
+               mc.thePlayer.jump();
+               MoveUtil.strafe();
+
+               if (MoveUtil.speed() < 0.281) {
+                  MoveUtil.strafe(0.281);
+               } else {
+                  MoveUtil.strafe();
+               }
+            }
          }
          break;
       }

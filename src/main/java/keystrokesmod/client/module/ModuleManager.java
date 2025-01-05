@@ -3,6 +3,7 @@ package keystrokesmod.client.module;
 import keystrokesmod.client.module.modules.HUD;
 import keystrokesmod.client.module.modules.exploit.Disabler;
 import keystrokesmod.client.module.modules.fun.AutoBan;
+import keystrokesmod.client.module.modules.fun.AutoMeow;
 import keystrokesmod.client.module.modules.rage.killAura.KillAura;
 import keystrokesmod.client.module.modules.client.*;
 import keystrokesmod.client.module.modules.combat.*;
@@ -116,6 +117,7 @@ public class ModuleManager {
       addModule(new KillAura());
       addModule(new KillAuraAdditions());
       addModule(new Anticheat());
+      addModule(new AutoMeow());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.

@@ -2,7 +2,6 @@ package keystrokesmod.client.utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovementInput;
 
@@ -56,6 +55,14 @@ public class MoveUtil {
         return player != null && (player.moveForward != 0F || player.moveStrafing != 0F);
     }
 
+    public static void stop() {
+        mc.thePlayer.motionX = mc.thePlayer.motionY = mc.thePlayer.motionZ = 0;
+    }
+
+    public static void stopXZ() {
+        mc.thePlayer.motionX = mc.thePlayer.motionZ = 0;
+    }
+
     public static double getDirection() {
         float rotationYaw = mc.thePlayer.rotationYaw;
 
@@ -81,7 +88,6 @@ public class MoveUtil {
     public static double speed() {
         return Math.hypot(mc.thePlayer.motionX, mc.thePlayer.motionZ);
     }
-
 
     public static void strafe() {
         strafe(speed(), mc.thePlayer);

@@ -117,7 +117,7 @@ public class KillAura extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
+    public void onPreClientTick(TickEvent.ClientTickEvent event) {
         if (mc.thePlayer == null || mc.theWorld == null || event.phase == TickEvent.Phase.END) {
             return;
         }
@@ -125,10 +125,7 @@ public class KillAura extends Module {
         if (currentTarget != null) {
             if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput()) {
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-                    if (autoBlock.getInput() != 3 && autoBlock.getInput() != 4) {
-                        attack(currentTarget);
-                    }
-
+                    attack(currentTarget);
                     if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
                         mc.thePlayer.motionX *= 0.6;
                         mc.thePlayer.motionZ *= 0.6;
