@@ -117,6 +117,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             } else {
                 this.onUpdateWalkingPlayer();
             }
+
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostUpdateEvent());
         }
     }
@@ -210,7 +211,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
                 this.lastReportedPitch = preMotionEvent.getPitch();
             }
         }
-
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostMotionEvent());
     }
 
     /**
