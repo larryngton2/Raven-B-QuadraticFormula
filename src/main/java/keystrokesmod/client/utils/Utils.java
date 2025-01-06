@@ -66,6 +66,7 @@ public class Utils {
    public static float prevRenderPitch;
    public static float renderYaw;
    public static float prevRenderYaw;
+   public static float[] serverRotations = new float[] { 0, 0 } ;
 
    public static class Player {
       public static void setRenderYaw(float yaw) {
@@ -270,11 +271,20 @@ public class Utils {
       }
 
       public static boolean isPlayerHoldingWeapon() {
-         if (mc.thePlayer.getCurrentEquippedItem() == null) {
+         if (mc.thePlayer.getHeldItem() == null) {
             return false;
          } else {
-            Item item = mc.thePlayer.getCurrentEquippedItem().getItem();
+            Item item = mc.thePlayer.getHeldItem().getItem();
             return item instanceof ItemSword || item instanceof ItemAxe;
+         }
+      }
+
+      public static boolean isPlayerHoldingSword() {
+         if (mc.thePlayer.getHeldItem() == null) {
+            return false;
+         } else {
+            Item item = mc.thePlayer.getHeldItem().getItem();
+            return item instanceof ItemSword;
          }
       }
 
@@ -510,6 +520,9 @@ public class Utils {
    }
 
    public static class Client {
+      public static float interpolateValue(float tickDelta, float old, float newFloat) {
+         return old + (newFloat - old) * tickDelta;
+      }
 
       public static List<NetworkPlayerInfo> getPlayers() {
          List<NetworkPlayerInfo> yes = new ArrayList<>();

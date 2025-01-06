@@ -18,6 +18,7 @@ import net.minecraft.network.play.client.C02PacketUseEntity.Action;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.*;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -32,9 +33,6 @@ public class KillAura extends Module {
     private static SliderSetting attackRange, rotationSpeed, autoBlockRange, searchRange;
     private static DoubleSliderSetting attackDelay;
     private static TickSetting forceSprint, onlyWeapon, keepSprintOnGround, keepSprintOnAir;
-
-    private static long lastTargetTime = 0;
-    private static boolean isBlocking = false;
 
     public KillAura() {
         super("KillAura", ModuleCategory.rage);
@@ -59,6 +57,9 @@ public class KillAura extends Module {
 
     private Entity currentTarget = null;
     private long lastSwitchTime = 0;
+    private static long lastTargetTime = 0;
+    private static boolean isBlocking = false;
+    public static boolean blocking;
 
     @Override
     public void onEnable() {
@@ -77,7 +78,7 @@ public class KillAura extends Module {
             return;
         }
 
-        if (!Utils.Player.isPlayerHoldingWeapon() && onlyWeapon.isToggled()) {
+        if (!Utils.Player.isPlayerHoldingSword() && onlyWeapon.isToggled()) {
             return;
         }
 
@@ -98,13 +99,7 @@ public class KillAura extends Module {
                 return;
             }
 
-            if (rotationMode.getInput() == 3) {
-                float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
-
-                mc.thePlayer.rotationYawHead = rotations[0];
-            } else {
-                handleRotation(currentTarget);
-            }
+            handleRotation(currentTarget);
 
             if (mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput()) {
                 handleAutoBlock((EntityLivingBase) currentTarget);
@@ -181,55 +176,44 @@ public class KillAura extends Module {
                 Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
                 break;
             case 2:
+                // using the attack delay on here to only rotate when needed in order to not flag less.
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                     Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());
                 }
                 break;
-            case 3:
-                Utils.Player.sendMessageToSelf("izuna - Today at 21:06" + "no i suck");
-                break;
-        }
-
-        if (rotationMode.getInput() == 1) {
-            Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
-        } else if (rotationMode.getInput() == 2) {
-            // using the attack delay on here to only rotate when needed in order to not flag less.
-            if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-                Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onRenderTick(TickEvent.RenderTickEvent ev) {
-        if (rotationMode.getInput() == 3) {
-            if (!Utils.Player.isPlayerInGame()) {
-                return;
-            }
-
-            if (ev.phase != TickEvent.Phase.START) {
-                return;
-            }
-
-            if (currentTarget != null && rotationMode.getInput() == 3) {
-                float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
-
-                mc.thePlayer.rotationYaw = rotations[0];
-                mc.thePlayer.rotationPitch = rotations[1];
-            }
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPreMotion(PreMotionEvent e) {
-        if (rotationMode.getInput() != 3 || currentTarget == null) {
+        if (rotationMode.getInput() == 1 && currentTarget != null) {
+            float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
+            e.setYaw(rotations[0]);
+            e.setPitch(rotations[1]);
+        }
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent event) {
+        if (!Utils.Player.nullCheck()) {
             return;
         }
 
-        float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
+        if (event.phase == TickEvent.Phase.END && rotationMode.getInput() == 1) {
+            mc.thePlayer.renderArmPitch = mc.thePlayer.rotationPitch;
+            mc.thePlayer.renderArmYaw = mc.thePlayer.rotationYaw;
+        }
+    }
 
-        e.setYaw(rotations[0]);
-        e.setPitch(rotations[1]);
+    @SubscribeEvent
+    public void onMouse(MouseEvent e) {
+        if (e.button == 0 || e.button == 1) {
+            if (!Utils.Player.isPlayerHoldingWeapon() || currentTarget == null || rotationMode.getInput() != 1) {
+                return;
+            }
+
+            e.setCanceled(true);
+        }
     }
 
     private void handleAutoBlock(EntityLivingBase entity) {
@@ -313,6 +297,7 @@ public class KillAura extends Module {
 
     private void blocking(boolean state) {
         KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
+        blocking = state;
     }
 
     private void attack(Entity e) {
@@ -329,9 +314,6 @@ public class KillAura extends Module {
                         mc.thePlayer.swingItem();
                     }
                     mc.playerController.attackEntity(mc.thePlayer, e);
-                    break;
-                case 3:
-                    KeyBinding.onTick(mc.gameSettings.keyBindAttack.getKeyCode());
                     break;
             }
         }

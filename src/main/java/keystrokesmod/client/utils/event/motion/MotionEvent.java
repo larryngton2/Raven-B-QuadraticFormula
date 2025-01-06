@@ -1,5 +1,6 @@
 package keystrokesmod.client.utils.event.motion;
 
+import keystrokesmod.client.utils.event.CancellableEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package keystrokesmod.client.utils.event.motion;
+package keystrokesmod.client.utils.event;
 
 /**
  * An interface for objects that can be cancelled.

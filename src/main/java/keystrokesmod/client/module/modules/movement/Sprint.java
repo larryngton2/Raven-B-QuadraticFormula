@@ -9,19 +9,18 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class Sprint extends Module {
-   public static TickSetting a;
+   public static TickSetting omni;
 
    public Sprint() {
       super("Sprint", ModuleCategory.movement);
-      a = new TickSetting("OmniSprint", false);
-      this.registerSetting(a);
+      this.registerSetting(omni = new TickSetting("OmniSprint", false));
    }
 
    @SubscribeEvent
    public void p(PlayerTickEvent e) {
       if (Utils.Player.isPlayerInGame() && mc.inGameHasFocus) {
          EntityPlayerSP p = mc.thePlayer;
-         if (a.isToggled()) {
+         if (omni.isToggled()) {
             if (Utils.Player.isMoving() && p.getFoodStats().getFoodLevel() > 6) {
                p.setSprinting(true);
             }

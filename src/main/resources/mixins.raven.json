@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "keystrokesmod.mixins.impl",
+  "refmap": "mixins.raven.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "verbose": true,
+  "mixins": [
+    "entity.MixinEntityPlayer"
+  ],
+  "client": [
+    "entity.MixinEntityPlayerSP"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

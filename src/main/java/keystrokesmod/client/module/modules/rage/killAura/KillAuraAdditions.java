@@ -18,8 +18,8 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(desc = new DescriptionSetting("Additions to the KillAura module."));
 
         //attack options
-        this.registerSetting(dAttack = new DescriptionSetting("Packet, PlayerController, Legit"));
-        this.registerSetting(attackMode = new SliderSetting("Attack Mode", 3, 1, 3, 1));
+        this.registerSetting(dAttack = new DescriptionSetting("Packet, PlayerController"));
+        this.registerSetting(attackMode = new SliderSetting("Attack Mode", 3, 1, 2, 1));
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
 
         //auto block options
@@ -28,7 +28,7 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(packet = new TickSetting("Packet Block", true));
 
         //rotation options
-        this.registerSetting(dRotation = new DescriptionSetting("Normal, Packet, Test, None"));
+        this.registerSetting(dRotation = new DescriptionSetting("Silent, Normal, Packet, None"));
         this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 4, 1));
         this.registerSetting(targetSwitch = new TickSetting("Target Switch", false));
         this.registerSetting(targetSwitchDelay = new SliderSetting("Target Switch Delay (ms)", 500, 50, 1000, 50));
@@ -39,16 +39,15 @@ public class KillAuraAdditions extends Module {
     }
 
     public enum rotModes {
+        SILENT,
         NORMAL,
         PACKET,
-        TEST,
         NONE
     }
 
     public enum attackModes {
         PACKET,
-        PLAYERCONTROLLER,
-        LEGIT
+        PLAYERCONTROLLER
     }
 
     public enum autoBlockModes {

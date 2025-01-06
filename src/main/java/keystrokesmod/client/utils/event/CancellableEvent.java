@@ -1,4 +1,4 @@
-package keystrokesmod.client.utils.event.motion;
+package keystrokesmod.client.utils.event;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 

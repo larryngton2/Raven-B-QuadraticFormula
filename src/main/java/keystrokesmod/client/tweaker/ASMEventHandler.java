@@ -4,8 +4,6 @@ import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.modules.combat.Reach;
-import keystrokesmod.client.module.modules.movement.KeepSprint;
-import keystrokesmod.client.module.modules.movement.NoSlow;
 import keystrokesmod.client.module.modules.other.NameHider;
 import keystrokesmod.client.module.modules.other.StringEncrypt;
 import keystrokesmod.client.module.modules.player.SafeWalk;
@@ -72,34 +70,6 @@ public class ASMEventHandler {
    {
       return "lunarclient:db2533c";
    }*/
-
-   /**
-    * called when a player is using an item (aka right-click)
-    * ASM Modules : NoSlow
-    */
-   public static void onLivingUpdate() {
-      Module noSlow = Raven.moduleManager.getModuleByClazz(NoSlow.class);
-      if (noSlow != null && noSlow.isEnabled()) {
-         NoSlow.sl();
-      } else {
-         mc.thePlayer.movementInput.moveStrafe *= 0.2F;
-         mc.thePlayer.movementInput.moveForward *= 0.2F;
-      }
-   }
-
-   /**
-    * called when a player is moving and hits another one
-    * ASM Modules : KeepSprint
-    */
-   public static void onAttackTargetEntityWithCurrentItem(Entity en) {
-      Module keepSprint = Raven.moduleManager.getModuleByClazz(KeepSprint.class);
-      if (keepSprint != null && keepSprint.isEnabled()) {
-         KeepSprint.sl(en);
-      } else {
-         mc.thePlayer.motionX *= 0.6D;
-         mc.thePlayer.motionZ *= 0.6D;
-      }
-   }
 
    /**
     * called every tick

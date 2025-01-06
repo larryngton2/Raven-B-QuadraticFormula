@@ -9,6 +9,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
 public class BlockUtils {
     public static final Minecraft mc = Minecraft.getMinecraft();
@@ -26,7 +28,26 @@ public class BlockUtils {
     }
 
     public static boolean isInteractable(Block block) {
-        return block instanceof BlockFurnace || block instanceof BlockTrapDoor || block instanceof BlockDoor || block instanceof BlockJukebox || block instanceof BlockFenceGate || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable || block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper || block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil || block instanceof BlockNote || block instanceof BlockWorkbench;
+        return block instanceof BlockFurnace || block instanceof BlockTrapDoor || block instanceof BlockDoor || block instanceof BlockContainer || block instanceof BlockJukebox || block instanceof BlockFenceGate || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable || block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper || block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil || block instanceof BlockNote || block instanceof BlockWorkbench;
+    }
+
+    public static boolean isInteractable(MovingObjectPosition mv) {
+        if (mv == null || mv.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || mv.getBlockPos() == null) {
+            return false;
+        }
+        IBlockState iblockstate = mc.theWorld.getBlockState(mv.getBlockPos());
+        if (!mc.thePlayer.isSneaking() || mc.thePlayer.getHeldItem() == null || mc.thePlayer.getHeldItem().getItem().doesSneakBypassUse(mc.theWorld, mv.getBlockPos(), mc.thePlayer)) {
+            Vec3 hitVec = getHitVec(mv.hitVec, mv.getBlockPos());
+            return iblockstate.getBlock().onBlockActivated(mc.theWorld, mv.getBlockPos(), iblockstate, mc.thePlayer, mv.sideHit, (float) hitVec.xCoord, (float) hitVec.yCoord, (float) hitVec.zCoord);
+        }
+        return false;
+    }
+
+    public static Vec3 getHitVec(Vec3 hitVec, BlockPos blockPos) {
+        float x = (float)(hitVec.xCoord - blockPos.getX());
+        float y = (float)(hitVec.yCoord - blockPos.getY());
+        float z = (float)(hitVec.zCoord - blockPos.getZ());
+        return new Vec3(x, y, z);
     }
 
     public static float getBlockHardness(final Block block, final ItemStack itemStack, boolean ignoreSlow, boolean ignoreGround) {
