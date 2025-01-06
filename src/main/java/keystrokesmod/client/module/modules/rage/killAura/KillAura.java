@@ -172,10 +172,10 @@ public class KillAura extends Module {
         }
 
         switch ((int) rotationMode.getInput()) {
-            case 1:
+            case 2:
                 Utils.Player.aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
                 break;
-            case 2:
+            case 3:
                 // using the attack delay on here to only rotate when needed in order to not flag less.
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                     Utils.Player.aimPacket(entity, (float) pitchOffset.getInput());

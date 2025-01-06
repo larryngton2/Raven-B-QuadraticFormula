@@ -25,7 +25,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,66 +35,46 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     public MixinEntityPlayerSP(World p_i45074_1_, GameProfile p_i45074_2_) {
         super(p_i45074_1_, p_i45074_2_);
     }
-    @Shadow
-    public int sprintingTicksLeft;
-    @Shadow
-    public abstract void setSprinting(boolean p_setSprinting_1_);
 
+    @Override
     @Shadow
-    protected int sprintToggleTimer;
-    @Shadow
-    public float prevTimeInPortal;
-    @Shadow
-    public float timeInPortal;
-    @Shadow
-    protected Minecraft mc;
-    @Shadow
-    public MovementInput movementInput;
+    public void setSprinting(boolean p_setSprinting_1_) {
+        super.setSprinting(p_setSprinting_1_);
+        this.field_71157_e = p_setSprinting_1_ ? 600 : 0;
+    }
 
-    @Shadow
-    public abstract void sendPlayerAbilities();
+    protected Minecraft field_71159_c;
+    public MovementInput field_71158_b;
+    public NetHandlerPlayClient field_71174_a;
 
-    @Shadow
-    protected abstract boolean isCurrentViewEntity();
+    protected boolean func_175160_A() {
+        return this.field_71159_c.getRenderViewEntity() == this;
+    }
 
-    @Shadow
-    public abstract boolean isRidingHorse();
+    protected abstract void func_110318_g();
 
-    @Shadow
-    private int horseJumpPowerCounter;
-    @Shadow
-    private float horseJumpPower;
+    public boolean func_110317_t() {
+        return this.ridingEntity != null && this.ridingEntity instanceof EntityHorse && ((EntityHorse)this.ridingEntity).isHorseSaddled();
+    }
 
-    @Shadow
-    protected abstract void sendHorseJump();
-
-    @Shadow
-    private boolean serverSprintState;
-    @Shadow
-    @Final
-    public NetHandlerPlayClient sendQueue;
+    @Override
     @Shadow
     public abstract boolean isSneaking();
-    @Shadow
-    private boolean serverSneakState;
-    @Shadow
-    private double lastReportedPosX;
-    @Shadow
-    private double lastReportedPosY;
-    @Shadow
-    private double lastReportedPosZ;
-    @Shadow
-    private float lastReportedYaw;
-    @Shadow
-    private float lastReportedPitch;
-    @Shadow
-    private int positionUpdateTicks;
-    @Shadow
-    public abstract void playSound(String name, float volume, float pitch);
 
-    @Shadow
-    protected abstract boolean pushOutOfBlocks(double x, double y, double z);
-
+    private boolean field_175170_bN;
+    private double field_175172_bI;
+    private double field_175166_bJ;
+    private int field_110320_a;
+    private float field_110321_bQ;
+    private double field_175167_bK;
+    private float field_175164_bL;
+    private float field_175165_bM;
+    private boolean field_175171_bO;
+    private int field_175168_bP;
+    public int field_71157_e;
+    protected int field_71156_d;
+    public float field_71080_cy;
+    public float field_71086_bY;
 
     /**
      * @author a
@@ -103,32 +82,26 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
      */
     @Overwrite
     public void onUpdate() {
-        if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, (double)0.0F, this.posZ))) {
-
+        if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0, this.posZ))) {
             Utils.prevRenderPitch = Utils.renderPitch;
             Utils.prevRenderYaw = Utils.renderYaw;
 
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PreUpdateEvent());
 
             super.onUpdate();
+
             if (this.isRiding()) {
-                this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
-                this.sendQueue.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward, this.movementInput.jump, this.movementInput.sneak));
+                this.field_71174_a.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
+                this.field_71174_a.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward, this.field_71158_b.jump, this.field_71158_b.sneak));
             } else {
-                this.onUpdateWalkingPlayer();
+                this.func_175161_p();
             }
 
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostUpdateEvent());
         }
     }
 
-    /**
-     * @author a
-     * @reason a
-     */
-    @Overwrite
-    public void onUpdateWalkingPlayer() {
-
+    public void func_175161_p() {
         PreMotionEvent preMotionEvent = new PreMotionEvent(
                 this.posX,
                 this.getEntityBoundingBox().minY,
@@ -145,28 +118,28 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         Utils.serverRotations = new float[] { preMotionEvent.getYaw(), preMotionEvent.getPitch() };
 
         boolean flag = preMotionEvent.isSprinting();
-        if (flag != this.serverSprintState) {
+        if (flag != this.field_175171_bO) {
             if (flag) {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SPRINTING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SPRINTING));
             } else {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SPRINTING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SPRINTING));
             }
 
-            this.serverSprintState = flag;
+            this.field_175171_bO = flag;
         }
 
         boolean flag1 = preMotionEvent.isSneaking();
-        if (flag1 != this.serverSneakState) {
+        if (flag1 != this.field_175170_bN) {
             if (flag1) {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SNEAKING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.START_SNEAKING));
             } else {
-                this.sendQueue.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SNEAKING));
+                this.field_71174_a.addToSendQueue(new C0BPacketEntityAction(this, C0BPacketEntityAction.Action.STOP_SNEAKING));
             }
 
-            this.serverSneakState = flag1;
+            this.field_175170_bN = flag1;
         }
 
-        if (this.isCurrentViewEntity()) {
+        if (this.func_175160_A()) {
             if (PreMotionEvent.setRenderYaw()) {
                 Utils.Player.setRenderYaw(preMotionEvent.getYaw());
                 preMotionEvent.setRenderYaw(false);
@@ -175,90 +148,85 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             Utils.renderPitch = preMotionEvent.getPitch();
             Utils.renderYaw = preMotionEvent.getYaw();
 
-            double d0 = preMotionEvent.getPosX() - this.lastReportedPosX;
-            double d1 = preMotionEvent.getPosY() - this.lastReportedPosY;
-            double d2 = preMotionEvent.getPosZ() - this.lastReportedPosZ;
-            double d3 = preMotionEvent.getYaw() - this.lastReportedYaw;
-            double d4 = preMotionEvent.getPitch() - this.lastReportedPitch;
-
-            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4 || this.positionUpdateTicks >= 20;
-            boolean flag3 = d3 != (double)0.0F || d4 != (double)0.0F;
+            double d0 = preMotionEvent.getPosX() - this.field_175172_bI;
+            double d1 = preMotionEvent.getPosY() - this.field_175166_bJ;
+            double d2 = preMotionEvent.getPosZ() - this.field_175167_bK;
+            double d3 = preMotionEvent.getYaw() - this.field_175164_bL;
+            double d4 = preMotionEvent.getPitch() - this.field_175165_bM;
+            boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4 || this.field_175168_bP >= 20;
+            boolean flag3 = d3 != 0.0 || d4 != 0.0;
             if (this.ridingEntity == null) {
                 if (flag2 && flag3) {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
                 } else if (flag2) {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(preMotionEvent.getPosX(), preMotionEvent.getPosY(), preMotionEvent.getPosZ(), preMotionEvent.isOnGround()));
                 } else if (flag3) {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
                 } else {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer(preMotionEvent.isOnGround()));
+                    this.field_71174_a.addToSendQueue(new C03PacketPlayer(preMotionEvent.isOnGround()));
                 }
             } else {
-                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0, this.motionZ, preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
+                this.field_71174_a.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, preMotionEvent.getYaw(), preMotionEvent.getPitch(), preMotionEvent.isOnGround()));
                 flag2 = false;
             }
 
-            ++this.positionUpdateTicks;
+            ++this.field_175168_bP;
+
             if (flag2) {
-                this.lastReportedPosX = preMotionEvent.getPosX();
-                this.lastReportedPosY = preMotionEvent.getPosY();
-                this.lastReportedPosZ = preMotionEvent.getPosZ();
-                this.positionUpdateTicks = 0;
+                this.field_175172_bI = preMotionEvent.getPosX();
+                this.field_175166_bJ = preMotionEvent.getPosY();
+                this.field_175167_bK = preMotionEvent.getPosZ();
+                this.field_175168_bP = 0;
             }
 
             if (flag3) {
-                this.lastReportedYaw = preMotionEvent.getYaw();
-                this.lastReportedPitch = preMotionEvent.getPitch();
+                this.field_175164_bL = preMotionEvent.getYaw();
+                this.field_175165_bM = preMotionEvent.getPitch();
             }
         }
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostMotionEvent());
     }
 
-    /**
-     * @author a
-     * @reason a
-     */
-    @Overwrite
-    public void onLivingUpdate() {
-        if (this.sprintingTicksLeft > 0) {
-            --this.sprintingTicksLeft;
-            if (this.sprintingTicksLeft == 0) {
+    public void func_70636_d() {
+        if (this.field_71157_e > 0) {
+            --this.field_71157_e;
+            if (this.field_71157_e == 0) {
                 this.setSprinting(false);
             }
         }
 
-        if (this.sprintToggleTimer > 0) {
-            --this.sprintToggleTimer;
+        if (this.field_71156_d > 0) {
+            --this.field_71156_d;
         }
 
-        this.prevTimeInPortal = this.timeInPortal;
+        this.field_71080_cy = this.field_71086_bY;
         if (this.inPortal) {
-            if (this.mc.currentScreen != null && !this.mc.currentScreen.doesGuiPauseGame()) {
-                this.mc.displayGuiScreen((GuiScreen)null);
+            if (this.field_71159_c.currentScreen != null && !this.field_71159_c.currentScreen.doesGuiPauseGame()) {
+                this.field_71159_c.displayGuiScreen((GuiScreen) null);
             }
 
-            if (this.timeInPortal == 0.0F) {
-                this.mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("portal.trigger"), this.rand.nextFloat() * 0.4F + 0.8F));
+            if (this.field_71086_bY == 0.0F) {
+                this.field_71159_c.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("portal.trigger"), this.rand.nextFloat() * 0.4F + 0.8F));
             }
 
-            this.timeInPortal += 0.0125F;
-            if (this.timeInPortal >= 1.0F) {
-                this.timeInPortal = 1.0F;
+            this.field_71086_bY += 0.0125F;
+            if (this.field_71086_bY >= 1.0F) {
+                this.field_71086_bY = 1.0F;
             }
 
             this.inPortal = false;
         } else if (this.isPotionActive(Potion.confusion) && this.getActivePotionEffect(Potion.confusion).getDuration() > 60) {
-            this.timeInPortal += 0.006666667F;
-            if (this.timeInPortal > 1.0F) {
-                this.timeInPortal = 1.0F;
+            this.field_71086_bY += 0.006666667F;
+            if (this.field_71086_bY > 1.0F) {
+                this.field_71086_bY = 1.0F;
             }
         } else {
-            if (this.timeInPortal > 0.0F) {
-                this.timeInPortal -= 0.05F;
+            if (this.field_71086_bY > 0.0F) {
+                this.field_71086_bY -= 0.05F;
             }
 
-            if (this.timeInPortal < 0.0F) {
-                this.timeInPortal = 0.0F;
+            if (this.field_71086_bY < 0.0F) {
+                this.field_71086_bY = 0.0F;
             }
         }
 
@@ -266,52 +234,52 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             --this.timeUntilPortal;
         }
 
-        boolean flag = this.movementInput.jump;
-        boolean flag1 = this.movementInput.sneak;
+        boolean flag = this.field_71158_b.jump;
+        boolean flag1 = this.field_71158_b.sneak;
         float f = 0.8F;
-        boolean flag2 = this.movementInput.moveForward >= f;
-        this.movementInput.updatePlayerMoveState();
-        Module noslow = Raven.moduleManager.getModuleByClazz(NoSlow.class);
-        boolean stopSprint = noslow == null || !noslow.isEnabled() || NoSlow.slowed.getInput() == 80;
-        if ((this.isUsingItem() || mc.thePlayer.isBlocking()) && !this.isRiding()) {
-            MovementInput var10000 = this.movementInput;
+        boolean flag2 = this.field_71158_b.moveForward >= f;
+        this.field_71158_b.updatePlayerMoveState();
+        Module nosalow = Raven.moduleManager.getModuleByClazz(NoSlow.class);
+        boolean stopSprint = nosalow == null || !nosalow.isEnabled() || NoSlow.slowed.getInput() == 80;
+        if ((this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) && !this.isRiding()) {
+            MovementInput var10000 = this.field_71158_b;
             float slowed = NoSlow.getSlowed();
             var10000.moveStrafe *= slowed;
-            var10000 = this.movementInput;
+            var10000 = this.field_71158_b;
             var10000.moveForward *= slowed;
             if (stopSprint) {
-                this.sprintToggleTimer = 0;
+                this.field_71156_d = 0;
             }
         }
 
-        this.pushOutOfBlocks(this.posX - (double)this.width * 0.35, this.getEntityBoundingBox().minY + (double)0.5F, this.posZ + (double)this.width * 0.35);
-        this.pushOutOfBlocks(this.posX - (double)this.width * 0.35, this.getEntityBoundingBox().minY + (double)0.5F, this.posZ - (double)this.width * 0.35);
-        this.pushOutOfBlocks(this.posX + (double)this.width * 0.35, this.getEntityBoundingBox().minY + (double)0.5F, this.posZ - (double)this.width * 0.35);
-        this.pushOutOfBlocks(this.posX + (double)this.width * 0.35, this.getEntityBoundingBox().minY + (double)0.5F, this.posZ + (double)this.width * 0.35);
-        boolean flag3 = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
-        if (this.onGround && !flag1 && !flag2 && this.movementInput.moveForward >= f && !this.isSprinting() && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness)) {
-            if (this.sprintToggleTimer <= 0 && !this.mc.gameSettings.keyBindSprint.isKeyDown()) {
-                this.sprintToggleTimer = 7;
+        this.pushOutOfBlocks(this.posX - (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
+        this.pushOutOfBlocks(this.posX - (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ - (double) this.width * 0.35);
+        this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ - (double) this.width * 0.35);
+        this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
+        boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
+        if (this.onGround && !flag1 && !flag2 && this.field_71158_b.moveForward >= f && !this.isSprinting() && flag3 && (!(this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) || !stopSprint) && !this.isPotionActive(Potion.blindness)) {
+            if (this.field_71156_d <= 0 && !this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) {
+                this.field_71156_d = 7;
             } else {
                 this.setSprinting(true);
             }
         }
 
-        if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown()) {
+        if ((!this.isSprinting() && this.field_71158_b.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) || (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround)) {
             this.setSprinting(true);
         }
 
-        if (this.isSprinting() && (this.movementInput.moveForward < f || this.isCollidedHorizontally || !flag3)) {
+        if (this.isSprinting() && (this.field_71158_b.moveForward < f || this.isCollidedHorizontally || !flag3)) {
             this.setSprinting(false);
         }
 
         if (this.capabilities.allowFlying) {
-            if (this.mc.playerController.isSpectatorMode()) {
+            if (this.field_71159_c.playerController.isSpectatorMode()) {
                 if (!this.capabilities.isFlying) {
                     this.capabilities.isFlying = true;
                     this.sendPlayerAbilities();
                 }
-            } else if (!flag && this.movementInput.jump) {
+            } else if (!flag && this.field_71158_b.jump) {
                 if (this.flyToggleTimer == 0) {
                     this.flyToggleTimer = 7;
                 } else {
@@ -322,44 +290,44 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             }
         }
 
-        if (this.capabilities.isFlying && this.isCurrentViewEntity()) {
-            if (this.movementInput.sneak) {
-                this.motionY -= (double)(this.capabilities.getFlySpeed() * 3.0F);
+        if (this.capabilities.isFlying && this.func_175160_A()) {
+            if (this.field_71158_b.sneak) {
+                this.motionY -= (double) (this.capabilities.getFlySpeed() * 3.0F);
             }
 
-            if (this.movementInput.jump) {
-                this.motionY += (double)(this.capabilities.getFlySpeed() * 3.0F);
+            if (this.field_71158_b.jump) {
+                this.motionY += (double) (this.capabilities.getFlySpeed() * 3.0F);
             }
         }
 
-        if (this.isRidingHorse()) {
-            if (this.horseJumpPowerCounter < 0) {
-                ++this.horseJumpPowerCounter;
-                if (this.horseJumpPowerCounter == 0) {
-                    this.horseJumpPower = 0.0F;
+        if (this.func_110317_t()) {
+            if (this.field_110320_a < 0) {
+                ++this.field_110320_a;
+                if (this.field_110320_a == 0) {
+                    this.field_110321_bQ = 0.0F;
                 }
             }
 
-            if (flag && !this.movementInput.jump) {
-                this.horseJumpPowerCounter = -10;
-                this.sendHorseJump();
-            } else if (!flag && this.movementInput.jump) {
-                this.horseJumpPowerCounter = 0;
-                this.horseJumpPower = 0.0F;
+            if (flag && !this.field_71158_b.jump) {
+                this.field_110320_a = -10;
+                this.func_110318_g();
+            } else if (!flag && this.field_71158_b.jump) {
+                this.field_110320_a = 0;
+                this.field_110321_bQ = 0.0F;
             } else if (flag) {
-                ++this.horseJumpPowerCounter;
-                if (this.horseJumpPowerCounter < 10) {
-                    this.horseJumpPower = (float)this.horseJumpPowerCounter * 0.1F;
+                ++this.field_110320_a;
+                if (this.field_110320_a < 10) {
+                    this.field_110321_bQ = (float) this.field_110320_a * 0.1F;
                 } else {
-                    this.horseJumpPower = 0.8F + 2.0F / (float)(this.horseJumpPowerCounter - 9) * 0.1F;
+                    this.field_110321_bQ = 0.8F + 2.0F / (float) (this.field_110320_a - 9) * 0.1F;
                 }
             }
         } else {
-            this.horseJumpPower = 0.0F;
+            this.field_110321_bQ = 0.0F;
         }
 
         super.onLivingUpdate();
-        if (this.onGround && this.capabilities.isFlying && !this.mc.playerController.isSpectatorMode()) {
+        if (this.onGround && this.capabilities.isFlying && !this.field_71159_c.playerController.isSpectatorMode()) {
             this.capabilities.isFlying = false;
             this.sendPlayerAbilities();
         }
