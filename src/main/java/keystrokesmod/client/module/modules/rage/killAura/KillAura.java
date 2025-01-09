@@ -311,7 +311,9 @@ public class KillAura extends Module {
 
     private void blocking(boolean state) {
         if (autoBlock.getInput() == 7) {
-            mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
+            if (!state) {
+                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
+            }
         } else {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
         }
