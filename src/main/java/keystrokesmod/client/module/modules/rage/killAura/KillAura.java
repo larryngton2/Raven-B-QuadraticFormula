@@ -243,6 +243,9 @@ public class KillAura extends Module {
             case 6: // Smart
                 smartAb(entity);
                 break;
+            case 7:
+                NCPAb();
+                break;
             default:
                 setBlockingState(false);
                 break;
@@ -279,6 +282,11 @@ public class KillAura extends Module {
         setBlockingState(((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) && mc.thePlayer.motionY >= 0) || e.hurtTime >= 5);
     }
 
+    private void NCPAb() {
+        mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f));
+        setBlockingState(true);
+    }
+
     private void setBlockingState(boolean state) {
         if (packet.isToggled()) {
             packetBlocking(state);
@@ -290,15 +298,24 @@ public class KillAura extends Module {
     private void packetBlocking(boolean state) {
         if (state && !isBlocking) {
             mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
-            isBlocking = true;
         } else if (!state && isBlocking) {
-            mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-            isBlocking = false;
+            if (autoBlock.getInput() == 7) {
+                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
+            } else {
+                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
+            }
         }
+
+        blocking = state;
     }
 
     private void blocking(boolean state) {
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
+        if (autoBlock.getInput() == 7) {
+            mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
+        } else {
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
+        }
+
         blocking = state;
     }
 

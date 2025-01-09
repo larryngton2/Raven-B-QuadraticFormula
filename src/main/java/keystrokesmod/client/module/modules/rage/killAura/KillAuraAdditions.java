@@ -23,8 +23,8 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
 
         //auto block options
-        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock, Smart"));
-        this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 6, 1));
+        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock, Smart, NCP"));
+        this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 7, 1));
         this.registerSetting(packet = new TickSetting("Packet Block", true));
 
         //rotation options
@@ -56,7 +56,8 @@ public class KillAuraAdditions extends Module {
         RELEASE,
         AAC,
         VANILLAREBLOCK,
-        SMART
+        SMART,
+        NCP
     }
 
     public void guiUpdate() {
