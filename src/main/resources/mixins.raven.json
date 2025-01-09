@@ -5,13 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "verbose": true,
   "mixins": [
+    "entity.MixinEntityPlayerSP",
     "entity.MixinEntityPlayer"
-  ],
-  "client": [
-    "entity.MixinEntityPlayerSP"
-  ],
-  "server": [],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  ]
 }

@@ -2,8 +2,8 @@ package keystrokesmod.client.module.modules.world;
 
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.modules.player.Freecam;
+import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

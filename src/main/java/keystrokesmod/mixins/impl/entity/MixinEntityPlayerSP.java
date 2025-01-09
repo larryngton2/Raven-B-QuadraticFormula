@@ -25,6 +25,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,38 +44,62 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         this.field_71157_e = p_setSprinting_1_ ? 600 : 0;
     }
 
-    protected Minecraft field_71159_c;
-    public MovementInput field_71158_b;
-    public NetHandlerPlayClient field_71174_a;
+    @Shadow
+    public int field_71157_e;
 
+    @Shadow
+    protected int field_71156_d;
+    @Shadow
+    public float field_71080_cy;
+    @Shadow
+    public float field_71086_bY;
+    @Shadow
+    protected Minecraft field_71159_c;
+    @Shadow
+    public MovementInput field_71158_b;
+
+    @Shadow
     protected boolean func_175160_A() {
         return this.field_71159_c.getRenderViewEntity() == this;
     }
 
+    @Shadow
+    public boolean func_110317_t() {
+        return this.ridingEntity != null && this.ridingEntity instanceof EntityHorse && ((EntityHorse) this.ridingEntity).isHorseSaddled();
+    }
+
+    @Shadow
+    private int field_110320_a;
+    @Shadow
+    private float field_110321_bQ;
+
+    @Shadow
     protected abstract void func_110318_g();
 
-    public boolean func_110317_t() {
-        return this.ridingEntity != null && this.ridingEntity instanceof EntityHorse && ((EntityHorse)this.ridingEntity).isHorseSaddled();
-    }
+    @Shadow
+    private boolean field_175171_bO;
+    @Shadow
+    @Final
+    public NetHandlerPlayClient field_71174_a;
 
     @Override
     @Shadow
     public abstract boolean isSneaking();
 
+    @Shadow
     private boolean field_175170_bN;
+    @Shadow
     private double field_175172_bI;
+    @Shadow
     private double field_175166_bJ;
-    private int field_110320_a;
-    private float field_110321_bQ;
+    @Shadow
     private double field_175167_bK;
+    @Shadow
     private float field_175164_bL;
+    @Shadow
     private float field_175165_bM;
-    private boolean field_175171_bO;
+    @Shadow
     private int field_175168_bP;
-    public int field_71157_e;
-    protected int field_71156_d;
-    public float field_71080_cy;
-    public float field_71086_bY;
 
     /**
      * @author a
@@ -101,6 +126,11 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         }
     }
 
+    /**
+     * @author a
+     * @reason a
+     */
+    @Overwrite
     public void func_175161_p() {
         PreMotionEvent preMotionEvent = new PreMotionEvent(
                 this.posX,
@@ -115,7 +145,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(preMotionEvent);
 
-        Utils.serverRotations = new float[] { preMotionEvent.getYaw(), preMotionEvent.getPitch() };
+        Utils.serverRotations = new float[]{preMotionEvent.getYaw(), preMotionEvent.getPitch()};
 
         boolean flag = preMotionEvent.isSprinting();
         if (flag != this.field_175171_bO) {
@@ -187,6 +217,11 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PostMotionEvent());
     }
 
+    /**
+     * @author a
+     * @reason a
+     */
+    @Overwrite
     public void func_70636_d() {
         if (this.field_71157_e > 0) {
             --this.field_71157_e;
@@ -257,20 +292,29 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ - (double) this.width * 0.35);
         this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
         boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
-        if (this.onGround && !flag1 && !flag2 && this.field_71158_b.moveForward >= f && !this.isSprinting() && flag3 && (!(this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) || !stopSprint) && !this.isPotionActive(Potion.blindness)) {
-            if (this.field_71156_d <= 0 && !this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) {
-                this.field_71156_d = 7;
-            } else {
-                this.setSprinting(true);
+
+        if (Sprint.always.isToggled()) {
+            this.setSprinting(true);
+        } else {
+            if (this.onGround && !flag1 && !flag2 && this.field_71158_b.moveForward >= f && !this.isSprinting() && flag3 && (!(this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) || !stopSprint) && !this.isPotionActive(Potion.blindness)) {
+                if (this.field_71156_d <= 0 && !this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) {
+                    this.field_71156_d = 7;
+                } else {
+                    this.setSprinting(true);
+                }
             }
         }
 
-        if ((!this.isSprinting() && this.field_71158_b.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) || (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround)) {
+        if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround) {
             this.setSprinting(true);
-        }
+        } else {
+            if ((!this.isSprinting() && this.field_71158_b.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.field_71159_c.gameSettings.keyBindSprint.isKeyDown())) {
+                this.setSprinting(true);
+            }
 
-        if (this.isSprinting() && (this.field_71158_b.moveForward < f || this.isCollidedHorizontally || !flag3)) {
-            this.setSprinting(false);
+            if (this.isSprinting() && (this.field_71158_b.moveForward < f || this.isCollidedHorizontally || !flag3)) {
+                this.setSprinting(false);
+            }
         }
 
         if (this.capabilities.allowFlying) {

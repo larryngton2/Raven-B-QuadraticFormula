@@ -22,6 +22,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(EntityPlayer.class)
 public abstract class MixinEntityPlayer extends EntityLivingBase {
@@ -61,6 +62,11 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
         this.func_71064_a(p_func_71029_a_1_, 1);
     }
 
+    /**
+     * @author a
+     * @reason a
+     */
+    @Overwrite
     public void func_71059_n(Entity p_attackTargetEntityWithCurrentItem_1_) {
         if (ForgeHooks.onPlayerAttackTarget(((EntityPlayer) (Object) this), p_attackTargetEntityWithCurrentItem_1_)) {
             if (p_attackTargetEntityWithCurrentItem_1_.canAttackWithItem() && !p_attackTargetEntityWithCurrentItem_1_.hitByEntity(this)) {

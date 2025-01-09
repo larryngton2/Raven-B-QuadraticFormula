@@ -517,6 +517,69 @@ public class Utils {
          Block block1 = Minecraft.getMinecraft().theWorld.getBlockState(blockpos).getBlock();
          return block1 instanceof BlockLadder && !entity.onGround;
       }
+
+      public static float[] fixRotation(float yaw, float n2, final float n3, final float n4) {
+         float n5 = yaw - n3;
+         final float abs = Math.abs(n5);
+         final float n7 = n2 - n4;
+         final float n8 = mc.gameSettings.mouseSensitivity * 0.6f + 0.2f;
+         final double n9 = n8 * n8 * n8 * 1.2;
+         final float n10 = (float) (Math.round((double) n5 / n9) * n9);
+         final float n11 = (float) (Math.round((double) n7 / n9) * n9);
+         yaw = n3 + n10;
+         n2 = n4 + n11;
+         if (abs <= 0.04) {
+            yaw += (float) ((abs > 0.0f) ? 0.01 : -0.01);
+         }
+         return new float[]{yaw, clampTo90(n2)};
+      }
+
+      public static float clampTo90(final float n) {
+         return MathHelper.clamp_float(n, -90.0f, 90.0f);
+      }
+
+      public static float[] getRotations(BlockPos blockPos, final float n, final float n2) {
+         final float[] array = getRotations(blockPos);
+         return fixRotation(array[0], array[1], n, n2);
+      }
+
+      public static float[] getRotations(BlockPos blockPos) {
+         double x = blockPos.getX() + 0.45 - mc.thePlayer.posX;
+         double y = blockPos.getY() + 0.45 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+         double z = blockPos.getZ() + 0.45 - mc.thePlayer.posZ;
+
+         float angleToBlock = (float) (Math.atan2(z, x) * (180 / Math.PI)) - 90.0f;
+         float deltaYaw = MathHelper.wrapAngleTo180_float(angleToBlock - mc.thePlayer.rotationYaw);
+         float yaw = mc.thePlayer.rotationYaw + deltaYaw;
+
+         double distance = MathHelper.sqrt_double(x * x + z * z);
+         float angleToBlockPitch = (float) (-(Math.atan2(y, distance) * (180 / Math.PI)));
+         float deltaPitch = MathHelper.wrapAngleTo180_float(angleToBlockPitch - mc.thePlayer.rotationPitch);
+         float pitch = mc.thePlayer.rotationPitch + deltaPitch;
+
+         pitch = clampTo90(pitch);
+
+         return new float[] { yaw, pitch };
+      }
+
+      public static float[] getRotations(Vec3 vec3) {
+         double x = vec3.xCoord + 0.45 - mc.thePlayer.posX;
+         double y = vec3.yCoord + 0.45 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+         double z = vec3.zCoord + 0.45 - mc.thePlayer.posZ;
+
+         float angleToBlock = (float) (Math.atan2(z, x) * (180 / Math.PI)) - 90.0f;
+         float deltaYaw = MathHelper.wrapAngleTo180_float(angleToBlock - mc.thePlayer.rotationYaw);
+         float yaw = mc.thePlayer.rotationYaw + deltaYaw;
+
+         double distance = MathHelper.sqrt_double(x * x + z * z);
+         float angleToBlockPitch = (float) (-(Math.atan2(y, distance) * (180 / Math.PI)));
+         float deltaPitch = MathHelper.wrapAngleTo180_float(angleToBlockPitch - mc.thePlayer.rotationPitch);
+         float pitch = mc.thePlayer.rotationPitch + deltaPitch;
+
+         pitch = clampTo90(pitch);
+
+         return new float[] { yaw, pitch };
+      }
    }
 
    public static class Client {

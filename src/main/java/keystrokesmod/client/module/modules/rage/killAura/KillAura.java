@@ -17,7 +17,8 @@ import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C02PacketUseEntity.Action;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -55,7 +56,8 @@ public class KillAura extends Module {
         this.registerSetting(onlyWeapon = new TickSetting("Only Weapon", false));
     }
 
-    private Entity currentTarget = null;
+    public static Entity currentTarget = null;
+
     private long lastSwitchTime = 0;
     private static long lastTargetTime = 0;
     private static boolean isBlocking = false;

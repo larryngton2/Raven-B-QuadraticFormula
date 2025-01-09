@@ -2,8 +2,8 @@ package keystrokesmod.client.module.modules.minigames;
 
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.modules.render.PlayerESP;
+import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;

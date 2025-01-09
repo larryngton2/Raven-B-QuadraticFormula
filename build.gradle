@@ -78,7 +78,16 @@ minecraft {
 
     mappings = 'stable_20'
     makeObfSourceJar = false
-    clientJvmArgs += '-Dfml.coreMods.load=keystrokesmod.mixins.MixinLoader'
+    //clientJvmArgs += '-Dfml.coreMods.load=keystrokesmod.mixins.MixinLoader'
+}
+
+mixin {
+    defaultObfuscationEnv searge
+    sourceSets {
+        main {
+            ext.refMap = 'mixins.raven.refmap.json'
+        }
+    }
 }
 
 shadowJar {
