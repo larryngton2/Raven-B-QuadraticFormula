@@ -5,6 +5,7 @@ import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.movement.NoSlow;
 import keystrokesmod.client.module.modules.movement.Sprint;
+import keystrokesmod.client.utils.MoveUtil;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.event.motion.PostMotionEvent;
 import keystrokesmod.client.utils.event.motion.PreMotionEvent;
@@ -293,9 +294,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
         boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
 
-        if (Sprint.always.isToggled()) {
-            this.setSprinting(true);
-        } else {
+        if (!Sprint.omni.isToggled()) {
             if (this.onGround && !flag1 && !flag2 && this.field_71158_b.moveForward >= f && !this.isSprinting() && flag3 && (!(this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) || !stopSprint) && !this.isPotionActive(Potion.blindness)) {
                 if (this.field_71156_d <= 0 && !this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) {
                     this.field_71156_d = 7;
@@ -305,7 +304,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             }
         }
 
-        if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround) {
+        if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround && MoveUtil.isMoving()) {
             this.setSprinting(true);
         } else {
             if ((!this.isSprinting() && this.field_71158_b.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.field_71159_c.gameSettings.keyBindSprint.isKeyDown())) {

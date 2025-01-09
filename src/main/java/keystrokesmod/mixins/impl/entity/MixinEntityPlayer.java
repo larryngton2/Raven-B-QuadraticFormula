@@ -174,16 +174,4 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
 
         }
     }
-
-    /**
-    @Inject(method = "isBlocking", at = @At("RETURN"), cancellable = true)
-    private void isBlocking(CallbackInfoReturnable<Boolean> cir) {
-        Module kackaura = Raven.moduleManager.getModuleByClazz(KillAura.class);
-        if (kackaura != null && kackaura.isEnabled() && KillAura.blocking) {
-            cir.setReturnValue(true);
-        }
-        cir.setReturnValue(cir.getReturnValue());
-    }
-    */
-
 }
