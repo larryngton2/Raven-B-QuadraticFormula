@@ -15,13 +15,9 @@ public class Friends extends Command {
     public void onCall(String[] args){
         if (args.length == 0){
             listFriends();
-        }
-
-        else if(args[0].equalsIgnoreCase("list")) {
+        } else if(args[0].equalsIgnoreCase("list")) {
             listFriends();
-        }
-
-        else if(args.length == 2){
+        } else if(args.length == 2){
             if(args[0].equalsIgnoreCase("add")){
                 boolean added = AimAssist.addFriend(args[1]);
                 if (added) {
@@ -38,8 +34,7 @@ public class Friends extends Command {
                     print("An error occurred!");
                 }
             }
-        }
-        else {
+        } else {
             this.incorrectArgs();
         }
     }
@@ -47,8 +42,7 @@ public class Friends extends Command {
     public void listFriends(){
         if(AimAssist.getFriends().isEmpty()){
             print("You have no friends. :(");
-        }
-        else {
+        } else {
             print("Your friends are:");
             for (Entity entity : AimAssist.getFriends()){
                 print(entity.getName());

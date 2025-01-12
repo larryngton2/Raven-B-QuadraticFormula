@@ -1,6 +1,7 @@
 package keystrokesmod.client.module.modules.rage.killAura;
 
 import keystrokesmod.client.module.Module;
+import keystrokesmod.client.module.modules.combat.AimAssist;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
@@ -9,6 +10,7 @@ import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.MathUtils;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.event.motion.PreMotionEvent;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,9 +27,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static keystrokesmod.client.module.modules.rage.killAura.KillAuraAdditions.*;
+import static keystrokesmod.client.utils.Utils.Player.isEnemy;
 
 public class KillAura extends Module {
     public static DescriptionSetting desc;
@@ -138,13 +142,25 @@ public class KillAura extends Module {
 
     private EntityLivingBase findNextTarget() {
         List<Entity> targets = new ArrayList<>();
+        EntityLivingBase enemyTarget = null;
+
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity)) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
                 if (distanceToEntity <= searchRange.getInput()) {
-                    targets.add(entity);
+                    EntityPlayer playerEntity = (EntityPlayer) entity;
+
+                    if (isEnemy(playerEntity)) {
+                        enemyTarget = playerEntity;
+                    } else {
+                        targets.add(entity);
+                    }
                 }
             }
+        }
+
+        if (enemyTarget != null) {
+            return enemyTarget;
         }
 
         if (targets.isEmpty()) {
@@ -161,23 +177,29 @@ public class KillAura extends Module {
         double leastHealth = Float.MAX_VALUE;
 
         for (Entity entity : mc.theWorld.loadedEntityList) {
-            if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity)) {
-                double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
+            double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
+
+            if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity) && !AimAssist.isAFriend(entity) && distanceToEntity <= searchRange.getInput()) {
+                EntityPlayer playerEntity = (EntityPlayer) entity;
+
+                if (Utils.Player.isEnemy(playerEntity)) {
+                    target = playerEntity;
+                    break;
+                }
+
                 switch ((int) targetPriority.getInput()) {
                     case 2:
-                        if (distanceToEntity <= searchRange.getInput() && distanceToEntity < closestDistance) {
+                        if (distanceToEntity < closestDistance) {
                             target = (EntityLivingBase) entity;
                             closestDistance = distanceToEntity;
                         }
                         break;
                     case 3:
-                        if (distanceToEntity <= searchRange.getInput()) {
-                            EntityLivingBase potentialTarget = (EntityLivingBase) entity;
-                            float potentialHealth = potentialTarget.getHealth();
-                            if (potentialHealth < leastHealth) {
-                                target = potentialTarget;
-                                leastHealth = potentialHealth;
-                            }
+                        EntityLivingBase potentialTarget = (EntityLivingBase) entity;
+                        float potentialHealth = potentialTarget.getHealth();
+                        if (potentialHealth < leastHealth) {
+                            target = potentialTarget;
+                            leastHealth = potentialHealth;
                         }
                         break;
                 }

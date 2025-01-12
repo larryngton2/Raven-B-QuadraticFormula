@@ -67,6 +67,7 @@ public class Utils {
    public static float renderYaw;
    public static float prevRenderYaw;
    public static float[] serverRotations = new float[] { 0, 0 } ;
+   public static HashSet<String> enemies = new HashSet<>();
 
    public static class Player {
       public static void setRenderYaw(float yaw) {
@@ -454,6 +455,30 @@ public class Utils {
             p.isSwingInProgress = true;
          }
 
+      }
+
+      public static boolean addEnemy(String name) {
+         if (enemies.add(name.toLowerCase())) {
+            sendMessageToSelf("&7Added enemy&7: &b" + name);
+            return true;
+         }
+         return false;
+      }
+
+      public static boolean removeEnemy(String name) {
+         if (enemies.remove(name.toLowerCase())) {
+            sendMessageToSelf("&7Removed enemy&7: &b" + name);
+            return true;
+         }
+         return false;
+      }
+
+      public static boolean isEnemy(EntityPlayer entityPlayer) {
+         return !enemies.isEmpty() && enemies.contains(entityPlayer.getName().toLowerCase());
+      }
+
+      public static boolean isEnemy(String name) {
+         return !enemies.isEmpty() && enemies.contains(name.toLowerCase());
       }
 
       public static String formatColor(String txt) {

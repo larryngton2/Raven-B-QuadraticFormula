@@ -34,7 +34,7 @@ public class CommandManager {
         this.addCommand(new Friends());
         this.addCommand(new VersionCommand());
         this.addCommand(new F3Name());
-
+        this.addCommand(new Enemy());
     }
 
     public void addCommand(Command c) {
