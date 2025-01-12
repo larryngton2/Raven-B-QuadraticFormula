@@ -121,6 +121,7 @@ public class ModuleManager {
       addModule(new AutoMeow());
       addModule(new Scaffold());
       addModule(new TargetHUD());
+      addModule(new AutoHead());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.

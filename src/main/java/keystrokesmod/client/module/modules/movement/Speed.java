@@ -11,12 +11,13 @@ import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.potion.Potion;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Speed extends Module {
    public static DescriptionSetting dc;
    public static SliderSetting mode;
    public static DoubleSliderSetting speed;
-
-   private int offGroundTicks, onGroundTicks;
 
    public Speed() {
       super("Speed", ModuleCategory.movement);
@@ -25,15 +26,20 @@ public class Speed extends Module {
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
    }
 
+   private int offGroundTicks, onGroundTicks;
+   private int level = 1;
+   private double moveSpeed = 0.2873;
+    private int timerDelay;
+
    public enum modes {
-      STRAFE,
-      GROUNDSTRAFE,
-      BHOP,
-      NCP_TICK_5,
-      MINIBLOX,
-      VULCAN_DEPRECATED,
-      VULCAN_VCLIP_DEPRECATED,
-      NCP_TICK_4
+      Strafe,
+      GroundStrafe,
+      BHop,
+      NCP_Tick5,
+      Miniblox,
+      Vulcan_Deprecated,
+      NCP_Tick4,
+      NCPBHop
    }
 
    public void guiUpdate() {
@@ -41,16 +47,37 @@ public class Speed extends Module {
    }
 
    @Override
+   public void onEnable() {
+      Utils.Client.getTimer().timerSpeed = 1.0f;
+
+      switch ((int) mode.getInput()) {
+         case 8:
+            level = !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.getEntityBoundingBox().offset(0.0, mc.thePlayer.motionY, 0.0)).isEmpty() || mc.thePlayer.isCollidedVertically ? 1 : 4;
+            break;
+      }
+   }
+
+   @Override
    public void onDisable() {
       Utils.Client.getTimer().timerSpeed = 1.0f;
 
-      if (mode.getInput() == 8) {
-         MoveUtil.stopXZ();
+      switch ((int) mode.getInput()) {
+         case 7:
+            MoveUtil.stopXZ();
+            break;
+         case 8:
+            moveSpeed = getBaseMoveSpeed();
+            level = 0;
+            break;
       }
    }
 
    @Override
    public void update() {
+      if (mc.thePlayer.moveForward == 0 && mc.thePlayer.moveStrafing == 0) {
+         return;
+      }
+
       if (mc.thePlayer.onGround) {
          offGroundTicks = 0;
          onGroundTicks++;
@@ -58,12 +85,6 @@ public class Speed extends Module {
          onGroundTicks = 0;
          offGroundTicks++;
       }
-
-      if (mc.thePlayer.moveForward == 0 && mc.thePlayer.moveStrafing == 0) {
-         return;
-      }
-
-      Module vroom = Raven.moduleManager.getModuleByClazz(Speed.class);
 
       if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7 && mode.getInput() != 8) {
          mc.thePlayer.jump();
@@ -179,71 +200,6 @@ public class Speed extends Module {
          break;
 
          case 7: {
-            if (MoveUtil.speed() < 0.22) {
-               MoveUtil.strafe(0.22);
-            }
-
-            if (mc.thePlayer.onGround) {
-               mc.thePlayer.jump();
-               if (mc.thePlayer.isPotionActive(Potion.moveSpeed) && mc.thePlayer.hurtTime == 0) {
-                  MoveUtil.strafe((.06 * (1 + (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier())) + 0.433));
-               } else if (mc.thePlayer.hurtTime == 0) {
-                  MoveUtil.strafe(0.433);
-               } else {
-                  MoveUtil.strafe();
-               }
-
-               if (vroom.isEnabled()) {
-                  Utils.Client.getTimer().timerSpeed = 1.004f;
-               }
-            }
-
-            if (offGroundTicks == 1) {
-               if (mc.thePlayer.isPotionActive(Potion.moveSpeed) && mc.thePlayer.hurtTime == 0) {
-                  MoveUtil.strafe((.06 * (1 + (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier())) + 0.308));
-               } else if (mc.thePlayer.hurtTime == 0) {
-                  MoveUtil.strafe(0.308);
-               } else {
-                  MoveUtil.strafe();
-               }
-            }
-
-            if (offGroundTicks == 2) {
-               if (mc.thePlayer.isPotionActive(Potion.moveSpeed) && mc.thePlayer.hurtTime == 0) {
-                  MoveUtil.strafe((.053 * (1 + (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier())) + 0.3035));
-               } else if (mc.thePlayer.hurtTime == 0) {
-                  MoveUtil.strafe(0.3035);
-               } else {
-                  MoveUtil.strafe();
-               }
-            }
-
-            if (MoveUtil.speed() < 0.22) {
-               MoveUtil.strafe(0.22);
-            }
-
-            if (offGroundTicks == 0) {
-               MoveUtil.strafe();
-               mc.thePlayer.motionY = -0.05;
-            }
-            if (offGroundTicks == 1) {
-               MoveUtil.strafe();
-               mc.thePlayer.motionY = -0.22319999363422365;
-            }
-            if (offGroundTicks == 2) {
-               MoveUtil.strafe();
-               //mc.thePlayer.motionY = -3;
-            }
-
-            if (offGroundTicks == 3) {
-               MoveUtil.strafe();
-            }
-
-            burstMovement(mc.thePlayer.posZ, mc.thePlayer.posX, offGroundTicks);
-         }
-         break;
-
-         case 8: {
             switch (offGroundTicks) {
                case 4: {
                   if (mc.thePlayer.posY % 1.0 == 0.16610926093821377) {
@@ -277,27 +233,16 @@ public class Speed extends Module {
       }
    }
 
-   public void burstMovement(double currentX, double currentZ, int airTicks) {
-      double predictedX = (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * 0.9100000262260437;
-      double predictedZ = (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * 0.9100000262260437;
-      double burstFactor = 1000000;
-      double deltaX = currentX * burstFactor;
-      double deltaZ = currentZ * burstFactor;
+   private double getBaseMoveSpeed() {
+      double baseSpeed = 0.2873;
+      if (mc.thePlayer.isPotionActive(Potion.moveSpeed))
+         baseSpeed *= 1.0 + 0.2 * (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1);
+      return baseSpeed;
+   }
 
-      double differenceX = deltaX - predictedX;
-      double differenceZ = deltaZ - predictedZ;
-      double difference = Math.hypot(differenceX, differenceZ);
-
-      difference /= 1.3;
-      difference -= 0.026;
-
-      if (mc.thePlayer.ticksExisted % 2 == 0) {
-         //alan wood
-      }
-      boolean invalid = difference > 0.0075 && Math.hypot(deltaX, deltaZ) > 0.25 && airTicks > 2;
-
-      if (!invalid) {
-         MoveUtil.strafe();
-      }
+   private double round(double value) {
+      BigDecimal bigDecimal = new BigDecimal(value);
+      bigDecimal = bigDecimal.setScale(3, RoundingMode.HALF_UP);
+      return bigDecimal.doubleValue();
    }
 }

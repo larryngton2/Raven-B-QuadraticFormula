@@ -29,6 +29,5 @@ public class Sprint extends Module {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
          }
       }
-
    }
 }

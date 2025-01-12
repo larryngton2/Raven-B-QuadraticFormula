@@ -8,6 +8,7 @@ import keystrokesmod.client.module.modules.other.NameHider;
 import keystrokesmod.client.module.modules.other.StringEncrypt;
 import keystrokesmod.client.module.modules.player.SafeWalk;
 import keystrokesmod.client.module.modules.render.AntiShuffle;
+import keystrokesmod.client.module.modules.world.Scaffold;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemBlock;
@@ -43,14 +44,15 @@ public class ASMEventHandler {
 
    /**
     * called when an entity moves
-    * ASM Modules : SafeWalk
+    * ASM Modules : SafeWalk, FlagFold
     */
    public static boolean onEntityMove(Entity entity) {
       if (entity == mc.thePlayer && mc.thePlayer.onGround) {
          Module safeWalk = Raven.moduleManager.getModuleByClazz(SafeWalk.class);
+         Module scaffold = Raven.moduleManager.getModuleByClazz(Scaffold.class);
 
-         if (safeWalk != null && safeWalk.isEnabled() && !SafeWalk.doShift.isToggled()) {
-            if (SafeWalk.blocksOnly.isToggled()) {
+         if (safeWalk != null && safeWalk.isEnabled() && !SafeWalk.doShift.isToggled() || scaffold != null && scaffold.isEnabled() && Scaffold.safewalk.isToggled()) {
+            if (SafeWalk.blocksOnly.isToggled() || scaffold.isEnabled()) {
                ItemStack i = mc.thePlayer.getHeldItem();
                if (i == null || !(i.getItem() instanceof ItemBlock)) {
                   return mc.thePlayer.isSneaking();

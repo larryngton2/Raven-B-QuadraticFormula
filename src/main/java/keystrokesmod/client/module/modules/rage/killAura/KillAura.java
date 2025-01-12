@@ -61,7 +61,6 @@ public class KillAura extends Module {
     private long lastSwitchTime = 0;
     private static long lastTargetTime = 0;
     private static boolean isBlocking = false;
-    public static boolean blocking;
 
     @Override
     public void onEnable() {
@@ -73,6 +72,7 @@ public class KillAura extends Module {
     public void onDisable() {
         super.onDisable();
         setBlockingState(false);
+        NCPAb(false);
     }
 
     public void update() {
@@ -89,7 +89,7 @@ public class KillAura extends Module {
         }
 
         if (!targetSwitch.isToggled()) {
-            currentTarget = findClosestEntity();
+            currentTarget = findTarget();
             lastSwitchTime = System.currentTimeMillis();
         } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
             currentTarget = findNextTarget();
@@ -128,6 +128,9 @@ public class KillAura extends Module {
                         mc.thePlayer.motionZ *= 0.6;
                     }
                     lastTargetTime = System.currentTimeMillis();
+                    if (autoBlock.getInput() == 7) {
+                        NCPAb(true);
+                    }
                 }
             }
         }
@@ -152,20 +155,35 @@ public class KillAura extends Module {
         return (EntityLivingBase) targets.get((index + 1) % targets.size());
     }
 
-    public static EntityLivingBase findClosestEntity() {
-        EntityLivingBase closestEntity = null;
+    public static EntityLivingBase findTarget() {
+        EntityLivingBase target = null;
         double closestDistance = searchRange.getInput();
+        double leastHealth = Float.MAX_VALUE;
 
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity)) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
-                if (distanceToEntity <= searchRange.getInput() && distanceToEntity < closestDistance) {
-                    closestEntity = (EntityLivingBase) entity;
-                    closestDistance = distanceToEntity;
+                switch ((int) targetPriority.getInput()) {
+                    case 2:
+                        if (distanceToEntity <= searchRange.getInput() && distanceToEntity < closestDistance) {
+                            target = (EntityLivingBase) entity;
+                            closestDistance = distanceToEntity;
+                        }
+                        break;
+                    case 3:
+                        if (distanceToEntity <= searchRange.getInput()) {
+                            EntityLivingBase potentialTarget = (EntityLivingBase) entity;
+                            float potentialHealth = potentialTarget.getHealth();
+                            if (potentialHealth < leastHealth) {
+                                target = potentialTarget;
+                                leastHealth = potentialHealth;
+                            }
+                        }
+                        break;
                 }
             }
         }
-        return closestEntity;
+        return target;
     }
 
     private void handleRotation(Entity entity) {
@@ -243,26 +261,23 @@ public class KillAura extends Module {
             case 6: // Smart
                 smartAb(entity);
                 break;
-            case 7:
-                NCPAb();
-                break;
             default:
                 setBlockingState(false);
                 break;
         }
     }
 
-    private void releaseAb(Entity e) {
+    private void releaseAb(EntityLivingBase e) {
+        setBlockingState(e.hurtTime >= 5 || mc.thePlayer.getDistanceToEntity(e) > attackRange.getInput());
+    }
+
+    private void AACAb(Entity e) {
         if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
             setBlockingState(false);
             attack(e);
             lastTargetTime = System.currentTimeMillis();
         }
         mc.addScheduledTask(() -> setBlockingState(true));
-    }
-
-    private void AACAb(Entity e) {
-        releaseAb(e);
 
         if (mc.thePlayer.ticksExisted % 2 == 0) {
             mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
@@ -282,9 +297,12 @@ public class KillAura extends Module {
         setBlockingState(((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) && mc.thePlayer.motionY >= 0) || e.hurtTime >= 5);
     }
 
-    private void NCPAb() {
-        mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f));
-        setBlockingState(true);
+    private void NCPAb(boolean state) {
+        if (state) {
+            mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f));
+        } else {
+            mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
+        }
     }
 
     private void setBlockingState(boolean state) {
@@ -299,26 +317,15 @@ public class KillAura extends Module {
         if (state && !isBlocking) {
             mc.getNetHandler().addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
         } else if (!state && isBlocking) {
-            if (autoBlock.getInput() == 7) {
-                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
-            } else {
-                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
-            }
+            mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
         }
 
-        blocking = state;
+        isBlocking = state;
     }
 
     private void blocking(boolean state) {
-        if (autoBlock.getInput() == 7) {
-            if (!state) {
-                mc.getNetHandler().addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), EnumFacing.DOWN));
-            }
-        } else {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
-        }
-
-        blocking = state;
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), state);
+        isBlocking = state;
     }
 
     private void attack(Entity e) {

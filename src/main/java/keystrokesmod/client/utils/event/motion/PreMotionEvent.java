@@ -16,10 +16,10 @@ public class PreMotionEvent extends Event {
     private double posZ;
     @Getter
     @Setter
-    private float yaw;
+    public float yaw;
     @Setter
     @Getter
-    private float pitch;
+    public float pitch;
     @Setter
     @Getter
     private boolean onGround;

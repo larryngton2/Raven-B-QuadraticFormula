@@ -2,9 +2,12 @@ package keystrokesmod.client.module;
 
 import com.google.gson.JsonObject;
 import keystrokesmod.client.module.setting.Setting;
+import keystrokesmod.client.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -22,10 +25,10 @@ public class Module {
    protected int defualtKeyCode = keycode;
 
    protected static Minecraft mc;
+
    private boolean isToggled = false;
 
    private String description = "";
-
 
    public Module(String name, ModuleCategory moduleCategory) {
       this.moduleName = name;

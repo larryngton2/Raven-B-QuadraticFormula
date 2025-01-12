@@ -478,6 +478,25 @@ public class Utils {
          return mc.thePlayer != null && mc.theWorld != null;
       }
 
+      public static MovingObjectPosition rayTraceWithCustomRotation(double blockReachDistance, float yaw, float pitch) {
+         Vec3 vec3 = mc.thePlayer.getPositionEyes(1f);
+         Vec3 vec31 = getVectorForRotation(pitch, yaw);
+         Vec3 vec32 = vec3.addVector(vec31.xCoord * blockReachDistance, vec31.yCoord * blockReachDistance, vec31.zCoord * blockReachDistance);
+         return mc.thePlayer.worldObj.rayTraceBlocks(vec3, vec32, false, false, true);
+      }
+
+      public static MovingObjectPosition rayTraceWithCustomRotation(double blockReachDistance, float[] rotation) {
+         return rayTraceWithCustomRotation(blockReachDistance, rotation[0], rotation[1]);
+      }
+
+      public static Vec3 getVectorForRotation(float p_getVectorForRotation_1_, float p_getVectorForRotation_2_) {
+         float f = MathHelper.cos(-p_getVectorForRotation_2_ * ((float)Math.PI / 180F) - (float)Math.PI);
+         float f1 = MathHelper.sin(-p_getVectorForRotation_2_ * ((float)Math.PI / 180F) - (float)Math.PI);
+         float f2 = -MathHelper.cos(-p_getVectorForRotation_1_ * ((float)Math.PI / 180F));
+         float f3 = MathHelper.sin(-p_getVectorForRotation_1_ * ((float)Math.PI / 180F));
+         return new Vec3((double)(f1 * f2), (double)f3, (double)(f * f2));
+      }
+
       public static boolean overVoid(double posX, double posY, double posZ) {
          for (int i = (int) posY; i > -1; i--) {
             if (!(mc.theWorld.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
