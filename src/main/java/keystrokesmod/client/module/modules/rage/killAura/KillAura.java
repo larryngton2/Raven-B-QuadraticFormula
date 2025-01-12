@@ -10,7 +10,6 @@ import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.MathUtils;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.event.motion.PreMotionEvent;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,7 +26,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static keystrokesmod.client.module.modules.rage.killAura.KillAuraAdditions.*;
@@ -92,7 +90,15 @@ public class KillAura extends Module {
             mc.thePlayer.setSprinting(true);
         }
 
-        if (!targetSwitch.isToggled()) {
+        if (pitSwitch.isToggled()) {
+            if (mc.thePlayer.getHealth() > 10) {
+                currentTarget = findTarget();
+                lastSwitchTime = System.currentTimeMillis();
+            } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
+                currentTarget = findNextTarget();
+                lastSwitchTime = System.currentTimeMillis();
+            }
+        } else if (!targetSwitch.isToggled()) {
             currentTarget = findTarget();
             lastSwitchTime = System.currentTimeMillis();
         } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
