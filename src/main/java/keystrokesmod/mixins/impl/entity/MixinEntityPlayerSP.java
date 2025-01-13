@@ -294,6 +294,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
         boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
 
+        Module theoppositeofwalk = Raven.moduleManager.getModuleByClazz(Sprint.class);
         if (!Sprint.omni.isToggled()) {
             if (this.onGround && !flag1 && !flag2 && this.field_71158_b.moveForward >= f && !this.isSprinting() && flag3 && (!(this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) || !stopSprint) && !this.isPotionActive(Potion.blindness)) {
                 if (this.field_71156_d <= 0 && !this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) {
@@ -304,7 +305,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             }
         }
 
-        if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround && MoveUtil.isMoving()) {
+        if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround && MoveUtil.isMoving() && theoppositeofwalk.isEnabled()) {
             this.setSprinting(true);
         } else {
             if ((!this.isSprinting() && this.field_71158_b.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.field_71159_c.gameSettings.keyBindSprint.isKeyDown())) {

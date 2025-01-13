@@ -31,7 +31,7 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(dRotation = new DescriptionSetting("Silent, Normal, Packet, None"));
         this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 4, 1));
         this.registerSetting(targetSwitch = new TickSetting("Target Switch", false));
-        this.registerSetting(pitSwitch = new TickSetting("Pit Switch", false)); // helps with vampire kit on the pit
+        this.registerSetting(pitSwitch = new TickSetting("Pit Switch", false)); // helps with vampire thing on the pit
         this.registerSetting(dTarget = new DescriptionSetting("None, Distance, Health"));
         this.registerSetting(targetPriority = new SliderSetting("Target Priority", 2, 1, 3, 1));
         this.registerSetting(targetSwitchDelay = new SliderSetting("Target Switch Delay (ms)", 500, 50, 1000, 50));

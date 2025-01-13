@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static keystrokesmod.client.module.modules.rage.killAura.KillAuraAdditions.*;
-import static keystrokesmod.client.utils.Utils.Player.isEnemy;
+import static keystrokesmod.client.utils.Utils.Player.*;
 
 public class KillAura extends Module {
     public static DescriptionSetting desc;
@@ -68,6 +68,7 @@ public class KillAura extends Module {
     public void onEnable() {
         super.onEnable();
         lastTargetTime = lastSwitchTime = System.currentTimeMillis();
+        resetInterpolation();
     }
 
     @Override
@@ -75,6 +76,7 @@ public class KillAura extends Module {
         super.onDisable();
         setBlockingState(false);
         NCPAb(false);
+        resetInterpolation();
     }
 
     public void update() {
@@ -91,7 +93,7 @@ public class KillAura extends Module {
         }
 
         if (pitSwitch.isToggled()) {
-            if (mc.thePlayer.getHealth() > 10) {
+            if (mc.thePlayer.getHealth() > 15) {
                 currentTarget = findTarget();
                 lastSwitchTime = System.currentTimeMillis();
             } else if (System.currentTimeMillis() - lastSwitchTime >= targetSwitchDelay.getInput()) {
@@ -113,7 +115,7 @@ public class KillAura extends Module {
 
             handleRotation(currentTarget);
 
-            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput()) {
+            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput() + 0.337) {
                 handleAutoBlock((EntityLivingBase) currentTarget);
             } else {
                 setBlockingState(false);
@@ -130,7 +132,7 @@ public class KillAura extends Module {
         }
 
         if (currentTarget != null) {
-            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput()) {
+            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput() + 0.337) {
                 if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
                     attack(currentTarget);
                     if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
@@ -153,7 +155,7 @@ public class KillAura extends Module {
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity)) {
                 double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
-                if (distanceToEntity <= searchRange.getInput()) {
+                if (distanceToEntity <= searchRange.getInput() + 0.337) {
                     EntityPlayer playerEntity = (EntityPlayer) entity;
 
                     if (isEnemy(playerEntity)) {
@@ -179,13 +181,13 @@ public class KillAura extends Module {
 
     public static EntityLivingBase findTarget() {
         EntityLivingBase target = null;
-        double closestDistance = searchRange.getInput();
+        double closestDistance = searchRange.getInput() + 0.337;
         double leastHealth = Float.MAX_VALUE;
 
         for (Entity entity : mc.theWorld.loadedEntityList) {
             double distanceToEntity = mc.thePlayer.getDistanceToEntity(entity);
 
-            if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity) && !AimAssist.isAFriend(entity) && distanceToEntity <= searchRange.getInput()) {
+            if (entity instanceof EntityPlayer && entity != mc.thePlayer && !AntiBot.bot(entity) && !AimAssist.isAFriend(entity) && distanceToEntity <= searchRange.getInput() + 0.337) {
                 EntityPlayer playerEntity = (EntityPlayer) entity;
 
                 if (Utils.Player.isEnemy(playerEntity)) {
@@ -235,9 +237,9 @@ public class KillAura extends Module {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPreMotion(PreMotionEvent e) {
         if (rotationMode.getInput() == 1 && currentTarget != null) {
-            float[] rotations = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
-            e.setYaw(rotations[0]);
-            e.setPitch(rotations[1]);
+            aimSilent(e, currentTarget, (float) rotationSpeed.getInput());
+        } else {
+            resetInterpolation();
         }
     }
 
@@ -296,7 +298,7 @@ public class KillAura extends Module {
     }
 
     private void releaseAb(EntityLivingBase e) {
-        setBlockingState(e.hurtTime >= 5 || mc.thePlayer.getDistanceToEntity(e) > attackRange.getInput());
+        setBlockingState(e.hurtTime >= 5 || mc.thePlayer.getDistanceToEntity(e) > attackRange.getInput() + 0.337);
     }
 
     private void AACAb(Entity e) {

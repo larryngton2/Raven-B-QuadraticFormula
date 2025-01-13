@@ -85,16 +85,27 @@ public class MoveUtil {
         return toRadians(rotationYaw);
     }
 
+    public static double getStrictDirection() {
+        float rotationYaw = mc.thePlayer.rotationYaw;
+
+        if (mc.thePlayer.movementInput.moveForward < 0F)
+            rotationYaw += 180F;
+
+        if (mc.thePlayer.movementInput.moveStrafe > 0F)
+            rotationYaw -= 90F;
+
+        if (mc.thePlayer.movementInput.moveStrafe < 0F)
+            rotationYaw += 90F;
+
+        return toRadians(rotationYaw);
+    }
+
     public static double speed() {
         return Math.hypot(mc.thePlayer.motionX, mc.thePlayer.motionZ);
     }
 
     public static void strafe() {
         strafe(speed(), mc.thePlayer);
-    }
-
-    public static void strafe(Entity entity) {
-        strafe(speed(), entity);
     }
 
     public static void strafe(final double speed) {

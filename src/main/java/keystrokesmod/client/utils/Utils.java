@@ -9,6 +9,7 @@ import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.utils.event.motion.PreMotionEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLadder;
@@ -56,6 +57,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 
+import static keystrokesmod.client.module.modules.rage.killAura.KillAuraAdditions.pitchOffset;
 import static keystrokesmod.client.utils.Utils.Java.rand;
 
 public class Utils {
@@ -68,6 +70,8 @@ public class Utils {
    public static float prevRenderYaw;
    public static float[] serverRotations = new float[] { 0, 0 } ;
    public static HashSet<String> enemies = new HashSet<>();
+   private static float interpolatedYaw = 0.0f;
+   private static float interpolatedPitch = 0.0f;
 
    public static class Player {
       public static void setRenderYaw(float yaw) {
@@ -123,6 +127,29 @@ public class Utils {
 
       public static RandomizedAim randomizedAim = new RandomizedAim();
 
+      public static void aimSilent(PreMotionEvent e, Entity currentTarget, float rotationSpeed) {
+         float[] targetRot = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
+         float[] fixedRotation = fixRotation(interpolatedYaw, interpolatedPitch, e.getYaw(), e.getPitch());
+
+         if (rotationSpeed == 1) {
+            e.setYaw(targetRot[0]);
+            e.setPitch(targetRot[1]);
+         } else {
+            interpolatedYaw = interpolate(interpolatedYaw,targetRot[0], rotationSpeed);
+            interpolatedPitch = interpolate(interpolatedPitch, targetRot[1], rotationSpeed);
+
+            e.setYaw(fixedRotation[0]);
+            e.setPitch(fixedRotation[1]);
+         }
+
+         mc.thePlayer.rotationYawHead = mc.thePlayer.renderYawOffset = fixedRotation[0];
+      }
+
+      public static void resetInterpolation() {
+         interpolatedYaw = 0.0f;
+         interpolatedPitch = 0.0f;
+      }
+
       public static void aim(Entity entity, float ps, float rotationSpeed, boolean offset) {
          if (entity != null) {
             float[] t = getTargetRotations(entity, ps);
@@ -137,6 +164,7 @@ public class Utils {
                if (offset) {
                   mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, randomizedYaw, rotationSpeed);
                   mc.thePlayer.rotationPitch = interpolate(mc.thePlayer.rotationPitch, randomizedPitch, rotationSpeed);
+
                } else {
                   mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, targetYaw, rotationSpeed);
                   mc.thePlayer.rotationPitch = interpolate(mc.thePlayer.rotationPitch, targetPitch, rotationSpeed);

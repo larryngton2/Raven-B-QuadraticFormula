@@ -9,10 +9,6 @@ import keystrokesmod.client.utils.MathUtils;
 import keystrokesmod.client.utils.MoveUtil;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.potion.Potion;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Speed extends Module {
    public static DescriptionSetting dc;
@@ -21,15 +17,12 @@ public class Speed extends Module {
 
    public Speed() {
       super("Speed", ModuleCategory.movement);
-      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip, BMC"));
+      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip, BMC, ONCPFHop"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 8, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
    }
 
    private int offGroundTicks, onGroundTicks;
-   private int level = 1;
-   private double moveSpeed = 0.2873;
-    private int timerDelay;
 
    public enum modes {
       Strafe,
@@ -39,7 +32,7 @@ public class Speed extends Module {
       Miniblox,
       Vulcan_Deprecated,
       NCP_Tick4,
-      NCPBHop
+      OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop
    }
 
    public void guiUpdate() {
@@ -49,27 +42,15 @@ public class Speed extends Module {
    @Override
    public void onEnable() {
       Utils.Client.getTimer().timerSpeed = 1.0f;
-
-      switch ((int) mode.getInput()) {
-         case 8:
-            level = !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.getEntityBoundingBox().offset(0.0, mc.thePlayer.motionY, 0.0)).isEmpty() || mc.thePlayer.isCollidedVertically ? 1 : 4;
-            break;
-      }
    }
 
    @Override
    public void onDisable() {
       Utils.Client.getTimer().timerSpeed = 1.0f;
 
-      switch ((int) mode.getInput()) {
-         case 7:
-            MoveUtil.stopXZ();
-            break;
-         case 8:
-            moveSpeed = getBaseMoveSpeed();
-            level = 0;
-            break;
-      }
+       if (mode.getInput() == 7) {
+           MoveUtil.stopXZ();
+       }
    }
 
    @Override
@@ -86,7 +67,7 @@ public class Speed extends Module {
          offGroundTicks++;
       }
 
-      if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7 && mode.getInput() != 8) {
+      if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
          mc.thePlayer.jump();
       }
 
@@ -230,19 +211,27 @@ public class Speed extends Module {
             }
          }
          break;
+
+         case 8:
+            Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
+            if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
+               KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
+               mc.thePlayer.noClip = true;
+
+               mc.thePlayer.setSprinting(true);
+               double spd = 0.0025D * 0.4;
+               double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
+               Utils.Player.bop(m);
+            }
+
+            if (offGroundTicks == 4 && mc.thePlayer.posY % 1.0 == 0.16610926093821377) {
+               mc.thePlayer.motionY = -0.09800000190734863;
+            }
+
+            if (MoveUtil.speed() < 0.3) {
+               MoveUtil.strafe(0.3);
+            }
+            break;
       }
-   }
-
-   private double getBaseMoveSpeed() {
-      double baseSpeed = 0.2873;
-      if (mc.thePlayer.isPotionActive(Potion.moveSpeed))
-         baseSpeed *= 1.0 + 0.2 * (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1);
-      return baseSpeed;
-   }
-
-   private double round(double value) {
-      BigDecimal bigDecimal = new BigDecimal(value);
-      bigDecimal = bigDecimal.setScale(3, RoundingMode.HALF_UP);
-      return bigDecimal.doubleValue();
    }
 }
