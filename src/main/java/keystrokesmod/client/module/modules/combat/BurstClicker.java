@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.combat;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -53,7 +53,7 @@ public class BurstClicker extends Module {
 
    public void onEnable() {
       if (clicks.getInput() != 0.0D && mc.currentScreen == null && mc.inGameHasFocus) {
-         Raven.getExecutor().execute(() -> {
+         demise.getExecutor().execute(() -> {
             try {
                int cl = (int) clicks.getInput();
                int del = (int) delay.getInput();

@@ -2,7 +2,7 @@ package keystrokesmod.client.module.modules.minigames;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -63,7 +63,7 @@ public class DuelsStats extends Module {
          for (String playerName : team.getMembershipCollection()) {
             if (!queue.contains(playerName) && team.getColorPrefix().equals("§7§k") && !playerName.equalsIgnoreCase(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
                this.queue.add(playerName);
-               Raven.getExecutor().execute(() -> {
+               demise.getExecutor().execute(() -> {
                   String id = getPlayerUUID(playerName);
                   if (!id.isEmpty()) {
                      if (sendIgnOnJoin.isToggled())
@@ -83,7 +83,7 @@ public class DuelsStats extends Module {
          Utils.Player.sendMessageToSelf("&cAPI Key is empty!");
       } else {
          Utils.Profiles.DuelsStatsMode dm = (Utils.Profiles.DuelsStatsMode) selectedGameMode.getMode();
-         Raven.getExecutor().execute(() -> {
+         demise.getExecutor().execute(() -> {
             PlayerProfile playerProfile = new PlayerProfile(new UUID(uuid), (Utils.Profiles.DuelsStatsMode) selectedGameMode.getMode());
             playerProfile.populateStats();
 

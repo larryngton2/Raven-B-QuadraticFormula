@@ -2,15 +2,17 @@ package keystrokesmod.client.command;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
 import keystrokesmod.client.command.commands.*;
-import keystrokesmod.client.main.Raven;
-import keystrokesmod.client.module.modules.HUD;
+import keystrokesmod.client.main.demise;
+import keystrokesmod.client.module.modules.hud.HUD;
 import keystrokesmod.client.utils.Utils;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class CommandManager {
+    @Getter
     public List<Command> commandList;
     public List<Command> sortedCommandList;
 
@@ -41,10 +43,6 @@ public class CommandManager {
         this.commandList.add(c);
     }
 
-    public List<Command> getCommandList() {
-        return this.commandList;
-    }
-
     public Command getCommandByName(String name) {
         for (Command command : this.commandList) {
             if (command.getName().equalsIgnoreCase(name))
@@ -62,7 +60,7 @@ public class CommandManager {
     }
 
     public void executeCommand(String commandName, String[] args) {
-        Command command = Raven.commandManager.getCommandByName(commandName);
+        Command command = demise.commandManager.getCommandByName(commandName);
 
         if (command == null) {
             this.noSuchCommand(commandName);

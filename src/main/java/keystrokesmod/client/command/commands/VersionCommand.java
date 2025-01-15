@@ -1,7 +1,7 @@
 package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.utils.version.Version;
 
 import static keystrokesmod.client.clickgui.raven.Terminal.print;
@@ -13,8 +13,8 @@ public class VersionCommand extends Command {
 
     @Override
     public void onCall(String[] args) {
-        Version clientVersion = Raven.versionManager.getClientVersion();
-        Version latestVersion = Raven.versionManager.getLatestVersion();
+        Version clientVersion = demise.versionManager.getClientVersion();
+        Version latestVersion = demise.versionManager.getLatestVersion();
 
         print("Your build: " + clientVersion);
         print("Latest version: " + latestVersion);

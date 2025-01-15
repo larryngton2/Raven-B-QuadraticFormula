@@ -139,7 +139,9 @@ public class KillAura extends Module {
                         mc.thePlayer.motionX *= 0.6;
                         mc.thePlayer.motionZ *= 0.6;
                     }
+
                     lastTargetTime = System.currentTimeMillis();
+
                     if (autoBlock.getInput() == 7) {
                         NCPAb(true);
                     }

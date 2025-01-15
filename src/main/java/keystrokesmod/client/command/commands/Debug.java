@@ -3,7 +3,7 @@ package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 
 public class Debug extends Command {
     public Debug() {
@@ -12,7 +12,7 @@ public class Debug extends Command {
 
     @Override
     public void onCall(String[] args) {
-        Raven.debugger = !Raven.debugger;
-        Terminal.print((Raven.debugger ? "Enabled" : "Disabled") + " debugging.");
+        demise.debugger = !demise.debugger;
+        Terminal.print((demise.debugger ? "Enabled" : "Disabled") + " debugging.");
     }
 }

@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.render;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -63,7 +63,7 @@ public class Tracers extends Module {
       if (Utils.Player.isPlayerInGame()) {
          int rgb = e.isToggled() ? Utils.Client.rainbowDraw(2L, 0L) : this.rgb_c;
          Iterator var3;
-         if (Raven.debugger) {
+         if (demise.debugger) {
             var3 = mc.theWorld.loadedEntityList.iterator();
 
             while (var3.hasNext()) {

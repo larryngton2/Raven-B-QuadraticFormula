@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.client;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.utils.ChatHelper;
 import keystrokesmod.client.utils.DebugInfoRenderer;
@@ -18,7 +18,7 @@ public class SelfDestruct extends Module {
 
       mc.displayGuiScreen(null);
 
-      for (Module module : Raven.moduleManager.getModules()) {
+      for (Module module : demise.moduleManager.getModules()) {
          if (module != this && module.isEnabled()) {
             module.disable();
          }
@@ -31,7 +31,7 @@ public class SelfDestruct extends Module {
        */
 
       // dude your event system doesnt even work bruh
-      MinecraftForge.EVENT_BUS.unregister(new Raven());
+      MinecraftForge.EVENT_BUS.unregister(new demise());
       MinecraftForge.EVENT_BUS.unregister(new DebugInfoRenderer());
       MinecraftForge.EVENT_BUS.unregister(new MouseManager());
       MinecraftForge.EVENT_BUS.unregister(new KeyStrokeRenderer());

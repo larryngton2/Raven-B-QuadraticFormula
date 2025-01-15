@@ -1,7 +1,7 @@
 package keystrokesmod.mixins.impl.entity;
 
 import com.mojang.authlib.GameProfile;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.movement.NoSlow;
 import keystrokesmod.client.module.modules.movement.Sprint;
@@ -275,7 +275,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         float f = 0.8F;
         boolean flag2 = this.field_71158_b.moveForward >= f;
         this.field_71158_b.updatePlayerMoveState();
-        Module nosalow = Raven.moduleManager.getModuleByClazz(NoSlow.class);
+        Module nosalow = demise.moduleManager.getModuleByClazz(NoSlow.class);
         boolean stopSprint = nosalow == null || !nosalow.isEnabled() || NoSlow.slowed.getInput() == 80;
         if ((this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) && !this.isRiding()) {
             MovementInput var10000 = this.field_71158_b;
@@ -294,7 +294,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         this.pushOutOfBlocks(this.posX + (double) this.width * 0.35, this.getEntityBoundingBox().minY + 0.5, this.posZ + (double) this.width * 0.35);
         boolean flag3 = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
 
-        Module theoppositeofwalk = Raven.moduleManager.getModuleByClazz(Sprint.class);
+        Module theoppositeofwalk = demise.moduleManager.getModuleByClazz(Sprint.class);
         if (!Sprint.omni.isToggled()) {
             if (this.onGround && !flag1 && !flag2 && this.field_71158_b.moveForward >= f && !this.isSprinting() && flag3 && (!(this.isUsingItem() || field_71159_c.thePlayer.isBlocking()) || !stopSprint) && !this.isPotionActive(Potion.blindness)) {
                 if (this.field_71156_d <= 0 && !this.field_71159_c.gameSettings.keyBindSprint.isKeyDown()) {

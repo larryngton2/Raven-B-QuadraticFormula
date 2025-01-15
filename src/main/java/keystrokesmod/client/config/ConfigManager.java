@@ -3,7 +3,7 @@ package keystrokesmod.client.config;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.*;
 import net.minecraft.client.Minecraft;
 
@@ -84,7 +84,7 @@ public class ConfigManager {
 
     public void save(){
         JsonObject data = new JsonObject();
-        data.addProperty("version", Raven.versionManager.getClientVersion().getVersion());
+        data.addProperty("version", demise.versionManager.getClientVersion().getVersion());
         data.addProperty("author", "Unknown");
         data.addProperty("notes", "");
         data.addProperty("intendedServer", "");
@@ -92,7 +92,7 @@ public class ConfigManager {
         data.addProperty("lastEditTime", System.currentTimeMillis());
 
         JsonObject modules = new JsonObject();
-        for(Module module : Raven.moduleManager.getModules()){
+        for(Module module : demise.moduleManager.getModules()){
             modules.add(module.getName(), module.getConfigAsJson());
         }
         data.add("modules", modules);
@@ -103,7 +103,7 @@ public class ConfigManager {
     public void setConfig(Config config){
         this.config = config;
         JsonObject data = config.getData().get("modules").getAsJsonObject();
-        List<Module> knownModules = new ArrayList<>(Raven.moduleManager.getModules());
+        List<Module> knownModules = new ArrayList<>(demise.moduleManager.getModules());
         for(Module module : knownModules){
             if(data.has(module.getName())){
                 module.applyConfigFromJson(
@@ -135,7 +135,7 @@ public class ConfigManager {
     }
 
     public void resetConfig() {
-        for(Module module : Raven.moduleManager.getModules())
+        for(Module module : demise.moduleManager.getModules())
             module.resetToDefaults();
         save();
     }

@@ -5,7 +5,6 @@ package keystrokesmod.keystroke;
 import java.io.IOException;
 
 import keystrokesmod.client.main.ClientConfig;
-import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.utils.MouseManager;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

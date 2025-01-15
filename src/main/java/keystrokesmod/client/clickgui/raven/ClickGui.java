@@ -2,16 +2,13 @@
 package keystrokesmod.client.clickgui.raven;
 
 import keystrokesmod.client.clickgui.raven.components.CategoryComponent;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.utils.Timer;
-import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.version.Version;
 import lombok.Getter;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
@@ -50,7 +47,7 @@ public class ClickGui extends GuiScreen {
 
    public void initMain() {
       (this.aT = this.aE = this.aR = new Timer(500.0F)).start();
-      this.sf = Raven.getExecutor().schedule(() -> (
+      this.sf = demise.getExecutor().schedule(() -> (
               this.aL = new Timer(650.0F)
       ).start(), 650L, TimeUnit.MILLISECONDS);
 
@@ -61,40 +58,31 @@ public class ClickGui extends GuiScreen {
    }
 
    public void drawScreen(int x, int y, float p) {
-      Version clientVersion = Raven.versionManager.getClientVersion();
-      Version latestVersion = Raven.versionManager.getLatestVersion();
+      Version clientVersion = demise.versionManager.getClientVersion();
+      Version latestVersion = demise.versionManager.getLatestVersion();
 
       drawRect(0, 0, this.width, this.height, (int) (this.aR.getValueFloat(0.0F, 0.7F, 2) * 255.0F) << 24);
       int quarterScreenHeight = this.height / 4;
       int halfScreenWidth = this.width / 2;
       int w_c = 30 - this.aT.getValueInt(0, 30, 3);
-      this.drawCenteredString(this.fontRendererObj, "r", halfScreenWidth + 1 - w_c, quarterScreenHeight - 25, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "a", halfScreenWidth - w_c, quarterScreenHeight - 15, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "v", halfScreenWidth - w_c, quarterScreenHeight - 5, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 5, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "n", halfScreenWidth - w_c, quarterScreenHeight + 15, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "b quadratic", halfScreenWidth + 1 + w_c, quarterScreenHeight + 30, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "d", halfScreenWidth - w_c, quarterScreenHeight - 26, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight - 15, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "m", halfScreenWidth - w_c, quarterScreenHeight - 5, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "i", halfScreenWidth - w_c, quarterScreenHeight + 5, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "s", halfScreenWidth - w_c, quarterScreenHeight + 15, Color.WHITE.getRGB());
+      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 25, Color.WHITE.getRGB());
 
       if (latestVersion.isNewerThan(clientVersion)) {
          int margin = 2;
          int rows = 1;
-         for (int i = Raven.updateText.length - 1; i >= 0; i--) {
-            String up = Raven.updateText[i];
+         for (int i = demise.updateText.length - 1; i >= 0; i--) {
+            String up = demise.updateText[i];
             mc.fontRendererObj.drawString(up, halfScreenWidth - this.fontRendererObj.getStringWidth(up) / 2, this.height - this.fontRendererObj.FONT_HEIGHT * rows - margin, Color.lightGray.getRGB());
             rows++;
             margin += 2;
          }
       } else {
-         mc.fontRendererObj.drawString("Raven b quadratic" + clientVersion + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
-      }
-
-      this.drawVerticalLine(halfScreenWidth - 10 - w_c, quarterScreenHeight - 30, quarterScreenHeight + 43, Color.white.getRGB());
-      this.drawVerticalLine(halfScreenWidth + 10 + w_c, quarterScreenHeight - 30, quarterScreenHeight + 43, Color.white.getRGB());
-      int animationProggress;
-      if (this.aL != null) {
-         animationProggress = this.aL.getValueInt(0, 20, 2);
-         this.drawHorizontalLine(halfScreenWidth - 10, halfScreenWidth - 10 + animationProggress, quarterScreenHeight - 29, -1);
-         this.drawHorizontalLine(halfScreenWidth + 10, halfScreenWidth + 10 - animationProggress, quarterScreenHeight + 42, -1);
+         mc.fontRendererObj.drawString("demise " + clientVersion + " | Config: " + demise.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
       }
 
       for (CategoryComponent category : categoryList) {
@@ -181,8 +169,8 @@ public class ClickGui extends GuiScreen {
             }
          }
       }
-      if (Raven.clientConfig != null) {
-         Raven.clientConfig.saveConfig();
+      if (demise.clientConfig != null) {
+         demise.clientConfig.saveConfig();
       }
    }
 
@@ -218,8 +206,8 @@ public class ClickGui extends GuiScreen {
          this.sf.cancel(true);
          this.sf = null;
       }
-      Raven.configManager.save();
-      Raven.clientConfig.saveConfig();
+      demise.configManager.save();
+      demise.clientConfig.saveConfig();
    }
 
    public boolean doesGuiPauseGame() {

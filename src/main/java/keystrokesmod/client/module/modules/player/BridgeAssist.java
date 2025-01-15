@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.*;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -60,7 +60,7 @@ public class BridgeAssist extends Module {
             return;
         }
 
-        Module safeWalk = Raven.moduleManager.getModuleByClazz(SafeWalk.class);
+        Module safeWalk = demise.moduleManager.getModuleByClazz(SafeWalk.class);
         if (safeWalk != null && safeWalk.isEnabled()) {
             if (!workWithSafeWalk.isToggled()) {
                 return;

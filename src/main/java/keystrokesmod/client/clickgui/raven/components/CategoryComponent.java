@@ -2,7 +2,7 @@
 package keystrokesmod.client.clickgui.raven.components;
 
 import keystrokesmod.client.clickgui.raven.Component;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.client.GuiModule;
 import lombok.Getter;
@@ -48,7 +48,7 @@ public class CategoryComponent {
       this.marginX = 80;
       this.marginY = 4.5;
 
-      for (Iterator<Module> var3 = Raven.moduleManager.getModulesInCategory(this.categoryName).iterator(); var3.hasNext(); tY += 16) {
+      for (Iterator<Module> var3 = demise.moduleManager.getModulesInCategory(this.categoryName).iterator(); var3.hasNext(); tY += 16) {
          Module mod = var3.next();
          ModuleComponent b = new ModuleComponent(mod, this, tY);
          this.modulesInCategory.add(b);
@@ -62,15 +62,15 @@ public class CategoryComponent {
 
    public void setX(int n) {
       this.x = n;
-      if (Raven.clientConfig != null) {
-         Raven.clientConfig.saveConfig();
+      if (demise.clientConfig != null) {
+         demise.clientConfig.saveConfig();
       }
    }
 
    public void setY(int y) {
       this.y = y;
-      if (Raven.clientConfig != null) {
-         Raven.clientConfig.saveConfig();
+      if (demise.clientConfig != null) {
+         demise.clientConfig.saveConfig();
       }
    }
 
@@ -92,8 +92,8 @@ public class CategoryComponent {
 
    public void setOpened(boolean on) {
       this.categoryOpened = on;
-      if (Raven.clientConfig != null) {
-         Raven.clientConfig.saveConfig();
+      if (demise.clientConfig != null) {
+         demise.clientConfig.saveConfig();
       }
    }
 

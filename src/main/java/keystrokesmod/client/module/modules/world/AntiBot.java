@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.world;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.player.Freecam;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -50,7 +50,7 @@ public class AntiBot extends Module {
       if (Freecam.en != null && Freecam.en == en) {
          return true;
       } else {
-         Module antiBot = Raven.moduleManager.getModuleByClazz(AntiBot.class);
+         Module antiBot = demise.moduleManager.getModuleByClazz(AntiBot.class);
          if (antiBot != null && !antiBot.isEnabled()) {
             return false;
          } else if (a.isToggled() && !newEnt.isEmpty() && newEnt.containsKey(en)) {

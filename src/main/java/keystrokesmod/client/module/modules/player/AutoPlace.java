@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.*;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -55,7 +55,7 @@ public class AutoPlace extends Module {
    }
 
    public void update() {
-      Module fastPlace = Raven.moduleManager.getModuleByClazz(FastPlace.class);
+      Module fastPlace = demise.moduleManager.getModuleByClazz(FastPlace.class);
       if (a.isToggled() && Mouse.isButtonDown(1) && !mc.thePlayer.capabilities.isFlying && fastPlace != null && !fastPlace.isEnabled()) {
          ItemStack i = mc.thePlayer.getHeldItem();
          if (i == null || !(i.getItem() instanceof ItemBlock)) {

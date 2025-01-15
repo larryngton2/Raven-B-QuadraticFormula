@@ -3,7 +3,7 @@ package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.utils.Utils;
 
 public class SetKey extends Command {
@@ -22,11 +22,11 @@ public class SetKey extends Command {
         Terminal.print("Setting...");
         String n;
         n = args[0];
-        Raven.getExecutor().execute(() -> {
+        demise.getExecutor().execute(() -> {
             if (Utils.URLS.isHypixelKeyValid(n)) {
                 Utils.URLS.hypixelApiKey = n;
                 Terminal.print("Success!");
-                Raven.clientConfig.saveConfig();
+                demise.clientConfig.saveConfig();
             } else {
                 Terminal.print("Invalid key.");
             }

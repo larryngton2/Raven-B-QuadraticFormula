@@ -1,6 +1,6 @@
 package keystrokesmod.client.clickgui.raven;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.utils.CoolDown;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -359,7 +359,7 @@ public class Terminal implements Component {
                 boolean hasArgs = inputText.contains(" ");
                 String[] args = hasArgs ? inputText.substring(command.length() + 1, inputText.length()).split(" ") : new String[0];
 
-                Raven.commandManager.executeCommand(command, args);
+                demise.commandManager.executeCommand(command, args);
             } catch (IndexOutOfBoundsException fuck){}
 
         }

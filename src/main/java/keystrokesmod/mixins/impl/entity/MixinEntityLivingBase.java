@@ -1,7 +1,7 @@
 package keystrokesmod.mixins.impl.entity;
 
 import com.google.common.collect.Maps;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.movement.Sprint;
 import keystrokesmod.client.utils.MoveUtil;
@@ -115,7 +115,7 @@ public abstract class MixinEntityLivingBase extends Entity {
         if (jumpEvent.applySprint() && MoveUtil.isMoving()) {
             float f;
 
-            Module theoppositeofwalk = Raven.moduleManager.getModuleByClazz(Sprint.class);
+            Module theoppositeofwalk = demise.moduleManager.getModuleByClazz(Sprint.class);
             if (Sprint.directionFix.isToggled() && theoppositeofwalk.isEnabled()) {
                 f = (float) MoveUtil.getDirection();
             } else {

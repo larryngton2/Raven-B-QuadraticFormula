@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.*;
 import keystrokesmod.client.module.modules.movement.Fly;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
@@ -21,8 +21,8 @@ public class FallSpeed extends Module {
 
    public void update() {
       if ((double) mc.thePlayer.fallDistance >= 2.5D) {
-         Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
-         Module noFall = Raven.moduleManager.getModuleByClazz(NoFall.class);
+         Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
+         Module noFall = demise.moduleManager.getModuleByClazz(NoFall.class);
 
          if ((fly != null && fly.isEnabled()) || (noFall != null && noFall.isEnabled())) {
             return;

@@ -1,7 +1,7 @@
 package keystrokesmod.client.module.modules.minigames;
 
 import com.google.gson.JsonObject;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -123,7 +123,7 @@ public class BedwarsOverlay extends Module {
         } else {
             double bbblr, wlr, fkdr;
             if (!playerStats.containsKey(UUID)) {
-                Raven.getExecutor().execute(() -> getBedwarsStats(UUID));
+                demise.getExecutor().execute(() -> getBedwarsStats(UUID));
                 playerStats.put(UUID, new int[]{-16});
                 return;
             }

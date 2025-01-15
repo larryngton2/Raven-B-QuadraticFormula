@@ -1,7 +1,7 @@
 package keystrokesmod.keystroke;
 
 import keystrokesmod.client.main.ClientConfig;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,7 +28,7 @@ public class KeyStrokeMod {
         MinecraftForge.EVENT_BUS.register(new KeyStrokeRenderer());
         MinecraftForge.EVENT_BUS.register(this);
         ClientConfig.applyKeyStrokeSettingsFromConfigFile();
-        Raven.init();
+        demise.init();
     }
 
     public static KeyStroke getKeyStroke() {

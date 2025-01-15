@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.minigames;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.render.PlayerESP;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -33,7 +33,7 @@ public class MurderMystery extends Module {
    @SubscribeEvent
    public void o(RenderWorldLastEvent e) {
       if (Utils.Player.isPlayerInGame()) {
-         PlayerESP p = (PlayerESP) Raven.moduleManager.getModuleByName("PlayerESP");
+         PlayerESP p = (PlayerESP) demise.moduleManager.getModuleByName("PlayerESP");
          assert p != null;
          if (p.isEnabled()) {
             p.disable();

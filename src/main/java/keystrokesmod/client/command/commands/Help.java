@@ -3,7 +3,7 @@ package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 
 public class Help extends Command {
     public Help() {
@@ -13,11 +13,11 @@ public class Help extends Command {
     @Override
     public void onCall(String[] args) {
         if (args.length == 0) {
-            Raven.commandManager.sort();
+            demise.commandManager.sort();
 
             Terminal.print("Available commands:");
             int index = 1;
-            for (Command command : Raven.commandManager.getCommandList()) {
+            for (Command command : demise.commandManager.getCommandList()) {
                 if(command.getName().equalsIgnoreCase("help"))
                     continue;
 
@@ -27,7 +27,7 @@ public class Help extends Command {
 
             Terminal.print("Run \"help commandname\" for more information about the command");
         } else if (args.length == 1) {
-            Command command = Raven.commandManager.getCommandByName(args[0]);
+            Command command = demise.commandManager.getCommandByName(args[0]);
             if (command == null) {
                 Terminal.print("Unable to find a command with the cname or alias with " + args[0]);
                 return;

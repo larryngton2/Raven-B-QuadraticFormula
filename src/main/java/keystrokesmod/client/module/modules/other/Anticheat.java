@@ -1,5 +1,6 @@
 package keystrokesmod.client.module.modules.other;
 
+import keystrokesmod.client.command.commands.Enemy;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
@@ -12,10 +13,7 @@ import net.minecraft.block.BlockAir;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.*;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,7 +22,7 @@ import java.util.UUID;
 
 public class Anticheat extends Module {
     private final SliderSetting interval;
-    private final TickSetting autoReport, ignoreTeammates, atlasSuspect, shouldPing, autoBlock, noFall, noSlow, scaffold, legitScaffold;
+    private final TickSetting autoReport, ignoreTeammates, atlasSuspect, shouldPing, autoBlock, noFall, noSlow, scaffold, legitScaffold, addEnemy;
     private final HashMap<UUID, HashMap<TickSetting, Long>> flags = new HashMap<>();
     private final HashMap<UUID, PlayerData> players = new HashMap<>();
     private long lastAlert;
@@ -36,6 +34,7 @@ public class Anticheat extends Module {
         this.registerSetting(ignoreTeammates = new TickSetting("Ignore teammates", false));
         this.registerSetting(atlasSuspect = new TickSetting("Only atlas suspect", false));
         this.registerSetting(shouldPing = new TickSetting("Should ping", true));
+        this.registerSetting(addEnemy = new TickSetting("Add as enemy", false));
         this.registerSetting(new DescriptionSetting("Detected cheats"));
         this.registerSetting(autoBlock = new TickSetting("Autoblock", true));
         this.registerSetting(noFall = new TickSetting("NoFall", true));
@@ -68,17 +67,22 @@ public class Anticheat extends Module {
             hashMap.put(mode, currentTimeMillis);
             flags.put(entityPlayer.getUniqueID(), hashMap);
         }
-        final ChatComponentText chatComponentText = new ChatComponentText(Utils.Player.formatColor("&7[&dR&7]&r " + entityPlayer.getDisplayName().getUnformattedText() + " &7detected for &d" + mode.getName()));
+        final ChatComponentText chatComponentText = new ChatComponentText(Utils.Player.formatColor("&7[&8demise&7]&r " + entityPlayer.getDisplayName().getUnformattedText() + " &7detected for &8" + mode.getName()));
         final ChatStyle chatStyle = new ChatStyle();
         chatStyle.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wdr " + entityPlayer.getName()));
-        ((IChatComponent)chatComponentText).appendSibling(new ChatComponentText(Utils.Player.formatColor(" §7[§cWDR§7]")).setChatStyle(chatStyle));
+        ((IChatComponent)chatComponentText).appendSibling(new ChatComponentText(Utils.Player.formatColor(" §7[§8WDR§7]")).setChatStyle(chatStyle));
         mc.thePlayer.addChatMessage(chatComponentText);
         if (shouldPing.isToggled() && Math.abs(lastAlert - currentTimeMillis) >= 1500L) {
             mc.thePlayer.playSound("note.pling", 1.0f, 1.0f);
             lastAlert = currentTimeMillis;
         }
+
         if (autoReport.isToggled()) {
             mc.thePlayer.sendChatMessage("/wdr " + Utils.Player.stripColor(entityPlayer.getGameProfile().getName()));
+        }
+
+        if (addEnemy.isToggled()) {
+            Utils.Player.addEnemy(Utils.Player.stripColor(entityPlayer.getGameProfile().getName()));
         }
     }
 

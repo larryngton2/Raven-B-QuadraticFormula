@@ -1,6 +1,6 @@
 package keystrokesmod.mixins.impl.entity;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.movement.KeepSprint;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -105,7 +105,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
                     if (flag2) {
                         if (i > 0) {
                             p_attackTargetEntityWithCurrentItem_1_.addVelocity((double) (-MathHelper.sin(this.rotationYaw * 3.1415927F / 180.0F) * (float) i * 0.5F), 0.1, (double) (MathHelper.cos(this.rotationYaw * 3.1415927F / 180.0F) * (float) i * 0.5F));
-                            Module eepsprint = Raven.moduleManager.getModuleByClazz(KeepSprint.class);
+                            Module eepsprint = demise.moduleManager.getModuleByClazz(KeepSprint.class);
                                 if (eepsprint != null && eepsprint.isEnabled()) {
                                 KeepSprint.keepSprint(p_attackTargetEntityWithCurrentItem_1_);
                             }

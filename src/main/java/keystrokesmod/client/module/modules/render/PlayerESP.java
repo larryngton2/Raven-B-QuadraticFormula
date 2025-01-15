@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.render;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -66,7 +66,7 @@ public class PlayerESP extends Module {
       if (Utils.Player.isPlayerInGame()) {
          int rgb = d.isToggled() ? 0 : this.rgb_c;
          Iterator var3;
-         if (Raven.debugger) {
+         if (demise.debugger) {
             var3 = mc.theWorld.loadedEntityList.iterator();
 
             while (var3.hasNext()) {

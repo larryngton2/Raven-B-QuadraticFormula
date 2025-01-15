@@ -13,7 +13,7 @@ import java.util.Map;
 public class MixinLoader implements IFMLLoadingPlugin {
     public MixinLoader() {
         MixinBootstrap.init();
-        Mixins.addConfiguration("mixins.raven.json");
+        Mixins.addConfiguration("mixins.demise.json");
         MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);
     }
 

@@ -1,6 +1,6 @@
 package keystrokesmod.client.tweaker;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.modules.combat.Reach;
@@ -23,17 +23,17 @@ public class ASMEventHandler {
     * ASM Modules : NameHider, AntiShuffle, StringEncrypt
     */
    public static String getUnformattedTextForChat(String s) {
-      Module nameHider = Raven.moduleManager.getModuleByClazz(NameHider.class);
+      Module nameHider = demise.moduleManager.getModuleByClazz(NameHider.class);
       if (nameHider != null && nameHider.isEnabled()) {
          s = NameHider.getUnformattedTextForChat(s);
       }
 
-      Module antiShuffle = Raven.moduleManager.getModuleByClazz(StringEncrypt.class);
+      Module antiShuffle = demise.moduleManager.getModuleByClazz(StringEncrypt.class);
       if (antiShuffle != null && antiShuffle.isEnabled()) {
          s = AntiShuffle.getUnformattedTextForChat(s);
       }
 
-      Module stringEncrypt = Raven.moduleManager.getModuleByClazz(StringEncrypt.class);
+      Module stringEncrypt = demise.moduleManager.getModuleByClazz(StringEncrypt.class);
       if (stringEncrypt != null && stringEncrypt.isEnabled()) {
          s = StringEncrypt.getUnformattedTextForChat(s);
       }
@@ -48,8 +48,8 @@ public class ASMEventHandler {
     */
    public static boolean onEntityMove(Entity entity) {
       if (entity == mc.thePlayer && mc.thePlayer.onGround) {
-         Module safeWalk = Raven.moduleManager.getModuleByClazz(SafeWalk.class);
-         Module scaffold = Raven.moduleManager.getModuleByClazz(Scaffold.class);
+         Module safeWalk = demise.moduleManager.getModuleByClazz(SafeWalk.class);
+         Module scaffold = demise.moduleManager.getModuleByClazz(Scaffold.class);
 
          if (safeWalk != null && safeWalk.isEnabled() && !SafeWalk.doShift.isToggled() || scaffold != null && scaffold.isEnabled() && Scaffold.safewalk.isToggled()) {
             if (SafeWalk.blocksOnly.isToggled() || scaffold.isEnabled()) {
@@ -78,7 +78,7 @@ public class ASMEventHandler {
     * ASM Modules : AutoClicker, Reach
     */
    public static void onTick() {
-      Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+      Module autoClicker = demise.moduleManager.getModuleByClazz(LeftClicker.class);
       if (autoClicker == null || !autoClicker.isEnabled() || !Mouse.isButtonDown(0) || !Reach.call()) {
          mc.entityRenderer.getMouseOver(1.0F);
       }

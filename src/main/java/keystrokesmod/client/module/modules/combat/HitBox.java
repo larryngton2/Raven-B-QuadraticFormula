@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.combat;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -52,7 +52,7 @@ public class HitBox extends Module {
       // autoclick event
       if (!Utils.Player.isPlayerInGame()) return;
 
-      Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+      Module autoClicker = demise.moduleManager.getModuleByClazz(LeftClicker.class);
       if (autoClicker != null && !autoClicker.isEnabled()) return;
 
       if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
@@ -75,7 +75,7 @@ public class HitBox extends Module {
    }
 
    public static double exp(Entity en) {
-      Module hitBox = Raven.moduleManager.getModuleByClazz(HitBox.class);
+      Module hitBox = demise.moduleManager.getModuleByClazz(HitBox.class);
       return (hitBox != null && hitBox.isEnabled() && !AntiBot.bot(en)) ? a.getInput() : 1.0D;
    }
 

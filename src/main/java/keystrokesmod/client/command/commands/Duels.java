@@ -3,7 +3,7 @@ package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.profile.PlayerProfile;
 
@@ -27,7 +27,7 @@ public class Duels extends Command {
             String n;
             n = args[0];
             Terminal.print("Retrieving data...");
-            Raven.getExecutor().execute(() -> {
+            demise.getExecutor().execute(() -> {
                 PlayerProfile playerProfile = new PlayerProfile(n, Utils.Profiles.DuelsStatsMode.OVERALL);
                 playerProfile.populateStats();
                 if(!playerProfile.isPlayer){
@@ -58,7 +58,7 @@ public class Duels extends Command {
                 n = args[0];
                 Terminal.print("Retrieving data...");
                 Utils.Profiles.DuelsStatsMode finalGameMode = gameMode;
-                Raven.getExecutor().execute(() -> {
+                demise.getExecutor().execute(() -> {
                     PlayerProfile playerProfile = new PlayerProfile(n, finalGameMode);
                     playerProfile.populateStats();
                     if(!playerProfile.isPlayer){

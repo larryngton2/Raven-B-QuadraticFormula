@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.client;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -33,10 +33,10 @@ public class UpdateCheck extends Module {
 
         executor = Executors.newFixedThreadPool(1);
         task = () -> {
-            Version latest = Raven.versionManager.getLatestVersion();
-            Version current = Raven.versionManager.getClientVersion();
+            Version latest = demise.versionManager.getLatestVersion();
+            Version current = demise.versionManager.getClientVersion();
             if (latest.isNewerThan(current)) {
-                Utils.Player.sendMessageToSelf("The current version or Raven B+ is outdated. Visit https://github.com/Kopamed/Raven-bPLUS to download the latest version.");
+                Utils.Player.sendMessageToSelf("The current version or demise B+ is outdated. Visit https://github.com/Kopamed/Raven-bPLUS to download the latest version.");
                 Utils.Player.sendMessageToSelf("https://github.com/Kopamed/Raven-bPLUS");
             }
 
@@ -48,18 +48,18 @@ public class UpdateCheck extends Module {
             }
 
             if (copyToClipboard.isToggled())
-                if (Utils.Client.copyToClipboard(Raven.downloadLocation))
+                if (Utils.Client.copyToClipboard(demise.downloadLocation))
                     Utils.Player.sendMessageToSelf("Successfully copied download link to clipboard!");
-                    Utils.Player.sendMessageToSelf(Raven.sourceLocation);
+                    Utils.Player.sendMessageToSelf(demise.sourceLocation);
 
             if (openLink.isToggled()) {
                 try {
-                    URL url = new URL(Raven.sourceLocation);
+                    URL url = new URL(demise.sourceLocation);
                     Utils.Client.openWebpage(url);
-                    Utils.Client.openWebpage(new URL(Raven.downloadLocation));
+                    Utils.Client.openWebpage(new URL(demise.downloadLocation));
                 } catch (MalformedURLException bruh) {
                     bruh.printStackTrace();
-                    Utils.Player.sendMessageToSelf("&cFailed to open page! Please report this bug in Raven b+'s discord");
+                    Utils.Player.sendMessageToSelf("&cFailed to open page! Please report this bug in demise b+'s discord");
                 }
             }
 

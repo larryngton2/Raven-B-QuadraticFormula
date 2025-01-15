@@ -1,7 +1,7 @@
 
 package keystrokesmod.client.utils;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.modules.player.Freecam;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -16,7 +16,7 @@ public class DebugInfoRenderer extends net.minecraft.client.gui.Gui {
 
    @SubscribeEvent
    public void onRenderTick(RenderTickEvent ev) {
-      if (Raven.debugger && ev.phase == Phase.END && Utils.Player.isPlayerInGame()) {
+      if (demise.debugger && ev.phase == Phase.END && Utils.Player.isPlayerInGame()) {
          if (mc.currentScreen == null) {
             ScaledResolution res = new ScaledResolution(mc);
             double bps = Utils.Player.getPlayerBPS(Freecam.en == null ? mc.thePlayer : Freecam.en, 2);

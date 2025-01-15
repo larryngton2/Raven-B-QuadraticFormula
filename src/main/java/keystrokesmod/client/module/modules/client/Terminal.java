@@ -2,7 +2,7 @@ package keystrokesmod.client.module.modules.client;
 
 import com.google.gson.JsonObject;
 import keystrokesmod.client.clickgui.raven.ClickGui;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.Setting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -27,7 +27,7 @@ public class Terminal extends Module {
    }
 
    public void onEnable() {
-      Raven.clickGui.terminal.show();
+      demise.clickGui.terminal.show();
       //keystrokesmod.client.clickgui.raven.CommandLine.setccs();
       //visible = true;
       //b = false;
@@ -36,12 +36,12 @@ public class Terminal extends Module {
 
    @SubscribeEvent
    public void tick(TickEvent.PlayerTickEvent e){
-      if(Utils.Player.isPlayerInGame() && enabled && mc.currentScreen instanceof ClickGui && Raven.clickGui.terminal.hidden())
-         Raven.clickGui.terminal.show();
+      if(Utils.Player.isPlayerInGame() && enabled && mc.currentScreen instanceof ClickGui && demise.clickGui.terminal.hidden())
+         demise.clickGui.terminal.show();
    }
 
    public void onDisable() {
-      Raven.clickGui.terminal.hide();
+      demise.clickGui.terminal.hide();
       //b = true;
       if (animation != null) {
          animation.start();

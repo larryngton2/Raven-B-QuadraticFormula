@@ -4,7 +4,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
@@ -87,7 +87,7 @@ public class Utils {
 
       public static void sendMessageToSelf(String txt) {
          if (isPlayerInGame()) {
-            String m = Client.reformat("&7[&dR&7]&r " + txt);
+            String m = Client.reformat("&7[&8demise&7]&r " + txt);
             mc.thePlayer.addChatMessage(new ChatComponentText(m));
          }
       }
@@ -134,15 +134,17 @@ public class Utils {
          if (rotationSpeed == 1) {
             e.setYaw(targetRot[0]);
             e.setPitch(targetRot[1]);
+
+            mc.thePlayer.rotationYawHead = mc.thePlayer.renderYawOffset = targetRot[0];
          } else {
             interpolatedYaw = interpolate(interpolatedYaw,targetRot[0], rotationSpeed);
             interpolatedPitch = interpolate(interpolatedPitch, targetRot[1], rotationSpeed);
 
             e.setYaw(fixedRotation[0]);
             e.setPitch(fixedRotation[1]);
-         }
 
-         mc.thePlayer.rotationYawHead = mc.thePlayer.renderYawOffset = fixedRotation[0];
+            mc.thePlayer.rotationYawHead = mc.thePlayer.renderYawOffset = fixedRotation[0];
+         }
       }
 
       public static void resetInterpolation() {
@@ -737,7 +739,7 @@ public class Utils {
       }
 
       public static boolean autoClickerClicking() {
-         Module autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+         Module autoClicker = demise.moduleManager.getModuleByClazz(LeftClicker.class);
          if (autoClicker != null && autoClicker.isEnabled()) {
             return autoClicker.isEnabled() && Mouse.isButtonDown(0);
          } //else return mouseManager.getLeftClickCounter() > 1 && System.currentTimeMillis() - mouseManager.leftClickTimer < 300L;
@@ -747,6 +749,26 @@ public class Utils {
       public static int rainbowDraw(long speed, long... delay) {
          long time = System.currentTimeMillis() + (delay.length > 0 ? delay[0] : 0L);
          return Color.getHSBColor((float) (time % (15000L / speed)) / (15000.0F / (float) speed), 1.0F, 1.0F).getRGB();
+      }
+
+      public static int grayscaleDraw(long speed, long... delay) {
+         long time = System.currentTimeMillis() + (delay.length > 0 ? delay[0] : 0L);
+
+         long cycleDuration = 30000L;
+         int adjustedSpeed = (int) (speed / 2);
+
+         float hue = (float) (time % (cycleDuration / adjustedSpeed)) / (cycleDuration / (float) adjustedSpeed);
+         int rgb = Color.getHSBColor(hue, 1F, 1F).getRGB();
+
+         int red = (rgb >> 16) & 0xFF;
+         int green = (rgb >> 8) & 0xFF;
+         int blue = rgb & 0xFF;
+         int gray = (red + green + blue) / 3;
+
+         float whiteBoostFactor = 5f;
+         gray = Math.min(255, (int) (gray * (gray > 200 ? whiteBoostFactor : 1)));
+
+         return (gray << 16) | (gray << 8) | gray;
       }
 
       public static int astolfoColorsDraw(int yOffset, int yTotal, float speed) {
@@ -994,7 +1016,7 @@ public class Utils {
    public static class URLS {
 
       public static final String base_url = "https://api.paste.ee/v1/pastes/";
-      public static final String base_paste = "{\"description\":\"Raven B+ Config\",\"expiration\":\"never\",\"sections\":[{\"name\":\"TitleGoesHere\",\"syntax\":\"text\",\"contents\":\"BodyGoesHere\"}]}";
+      public static final String base_paste = "{\"description\":\"demise B+ Config\",\"expiration\":\"never\",\"sections\":[{\"name\":\"TitleGoesHere\",\"syntax\":\"text\",\"contents\":\"BodyGoesHere\"}]}";
       public static String hypixelApiKey = "";
       public static String pasteApiKey = "";
 

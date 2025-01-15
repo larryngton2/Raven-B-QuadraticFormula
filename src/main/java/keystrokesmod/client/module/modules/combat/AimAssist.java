@@ -1,8 +1,7 @@
 package keystrokesmod.client.module.modules.combat;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.player.Blink;
 import keystrokesmod.client.module.modules.player.RightClicker;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
@@ -64,12 +63,12 @@ public class AimAssist extends Module {
 
       if (!weaponOnly.isToggled() || Utils.Player.isPlayerHoldingWeapon()) {
 
-         Module autoClicker = Raven.moduleManager.getModuleByClazz(RightClicker.class);
+         Module autoClicker = demise.moduleManager.getModuleByClazz(RightClicker.class);
          //what if player clicking but mouse not down ????
          if ((clickAim.isToggled() && Utils.Client.autoClickerClicking()) || (Mouse.isButtonDown(0) && autoClicker != null && !autoClicker.isEnabled()) || !clickAim.isToggled()) {
             Entity en = this.getEnemy();
             if (en != null) {
-               if (Raven.debugger) {
+               if (demise.debugger) {
                   Utils.Player.sendMessageToSelf(this.getName() + " &e" + en.getName());
                }
 
@@ -96,7 +95,7 @@ public class AimAssist extends Module {
       }
       try {
          EntityPlayer bruhentity = (EntityPlayer) entity;
-         if (Raven.debugger) {
+         if (demise.debugger) {
             Utils.Player.sendMessageToSelf("unformatted / " + bruhentity.getDisplayName().getUnformattedText().replace("§", "%"));
 
             Utils.Player.sendMessageToSelf("susbstring entity / " + bruhentity.getDisplayName().getUnformattedText().substring(0, 2));
@@ -105,7 +104,7 @@ public class AimAssist extends Module {
          if (mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || mc.thePlayer.getDisplayName().getUnformattedText().startsWith(bruhentity.getDisplayName().getUnformattedText().substring(0, 2)))
             return true;
       } catch (Exception fhwhfhwe) {
-         if (Raven.debugger) {
+         if (demise.debugger) {
             Utils.Player.sendMessageToSelf(fhwhfhwe.getMessage());
          }
       }

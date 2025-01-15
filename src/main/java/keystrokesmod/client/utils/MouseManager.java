@@ -1,6 +1,6 @@
 package keystrokesmod.client.utils;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -21,7 +21,7 @@ public class MouseManager {
       if (mouse.buttonstate) {
          if (mouse.button == 0) {
             addLeftClick();
-            if (Raven.debugger && Minecraft.getMinecraft().objectMouseOver != null) {
+            if (demise.debugger && Minecraft.getMinecraft().objectMouseOver != null) {
                Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
                if (en == null) {
                   return;

@@ -7,7 +7,7 @@ import java.awt.*;
 public class RavenB3 implements Theme {
     @Override
     public String getName() {
-        return "Raven B3";
+        return "demise B3";
     }
 
     @Override

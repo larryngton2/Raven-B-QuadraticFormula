@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.movement;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -158,7 +158,7 @@ public class NoSlow extends Module {
    }
 
    public static float getSlowed() {
-      Module nosalow = Raven.moduleManager.getModuleByClazz(NoSlow.class);
+      Module nosalow = demise.moduleManager.getModuleByClazz(NoSlow.class);
 
       if (mc.thePlayer.getHeldItem() == null || nosalow == null || !nosalow.isEnabled()) {
          return 0.2f;

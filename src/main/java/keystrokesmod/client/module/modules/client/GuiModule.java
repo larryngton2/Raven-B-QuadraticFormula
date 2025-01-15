@@ -1,8 +1,7 @@
 package keystrokesmod.client.module.modules.client;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.Utils;
@@ -21,9 +20,9 @@ public class GuiModule extends Module {
    }
 
    public void onEnable() {
-      if (Utils.Player.isPlayerInGame() && mc.currentScreen != Raven.clickGui) {
-         mc.displayGuiScreen(Raven.clickGui);
-            Raven.clickGui.initMain();
+      if (Utils.Player.isPlayerInGame() && mc.currentScreen != demise.clickGui) {
+         mc.displayGuiScreen(demise.clickGui);
+            demise.clickGui.initMain();
       }
 
       this.disable();

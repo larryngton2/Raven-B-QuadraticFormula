@@ -1,28 +1,34 @@
 package keystrokesmod.client.module.modules.movement;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.MathUtils;
 import keystrokesmod.client.utils.MoveUtil;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.settings.KeyBinding;
 
 public class Speed extends Module {
-   public static DescriptionSetting dc;
-   public static SliderSetting mode;
-   public static DoubleSliderSetting speed;
+   private static DescriptionSetting dc;
+   private static SliderSetting mode;
+   private static DoubleSliderSetting speed;
+   private static TickSetting damageBoost, pOffGroundTicks, pSpeed;
 
    public Speed() {
       super("Speed", ModuleCategory.movement);
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip, BMC, ONCPFHop"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 8, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
+      this.registerSetting(damageBoost = new TickSetting("Damage Boost", false));
+      this.registerSetting(pOffGroundTicks = new TickSetting("Print Air Ticks", false));
+      this.registerSetting(pSpeed = new TickSetting("Print Speed", false));
    }
 
    private int offGroundTicks, onGroundTicks;
+   private int movingTicks, stoppedTicks;
 
    public enum modes {
       Strafe,
@@ -48,15 +54,20 @@ public class Speed extends Module {
    public void onDisable() {
       Utils.Client.getTimer().timerSpeed = 1.0f;
 
-       if (mode.getInput() == 7) {
-           MoveUtil.stopXZ();
-       }
+      if (mode.getInput() == 7) {
+         MoveUtil.stopXZ();
+      }
    }
 
    @Override
    public void update() {
-      if (mc.thePlayer.moveForward == 0 && mc.thePlayer.moveStrafing == 0) {
+      if (!MoveUtil.isMoving()) {
+         movingTicks = 0;
+         stoppedTicks++;
          return;
+      } else {
+         movingTicks++;
+         stoppedTicks = 0;
       }
 
       if (mc.thePlayer.onGround) {
@@ -65,6 +76,18 @@ public class Speed extends Module {
       } else {
          onGroundTicks = 0;
          offGroundTicks++;
+      }
+
+      if (pSpeed.isToggled()) {
+         Utils.Player.sendMessageToSelf("Speed: " + MoveUtil.speed());
+      }
+
+      if (pOffGroundTicks.isToggled()) {
+         Utils.Player.sendMessageToSelf("Air Ticks: " + offGroundTicks);
+      }
+
+      if (damageBoost.isToggled() && mc.thePlayer.hurtTime >= 9) {
+         MoveUtil.strafe(0.5);
       }
 
       if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
@@ -92,7 +115,7 @@ public class Speed extends Module {
          break;
 
          case 3: {
-            Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
+            Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
             if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
                KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
                mc.thePlayer.noClip = true;
@@ -213,23 +236,35 @@ public class Speed extends Module {
          break;
 
          case 8:
-            Module fly = Raven.moduleManager.getModuleByClazz(Fly.class);
+            Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
             if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
                KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
                mc.thePlayer.noClip = true;
 
                mc.thePlayer.setSprinting(true);
-               double spd = 0.0025D * 0.4;
+               double spd = 0.0025 * 0.4;
                double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
                Utils.Player.bop(m);
             }
 
-            if (offGroundTicks == 4 && mc.thePlayer.posY % 1.0 == 0.16610926093821377) {
+            if (offGroundTicks == 4) {
                mc.thePlayer.motionY = -0.09800000190734863;
             }
 
-            if (MoveUtil.speed() < 0.3) {
-               MoveUtil.strafe(0.3);
+            if (MoveUtil.speed() < 0.312866806998394775 && movingTicks > 15) {
+               MoveUtil.strafe(0.312866806998394775);
+            }
+
+            if (mc.thePlayer.hurtTime >= 1 && mc.thePlayer.motionY > 0 && !damageBoost.isToggled()) {
+               mc.thePlayer.motionY -= 0.15;
+            }
+
+            if (MoveUtil.isMoving()) {
+               float timerSpeed = (float) (1.337 - MoveUtil.speed());
+
+               if (timerSpeed > 1.5) timerSpeed = 1.5f;
+               if (timerSpeed < 0.6) timerSpeed = 0.6f;
+               Utils.Client.getTimer().timerSpeed = timerSpeed;
             }
             break;
       }

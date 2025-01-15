@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
@@ -53,7 +53,7 @@ public class AutoTool extends Module {
         }
 
         //make sure that we are allowed to breack blocks if ac is enabled
-        LeftClicker autoClicker = (LeftClicker) Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        LeftClicker autoClicker = (LeftClicker) demise.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker.isEnabled()) {
             if (!LeftClicker.breakBlocks.isToggled()) {
                 return;

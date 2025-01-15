@@ -7,7 +7,7 @@ import keystrokesmod.client.command.CommandManager;
 import keystrokesmod.client.config.ConfigManager;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.ModuleManager;
-import keystrokesmod.client.module.modules.HUD;
+import keystrokesmod.client.module.modules.hud.HUD;
 import keystrokesmod.client.utils.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -24,44 +24,27 @@ import java.io.InputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-
-//Todo fix wtap
-/* todo dump
-ghost blocks add ability to place air and or other block by ID possibly
-
-add blink
-
-fix autotool crashing game
-
-make it so that when you open the mod menu, your game's gui is set to normal/small to make organization and viewing modules easier
-
-add a way to input a hex code for the values of header backgrounds, text colors, etc
-
-menu blur in the background of the gui
-
-make autoplace have checks for bridging only like bridge assist does
-
-remove explicit b9 name tags or the default name tags, there isn't much point in both. you could also just make them into one module
-
-Fix aim assist
-
-tooltips, fix murder mystery detective, fix autotool
- */
-
-public class Raven {
+public class demise {
 
    public static boolean debugger = false;
    public static final VersionManager versionManager  = new VersionManager();
    public static CommandManager commandManager;
-   public static final String sourceLocation = "https://github.com/Kopamed/Raven-bPLUS";
-   public static final String downloadLocation = "https://github.com/Kopamed/Raven-bPLUS/raw/main/build/libs/rat.jar";
-   public static final String discord = "https://discord.gg/QQMQfCRyNP";
-   public static String[] updateText = {"Your version of Raven B+ (" + versionManager.getClientVersion().toString() + ") is outdated! Maybe because you are not fucking using ravne b+!!!!!!!!!!", "Enter the command update into client CommandLine to open the download page", "or just enable the update module to get a message in chat.", "", "Newest version: " + versionManager.getLatestVersion().toString()};
+   public static final String sourceLocation = "fuck yo u";
+   public static final String downloadLocation = "rat";
+   public static final String discord = "no";
+   public static String[] updateText = {
+           "Your version of demise (" +
+                   versionManager.getClientVersion().toString() +
+                   ") is outdated.",
+           "Enter the command update into client CommandLine to open the download page",
+           "or just enable the update module to get a message in chat.",
+           "",
+           "Newest version: " + versionManager.getLatestVersion().toString()
+         };
    public static ConfigManager configManager;
    public static ClientConfig clientConfig;
 
    public static final ModuleManager moduleManager = new ModuleManager();
-
 
    public static ClickGui clickGui;
    //public static TabGui tabGui;
@@ -72,15 +55,13 @@ public class Raven {
 
    public static final String osName, osArch;
 
-
    static {
       osName = System.getProperty("os.name").toLowerCase();
       osArch = System.getProperty("os.arch").toLowerCase();
    }
 
    public static void init() {
-
-      MinecraftForge.EVENT_BUS.register(new Raven());
+      MinecraftForge.EVENT_BUS.register(new demise());
       MinecraftForge.EVENT_BUS.register(new DebugInfoRenderer());
       MinecraftForge.EVENT_BUS.register(new MouseManager());
       MinecraftForge.EVENT_BUS.register(new ChatHelper());

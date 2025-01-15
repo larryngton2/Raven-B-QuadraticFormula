@@ -1,7 +1,7 @@
 package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 
 import static keystrokesmod.client.clickgui.raven.Terminal.print;
 
@@ -18,7 +18,7 @@ public class Uwu extends Command {
             return;
         }
 
-        Raven.getExecutor().execute(() -> {
+        demise.getExecutor().execute(() -> {
             u = true;
 
             for(int i = 0; i < 4; ++i) {

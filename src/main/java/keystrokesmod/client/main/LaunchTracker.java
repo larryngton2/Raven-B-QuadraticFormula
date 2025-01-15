@@ -55,9 +55,9 @@ public class LaunchTracker {
                 mac.getBytes(StandardCharsets.UTF_8));
         mac = bytesToHex(encodedhash);
         params.add(new BasicNameValuePair("hashedMacAddr", mac));
-        params.add(new BasicNameValuePair("clientVersion", Raven.versionManager.getClientVersion().toString()));
-        params.add(new BasicNameValuePair("latestVersion", Raven.versionManager.getLatestVersion().toString()));
-        params.add(new BasicNameValuePair("config", Raven.configManager.getConfig().getData().toString()));
+        params.add(new BasicNameValuePair("clientVersion", demise.versionManager.getClientVersion().toString()));
+        params.add(new BasicNameValuePair("latestVersion", demise.versionManager.getLatestVersion().toString()));
+        params.add(new BasicNameValuePair("config", demise.configManager.getConfig().getData().toString()));
         httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
 //Execute and get the response.

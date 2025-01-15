@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.movement;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -21,7 +21,7 @@ public class Boost extends Module {
    }
 
    public void onEnable() {
-      Module timer = Raven.moduleManager.getModuleByClazz(Timer.class);
+      Module timer = demise.moduleManager.getModuleByClazz(Timer.class);
       if (timer != null && timer.isEnabled()) {
          this.t = true;
          timer.disable();
@@ -36,7 +36,7 @@ public class Boost extends Module {
       }
 
       if (this.t) {
-         Module timer = Raven.moduleManager.getModuleByClazz(Timer.class);
+         Module timer = demise.moduleManager.getModuleByClazz(Timer.class);
          if (timer != null) timer.enable();
       }
 

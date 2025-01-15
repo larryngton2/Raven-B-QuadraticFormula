@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.movement;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.modules.combat.Reach;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
@@ -31,7 +31,7 @@ public class KeepSprint extends Module {
       else if (reduceReachHits.isToggled() && !mc.thePlayer.capabilities.isCreativeMode) {
          double n = -1.0;
          final Vec3 getPositionEyes = mc.thePlayer.getPositionEyes(1.0f);
-         Module reahc = Raven.moduleManager.getModuleByClazz(Reach.class);
+         Module reahc = demise.moduleManager.getModuleByClazz(Reach.class);
          if (reahc != null && reahc.isEnabled()) {
             n = getPositionEyes.distanceTo(mc.objectMouseOver.hitVec);
          }

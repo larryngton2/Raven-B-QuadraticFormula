@@ -1,6 +1,6 @@
 package keystrokesmod.client.module;
 
-import keystrokesmod.client.module.modules.HUD;
+import keystrokesmod.client.module.modules.hud.HUD;
 import keystrokesmod.client.module.modules.exploit.Disabler;
 import keystrokesmod.client.module.modules.fun.AutoBan;
 import keystrokesmod.client.module.modules.fun.AutoMeow;
@@ -120,7 +120,6 @@ public class ModuleManager {
       addModule(new Anticheat());
       addModule(new AutoMeow());
       addModule(new Scaffold());
-      addModule(new TargetHUD());
       addModule(new AutoHead());
 
       // why ?

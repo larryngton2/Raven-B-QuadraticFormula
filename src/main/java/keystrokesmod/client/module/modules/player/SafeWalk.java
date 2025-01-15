@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.module.*;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
@@ -182,7 +182,7 @@ public class SafeWalk extends Module {
                String t = totalBlocks + " blocks";
                int x = res.getScaledWidth() / 2 - mc.fontRendererObj.getStringWidth(t) / 2;
                int y;
-               if (Raven.debugger) {
+               if (demise.debugger) {
                   y = res.getScaledHeight() / 2 + 17 + mc.fontRendererObj.FONT_HEIGHT;
                } else {
                   y = res.getScaledHeight() / 2 + 15;

@@ -1,13 +1,21 @@
 package keystrokesmod.client.command;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class Command {
+    @Getter
     private final String name;
+    @Getter
     private final String help;
+    @Getter
     private final int minArgs;
+    @Getter
     private final int maxArgs;
     private final String[] alias;
+    @Getter
+    @Setter
     private String[] args;
 
     public Command(String name, String help, int minArgs, int maxArgs, String[] args, String[] alias) {
@@ -23,32 +31,7 @@ public abstract class Command {
         this(name, help, minArgs, maxArgs,args, new String[] {});
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getHelp() {
-        return help;
-    }
-
-    public int getMinArgs() {
-        return minArgs;
-    }
-
-    public int getMaxArgs() {
-        return maxArgs;
-    }
-
-    public String[] getArgs() {
-        return args;
-    }
-
-    public void setArgs(String[] args) {
-        this.args = args;
-    }
-
     public void onCall(String[] args) {
-
     }
 
     public void incorrectArgs() {

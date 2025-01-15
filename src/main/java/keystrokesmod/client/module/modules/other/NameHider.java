@@ -7,7 +7,7 @@ import keystrokesmod.client.utils.Utils;
 
 public class NameHider extends Module {
    public static DescriptionSetting a;
-   public static String n = "raven b quadratic";
+   public static String n = "demise";
 
    public NameHider() {
       super("Name Hider", ModuleCategory.other);

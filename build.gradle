@@ -85,7 +85,7 @@ mixin {
     defaultObfuscationEnv searge
     sourceSets {
         main {
-            ext.refMap = 'mixins.raven.refmap.json'
+            ext.refMap = 'mixins.demise.refmap.json'
         }
     }
 }
@@ -150,7 +150,7 @@ jar {
     }
     manifest {
         attributes(
-                'MixinConfigs': 'mixins.raven.json',
+                'MixinConfigs': 'mixins.demise.json',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
                 'TweakOrder': 0,
                 'FMLCorePlugin': 'keystrokesmod.mixins.MixinLoader',

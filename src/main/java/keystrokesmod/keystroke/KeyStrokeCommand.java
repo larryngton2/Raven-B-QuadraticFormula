@@ -2,7 +2,6 @@
 
 package keystrokesmod.keystroke;
 
-import keystrokesmod.client.main.Raven;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 

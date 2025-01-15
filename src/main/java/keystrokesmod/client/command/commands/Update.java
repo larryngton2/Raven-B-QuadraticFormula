@@ -3,7 +3,7 @@ package keystrokesmod.client.command.commands;
 
 import keystrokesmod.client.clickgui.raven.Terminal;
 import keystrokesmod.client.command.Command;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.main.demise;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.version.Version;
 
@@ -17,20 +17,20 @@ public class Update extends Command {
 
     @Override
     public void onCall(String[] args) {
-        Version clientVersion = Raven.versionManager.getClientVersion();
-        Version latestVersion = Raven.versionManager.getLatestVersion();
+        Version clientVersion = demise.versionManager.getClientVersion();
+        Version latestVersion = demise.versionManager.getLatestVersion();
 
         if (latestVersion.isNewerThan(clientVersion)) {
             Terminal.print("Opening page...");
             URL url = null;
             try {
-                url = new URL(Raven.sourceLocation);
+                url = new URL(demise.sourceLocation);
                 Utils.Client.openWebpage(url);
-                Utils.Client.openWebpage(new URL(Raven.downloadLocation));
+                Utils.Client.openWebpage(new URL(demise.downloadLocation));
                 Terminal.print("Opened page successfully!");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Terminal.print("Failed to open page! Please report this bug in Raven b+'s discord!");
+                Terminal.print("Failed to open page! Please report this bug in demise b+'s discord!");
 
             }
         } else {

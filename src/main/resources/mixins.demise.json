@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "keystrokesmod.mixins.impl",
-  "refmap": "mixins.raven.refmap.json",
+  "refmap": "mixins.demise.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "verbose": true,
   "mixins": [

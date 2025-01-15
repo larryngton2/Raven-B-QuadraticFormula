@@ -3,7 +3,7 @@ package keystrokesmod.client.main;
 import keystrokesmod.client.clickgui.raven.components.CategoryComponent;
 import keystrokesmod.client.module.modules.client.Terminal;
 import keystrokesmod.keystroke.KeyStroke;
-import keystrokesmod.client.module.modules.HUD;
+import keystrokesmod.client.module.modules.hud.HUD;
 import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.Minecraft;
 
@@ -116,13 +116,13 @@ public class ClientConfig {
       config.add(hypixelApiKeyPrefix + Utils.URLS.hypixelApiKey);
       config.add(pasteApiKeyPrefix + Utils.URLS.pasteApiKey);
       config.add(clickGuiPosPrefix + getClickGuiPos());
-      config.add(loadedConfigPrefix + Raven.configManager.getConfig().getName());
+      config.add(loadedConfigPrefix + demise.configManager.getConfig().getName());
       config.add(HUD.HUDX_prefix + HUD.getHudX());
       config.add(HUD.HUDY_prefix + HUD.getHudY());
-      config.add(terminalPosPrefix + Raven.clickGui.terminal.getX() + "," + Raven.clickGui.terminal.getY());
-      config.add(terminalSizePrefix + Raven.clickGui.terminal.getWidth() + "," + Raven.clickGui.terminal.getHeight());
-      config.add(terminalOpenedPrefix + Raven.clickGui.terminal.opened);
-      config.add(terminalHiddenPrefix + Raven.clickGui.terminal.hidden);
+      config.add(terminalPosPrefix + demise.clickGui.terminal.getX() + "," + demise.clickGui.terminal.getY());
+      config.add(terminalSizePrefix + demise.clickGui.terminal.getWidth() + "," + demise.clickGui.terminal.getHeight());
+      config.add(terminalOpenedPrefix + demise.clickGui.terminal.opened);
+      config.add(terminalHiddenPrefix + demise.clickGui.terminal.hidden);
 
       PrintWriter writer = null;
       try {
@@ -142,7 +142,7 @@ public class ClientConfig {
       for(String line : config){
          if(line.startsWith(hypixelApiKeyPrefix)){
             Utils.URLS.hypixelApiKey = line.replace(hypixelApiKeyPrefix, "");
-            Raven.getExecutor().execute(() -> {
+            demise.getExecutor().execute(() -> {
                if (!Utils.URLS.isHypixelKeyValid(Utils.URLS.hypixelApiKey)) {
                   Utils.URLS.hypixelApiKey = "";
                } else{
@@ -154,7 +154,7 @@ public class ClientConfig {
          } else if(line.startsWith(clickGuiPosPrefix)){
             loadClickGuiCoords(line.replace(clickGuiPosPrefix, ""));
          } else if(line.startsWith(loadedConfigPrefix)){
-            Raven.configManager.loadConfigByName(line.replace(loadedConfigPrefix, ""));
+            demise.configManager.loadConfigByName(line.replace(loadedConfigPrefix, ""));
          } else if (line.startsWith(HUD.HUDX_prefix)) {
             try {
                HUD.setHudX(Integer.parseInt(line.replace(HUD.HUDX_prefix, "")));
@@ -168,22 +168,22 @@ public class ClientConfig {
                String[] split_up = line.replace(terminalPosPrefix, "").split(",");
                int i1 = Integer.parseInt(split_up[0]);
                int i2 = Integer.parseInt(split_up[1]);
-               Raven.clickGui.terminal.setLocation(i1, i2);
+               demise.clickGui.terminal.setLocation(i1, i2);
             } catch (Exception e){}
          } else if(line.startsWith(terminalSizePrefix)){
             try{
                String[] split_up = line.replace(terminalSizePrefix, "").split(",");
                int i1 = Integer.parseInt(split_up[0]);
                int i2 = Integer.parseInt(split_up[1]);
-               Raven.clickGui.terminal.setSize(i1, i2);
+               demise.clickGui.terminal.setSize(i1, i2);
             } catch (Exception e){}
          } else if(line.startsWith(terminalOpenedPrefix)){
             try{
-               Raven.clickGui.terminal.opened = Boolean.parseBoolean(line.replace(terminalOpenedPrefix, ""));
+               demise.clickGui.terminal.opened = Boolean.parseBoolean(line.replace(terminalOpenedPrefix, ""));
             } catch (Exception e){}
          } else if(line.startsWith(terminalHiddenPrefix)){
             try{
-               Terminal terminalModule = (Terminal) Raven.moduleManager.getModuleByClazz(Terminal.class);
+               Terminal terminalModule = (Terminal) demise.moduleManager.getModuleByClazz(Terminal.class);
                terminalModule.setToggled(!Boolean.parseBoolean(line.replace(terminalHiddenPrefix, "")));
             } catch (Exception e){}
          }
@@ -206,7 +206,7 @@ public class ClientConfig {
 
    private void loadClickGuiCoords(String decryptedString) {
       for (String what : decryptedString.split("/")){
-         for (CategoryComponent cat : Raven.clickGui.getCategoryList()) {
+         for (CategoryComponent cat : demise.clickGui.getCategoryList()) {
             if(what.startsWith(cat.categoryName.name())){
                List<String> cfg = Utils.Java.StringListToList(what.split("~"));
                cat.setX(Integer.parseInt(cfg.get(1)));
@@ -219,7 +219,7 @@ public class ClientConfig {
 
    public String getClickGuiPos() {
       StringBuilder posConfig = new StringBuilder();
-      for (CategoryComponent cat : Raven.clickGui.getCategoryList()) {
+      for (CategoryComponent cat : demise.clickGui.getCategoryList()) {
          posConfig.append(cat.categoryName.name());
          posConfig.append("~");
          posConfig.append(cat.getX());
