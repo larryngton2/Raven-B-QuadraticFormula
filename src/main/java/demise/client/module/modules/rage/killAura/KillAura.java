@@ -482,27 +482,37 @@ public class KillAura extends Module {
     }
 
     private void attack(Entity e) {
-        if (e != null) {
-            if (rotationMode.getInput() == 2 && mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null) {
+        if (e == null) {
+            return;
+        }
+
+        boolean isMouseOverNull = mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null;
+
+        if (rotationMode.getInput() == 2 && isMouseOverNull) {
+            if (!noSwing.isToggled()) {
+                mc.thePlayer.swingItem();
+            }
+            return;
+        }
+
+        switch ((int) attackMode.getInput()) {
+            case 1:
                 if (!noSwing.isToggled()) {
                     mc.thePlayer.swingItem();
                 }
-            } else {
-                switch ((int) attackMode.getInput()) {
-                    case 1:
-                        if (!noSwing.isToggled()) {
-                            mc.thePlayer.swingItem();
-                        }
-                        PacketUtils.sendPacket(mc, new C02PacketUseEntity(e, Action.ATTACK));
-                        break;
-                    case 2:
-                        if (!noSwing.isToggled()) {
-                            mc.thePlayer.swingItem();
-                        }
-                        mc.playerController.attackEntity(mc.thePlayer, e);
-                        break;
+                PacketUtils.sendPacket(mc, new C02PacketUseEntity(e, Action.ATTACK));
+                break;
+
+            case 2:
+                if (!noSwing.isToggled()) {
+                    mc.thePlayer.swingItem();
                 }
-            }
+                mc.playerController.attackEntity(mc.thePlayer, e);
+                break;
+
+            default:
+                Utils.Player.sendMessageToSelf("the fuck did you do?????");
+                break;
         }
     }
 

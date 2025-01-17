@@ -4,6 +4,7 @@ import demise.client.module.Module;
 import demise.client.module.modules.world.AntiBot;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.SliderSetting;
+import demise.client.utils.MathUtils;
 import demise.client.utils.Utils;
 import demise.client.utils.packet.PacketUtils;
 import demise.client.utils.packet.SendPacketEvent;
@@ -30,16 +31,15 @@ import static demise.client.utils.RenderUtils.drawBox;
 
 public class FakeLag extends Module {
     public final List<Packet<?>> blinkedPackets = new ArrayList<>();
-    private static SliderSetting pulseDelay;
     private long startTime = -1;
     private Vec3 pos;
-    private static DoubleSliderSetting range;
+    private static DoubleSliderSetting range, pulseDelay;
     private boolean lagging;
 
     public FakeLag() {
         super("FakeLag", ModuleCategory.combat);
         this.registerSetting(range = new DoubleSliderSetting("Range", 3.0, 6.0, 0.5, 8.0, 0.1));
-        this.registerSetting(pulseDelay = new SliderSetting("Pulse delay", 1000, 0, 10000, 100));
+        this.registerSetting(pulseDelay = new DoubleSliderSetting("Pulse delay", 100, 200, 25, 1000, 25));
     }
 
     public static EntityLivingBase findTarget() {
@@ -147,7 +147,7 @@ public class FakeLag extends Module {
         blinkedPackets.add(packet);
         e.setCanceled(true);
 
-        if (System.currentTimeMillis() - startTime >= pulseDelay.getInput()) {
+        if (System.currentTimeMillis() - startTime >= MathUtils.randomFloat(pulseDelay.getInputMin(), pulseDelay.getInputMax())) {
             flush();
             return;
         }
@@ -164,8 +164,14 @@ public class FakeLag extends Module {
 
     @SubscribeEvent
     public void onRenderWorld(RenderWorldLastEvent event) {
-        if (pos != null && lagging) {
+        if (pos != null && lagging && mc.gameSettings.thirdPersonView != 0) {
             drawBox(mc, pos);
         }
+    }
+
+    @Override
+    public void onDisable() {
+        super.disable();
+        reset();
     }
 }
