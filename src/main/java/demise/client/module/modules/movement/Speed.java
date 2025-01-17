@@ -1,0 +1,272 @@
+package demise.client.module.modules.movement;
+
+import demise.client.main.demise;
+import demise.client.module.Module;
+import demise.client.module.setting.impl.DescriptionSetting;
+import demise.client.module.setting.impl.DoubleSliderSetting;
+import demise.client.module.setting.impl.SliderSetting;
+import demise.client.module.setting.impl.TickSetting;
+import demise.client.utils.MathUtils;
+import demise.client.utils.MoveUtil;
+import demise.client.utils.Utils;
+import net.minecraft.client.settings.KeyBinding;
+
+public class Speed extends Module {
+   private static DescriptionSetting dc;
+   private static SliderSetting mode;
+   private static DoubleSliderSetting speed;
+   private static TickSetting damageBoost, pOffGroundTicks, pSpeed;
+
+   public Speed() {
+      super("Speed", ModuleCategory.movement);
+      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip, BMC, ONCPFHop"));
+      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 8, 1));
+      this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
+      this.registerSetting(damageBoost = new TickSetting("Damage Boost", false));
+      this.registerSetting(pOffGroundTicks = new TickSetting("Print Air Ticks", false));
+      this.registerSetting(pSpeed = new TickSetting("Print Speed", false));
+   }
+
+   private int offGroundTicks, onGroundTicks;
+   private int movingTicks, stoppedTicks;
+
+   public enum modes {
+      Strafe,
+      GroundStrafe,
+      BHop,
+      NCP_Tick5,
+      Miniblox,
+      Vulcan_Deprecated,
+      NCP_Tick4,
+      OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop
+   }
+
+   public void guiUpdate() {
+      dc.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+   }
+
+   @Override
+   public void onEnable() {
+      Utils.Client.getTimer().timerSpeed = 1.0f;
+   }
+
+   @Override
+   public void onDisable() {
+      Utils.Client.getTimer().timerSpeed = 1.0f;
+
+      if (mode.getInput() == 7) {
+         MoveUtil.stopXZ();
+      }
+   }
+
+   @Override
+   public void update() {
+      if (!MoveUtil.isMoving()) {
+         movingTicks = 0;
+         stoppedTicks++;
+         return;
+      } else {
+         movingTicks++;
+         stoppedTicks = 0;
+      }
+
+      if (mc.thePlayer.onGround) {
+         offGroundTicks = 0;
+         onGroundTicks++;
+      } else {
+         onGroundTicks = 0;
+         offGroundTicks++;
+      }
+
+      if (pSpeed.isToggled()) {
+         Utils.Player.sendMessageToSelf("Speed: " + MoveUtil.speed());
+      }
+
+      if (pOffGroundTicks.isToggled()) {
+         Utils.Player.sendMessageToSelf("Air Ticks: " + offGroundTicks);
+      }
+
+      if (damageBoost.isToggled() && mc.thePlayer.hurtTime >= 9) {
+         MoveUtil.strafe(0.5);
+      }
+
+      if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
+         mc.thePlayer.jump();
+      }
+
+      switch ((int) mode.getInput()) {
+         case 1:
+            if (speed.getInputMin() <= 0.05f && speed.getInputMax() <= 0.05f) {
+               MoveUtil.strafe();
+            } else {
+               MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+            }
+            break;
+
+         case 2: {
+            if (mc.thePlayer.onGround) {
+               if (speed.getInputMin() <= 0.05f && speed.getInputMax() <= 0.05f) {
+                  MoveUtil.strafe();
+               } else {
+                  MoveUtil.strafe2(speed.getInputMin(), speed.getInputMax());
+               }
+            }
+         }
+         break;
+
+         case 3: {
+            Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
+            if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
+               KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
+               mc.thePlayer.noClip = true;
+
+               mc.thePlayer.setSprinting(true);
+               double spd = 0.0025D * MathUtils.randomFloat(speed.getInputMin(), speed.getInputMax());
+               double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
+               Utils.Player.bop(m);
+            }
+         }
+         break;
+
+         case 4: {
+            if (mc.thePlayer.onGround) {
+               MoveUtil.strafe();
+            }
+
+            if (offGroundTicks == 5) {
+               mc.thePlayer.motionY -= 0.1523351824467155;
+            }
+
+            if (mc.thePlayer.hurtTime >= 5 && mc.thePlayer.motionY >= 0) {
+               mc.thePlayer.motionY -= 0.1;
+            }
+
+            double BOOST_CONSTANT = 0.00718;
+
+            if (MoveUtil.isMoving()) {
+               mc.thePlayer.motionX *= 1f + BOOST_CONSTANT;
+               mc.thePlayer.motionZ *= 1f + BOOST_CONSTANT;
+            }
+         }
+         break;
+
+         case 5: {
+            switch (offGroundTicks) {
+               case 3:
+                  mc.thePlayer.motionY -= 0.1523351824467155;
+                  break;
+               case 5:
+                  mc.thePlayer.motionY -= 0.232335182447;
+                  break;
+            }
+
+            if (mc.thePlayer.onGround) {
+               MoveUtil.strafe(0.175f);
+            } else {
+               MoveUtil.strafe(0.35f);
+            }
+         }
+         break;
+
+         case 6: {
+            switch (offGroundTicks) {
+               case 1: {
+                  if (mc.thePlayer.movementInput.moveStrafe != 0f) {
+                     MoveUtil.strafe(0.3345);
+                  } else {
+                     MoveUtil.strafe(0.3355);
+                  }
+               }
+               break;
+
+               case 2: {
+                  if (mc.thePlayer.isSprinting()) {
+                     if (mc.thePlayer.movementInput.moveStrafe != 0f) {
+                        MoveUtil.strafe(0.3235);
+                     } else {
+                        MoveUtil.strafe(0.3284);
+                     }
+                  }
+               }
+               break;
+
+               case 4:
+                  mc.thePlayer.motionY -= 0.376f;
+                  break;
+
+               case 6:
+                  if (MoveUtil.speed() > 0.298) {
+                     MoveUtil.strafe(0.298);
+                  }
+                  break;
+            }
+         }
+         break;
+
+         case 7: {
+            switch (offGroundTicks) {
+               case 4: {
+                  if (mc.thePlayer.posY % 1.0 == 0.16610926093821377) {
+                     mc.thePlayer.motionY = -0.09800000190734863;
+                  }
+               }
+               break;
+
+               case 6: {
+                  if (MoveUtil.isMoving()) MoveUtil.strafe();
+               }
+               break;
+            }
+
+            if (mc.thePlayer.hurtTime >= 1 && mc.thePlayer.motionY > 0) {
+               mc.thePlayer.motionY -= 0.15;
+            }
+
+            if (mc.thePlayer.onGround) {
+               mc.thePlayer.jump();
+               MoveUtil.strafe();
+
+               if (MoveUtil.speed() < 0.281) {
+                  MoveUtil.strafe(0.281);
+               } else {
+                  MoveUtil.strafe();
+               }
+            }
+         }
+         break;
+
+         case 8:
+            Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
+            if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
+               KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
+               mc.thePlayer.noClip = true;
+
+               mc.thePlayer.setSprinting(true);
+               double spd = 0.0025 * 0.4;
+               double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
+               Utils.Player.bop(m);
+            }
+
+            if (offGroundTicks == 4) {
+               mc.thePlayer.motionY = -0.09800000190734863;
+            }
+
+            if (MoveUtil.speed() < 0.312866806998394775 && movingTicks > 15) {
+               MoveUtil.strafe(0.312866806998394775);
+            }
+
+            if (mc.thePlayer.hurtTime >= 1 && mc.thePlayer.motionY > 0 && !damageBoost.isToggled()) {
+               mc.thePlayer.motionY -= 0.15;
+            }
+
+            if (MoveUtil.isMoving()) {
+               float timerSpeed = (float) (1.337 - MoveUtil.speed());
+
+               if (timerSpeed > 1.5) timerSpeed = 1.5f;
+               if (timerSpeed < 0.6) timerSpeed = 0.6f;
+               Utils.Client.getTimer().timerSpeed = timerSpeed;
+            }
+            break;
+      }
+   }
+}

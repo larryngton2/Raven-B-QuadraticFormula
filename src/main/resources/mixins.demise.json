@@ -1,12 +1,13 @@
 {
   "required": true,
-  "package": "keystrokesmod.mixins.impl",
+  "package": "demise.mixins.impl",
   "refmap": "mixins.demise.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "verbose": true,
   "mixins": [
     "entity.MixinEntityLivingBase",
     "entity.MixinEntityPlayer",
-    "entity.MixinEntityPlayerSP"
+    "entity.MixinEntityPlayerSP",
+    "network.MixinNetworkManager"
   ]
 }
