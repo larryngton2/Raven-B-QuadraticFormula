@@ -126,7 +126,7 @@ public class FakeLag extends Module {
         }
 
         if (!Utils.Player.isPlayerInGame() || mc.thePlayer.isDead) {
-            lagging = false;
+            reset();
             return;
         }
 
@@ -171,7 +171,7 @@ public class FakeLag extends Module {
 
     @Override
     public void onDisable() {
-        super.disable();
+        super.onDisable();
         reset();
     }
 }

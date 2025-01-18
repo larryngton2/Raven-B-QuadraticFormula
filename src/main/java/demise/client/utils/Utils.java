@@ -371,6 +371,22 @@ public class Utils {
          return wearingArmor;
       }
 
+      public static int getSpeedAmplifier() {
+         if (mc.thePlayer.isPotionActive(Potion.moveSpeed)) {
+            return 1 + mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier();
+         }
+         return 0;
+      }
+
+      public static double rnd(double n, int d) {
+         if (d == 0) {
+            return (double) Math.round(n);
+         } else {
+            double p = Math.pow(10.0D, (double) d);
+            return (double) Math.round(n * p) / p;
+         }
+      }
+
       public static int getBlockAmountInCurrentStack(int currentItem) {
          if (mc.thePlayer.inventory.getStackInSlot(currentItem) == null) {
             return 0;

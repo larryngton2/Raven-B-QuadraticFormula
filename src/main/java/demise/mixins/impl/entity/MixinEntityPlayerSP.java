@@ -5,6 +5,7 @@ import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.movement.NoSlow;
 import demise.client.module.modules.movement.Sprint;
+import demise.client.module.modules.world.Scaffold;
 import demise.client.utils.MoveUtil;
 import demise.client.utils.Utils;
 import demise.client.utils.event.motion.PostMotionEvent;
@@ -305,7 +306,10 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
             }
         }
 
-        if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround && MoveUtil.isMoving() && theoppositeofwalk.isEnabled()) {
+        Module flagfold = demise.moduleManager.getModuleByClazz(Scaffold.class);
+        if (flagfold.isEnabled()) {
+            this.setSprinting(Scaffold.sprint);
+        } else if (Sprint.omni.isToggled() && this.field_71159_c.thePlayer.onGround && MoveUtil.isMoving() && theoppositeofwalk.isEnabled()) {
             this.setSprinting(true);
         } else {
             if ((!this.isSprinting() && this.field_71158_b.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.field_71159_c.gameSettings.keyBindSprint.isKeyDown())) {

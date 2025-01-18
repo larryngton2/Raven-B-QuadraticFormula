@@ -6,10 +6,13 @@ import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
+import demise.client.utils.BlockUtils;
 import demise.client.utils.MathUtils;
 import demise.client.utils.MoveUtil;
 import demise.client.utils.Utils;
+import demise.client.utils.event.JumpEvent;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class Speed extends Module {
    private static DescriptionSetting dc;
@@ -19,8 +22,8 @@ public class Speed extends Module {
 
    public Speed() {
       super("Speed", ModuleCategory.movement);
-      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, VulcanVClip, BMC, ONCPFHop"));
-      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 8, 1));
+      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, NCP Tick 4, ONCPFHop, Watchdog 7 tick"));
+      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 9, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
       this.registerSetting(damageBoost = new TickSetting("Damage Boost", false));
       this.registerSetting(pOffGroundTicks = new TickSetting("Print Air Ticks", false));
@@ -38,7 +41,8 @@ public class Speed extends Module {
       Miniblox,
       Vulcan_Deprecated,
       NCP_Tick4,
-      OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop
+      OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop,
+      Watchdog7Tick
    }
 
    public void guiUpdate() {
@@ -59,7 +63,6 @@ public class Speed extends Module {
       }
    }
 
-   @Override
    public void update() {
       if (!MoveUtil.isMoving()) {
          movingTicks = 0;
@@ -267,6 +270,51 @@ public class Speed extends Module {
                Utils.Client.getTimer().timerSpeed = timerSpeed;
             }
             break;
+         case 9:
+            if (mc.thePlayer.onGround) {
+               MoveUtil.strafe();
+            } else {
+               switch (offGroundTicks) {
+                  case 1:
+                     MoveUtil.strafe();
+                     mc.thePlayer.motionY += 0.0568;
+                     break;
+
+                  case 3:
+                     mc.thePlayer.motionY -= 0.13;
+                     break;
+                  case 4:
+                     mc.thePlayer.motionY -= 0.2;
+                     break;
+               }
+
+               if (mc.thePlayer.hurtTime >= 7) {
+                  MoveUtil.strafe(Math.max(MoveUtil.speed(), 0.281));
+               }
+
+               Utils.Player.getSpeedAmplifier();
+
+               if (Utils.Player.getSpeedAmplifier() == 3) {
+                  switch (offGroundTicks) {
+                     case 1:
+                     case 2:
+                     case 5:
+                     case 6:
+                     case 8:
+                        mc.thePlayer.motionX *= 1.2;
+                        mc.thePlayer.motionZ *= 1.2;
+                  }
+               }
+            }
+            break;
+      }
+   }
+
+   @SubscribeEvent
+   public void onJump(JumpEvent e) {
+      if (mode.getInput() == 9) {
+         double atLeast = 0.281 + 0.13 * (Utils.Player.getSpeedAmplifier() - 1);
+         MoveUtil.strafe(Math.max(MoveUtil.speed(), atLeast));
       }
    }
 }

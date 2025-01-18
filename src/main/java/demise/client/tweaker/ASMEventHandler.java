@@ -41,7 +41,6 @@ public class ASMEventHandler {
       return s;
    }
 
-
    /**
     * called when an entity moves
     * ASM Modules : SafeWalk, FlagFold
@@ -51,7 +50,7 @@ public class ASMEventHandler {
          Module safeWalk = demise.moduleManager.getModuleByClazz(SafeWalk.class);
          Module scaffold = demise.moduleManager.getModuleByClazz(Scaffold.class);
 
-         if (safeWalk != null && safeWalk.isEnabled() && !SafeWalk.doShift.isToggled() || scaffold != null && scaffold.isEnabled() && Scaffold.safewalk.isToggled()) {
+         if (safeWalk != null && safeWalk.isEnabled() && !SafeWalk.doShift.isToggled() || Scaffold.safeWalk()) {
             if (SafeWalk.blocksOnly.isToggled() || scaffold.isEnabled()) {
                ItemStack i = mc.thePlayer.getHeldItem();
                if (i == null || !(i.getItem() instanceof ItemBlock)) {
