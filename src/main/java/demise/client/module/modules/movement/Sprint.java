@@ -20,10 +20,9 @@ public class Sprint extends Module {
    @SubscribeEvent
    public void p(PlayerTickEvent e) {
       if (Utils.Player.isPlayerInGame() && mc.inGameHasFocus) {
-         EntityPlayerSP p = mc.thePlayer;
          if (omni.isToggled()) {
-            if (Utils.Player.isMoving() && p.getFoodStats().getFoodLevel() > 6) {
-               p.setSprinting(true);
+            if (Utils.Player.isMoving() && mc.thePlayer.getFoodStats().getFoodLevel() > 6) {
+               mc.thePlayer.setSprinting(true);
             }
          } else {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);

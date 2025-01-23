@@ -8,6 +8,7 @@
     "entity.MixinEntityLivingBase",
     "entity.MixinEntityPlayer",
     "entity.MixinEntityPlayerSP",
-    "network.MixinNetworkManager"
+    "network.MixinNetworkManager",
+    "render.MixinModelBiped"
   ]
 }

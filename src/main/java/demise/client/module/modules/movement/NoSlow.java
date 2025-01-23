@@ -12,11 +12,15 @@ import demise.client.utils.Utils;
 import demise.client.utils.event.JumpEvent;
 import demise.client.utils.event.motion.PostMotionEvent;
 import demise.client.utils.event.motion.PreMotionEvent;
+import demise.client.utils.packet.PacketUtils;
 import demise.client.utils.packet.SendPacketEvent;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.item.*;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoSlow extends Module {
@@ -27,16 +31,12 @@ public class NoSlow extends Module {
    public static TickSetting disablePotions;
    public static TickSetting swordOnly;
    public static TickSetting vanillaSword;
-   private boolean postPlace;
-   private boolean canFloat;
-   private boolean reSendConsume;
-   private int ticksOffStairs;
 
    public NoSlow() {
       super("NoSlow", ModuleCategory.movement);
       this.registerSetting(new DescriptionSetting("Default is 80% motion reduction."));
       this.registerSetting(agugu = new DescriptionSetting("Vanilla, Pre, Post, Alpha, Float"));
-      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 5, 1));
+      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 6, 1));
       this.registerSetting(slowed = new SliderSetting("Slow %", 80.0D, 0.0D, 80.0D, 1.0D));
       this.registerSetting(disableBow = new TickSetting("Disable bow", false));
       this.registerSetting(disablePotions = new TickSetting("Disable potions", false));
@@ -44,12 +44,18 @@ public class NoSlow extends Module {
       this.registerSetting(vanillaSword = new TickSetting("Vanilla sword", false));
    }
 
+   private boolean postPlace;
+   private boolean canFloat;
+   private boolean reSendConsume;
+   private int ticksOffStairs;
+
    public enum modes {
       Vanilla,
       Pre,
       Post,
       Alpha,
-      Float
+      Float,
+      Intave
    }
 
    public void guiUpdate() {
@@ -71,20 +77,20 @@ public class NoSlow extends Module {
          return;
       }
       switch ((int) mode.getInput()) {
-         case 1:
-            if (mc.thePlayer.ticksExisted % 3 == 0 && !PacketsHandler.C07.get()) {
-               mc.thePlayer.sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
-            }
-            break;
          case 2:
-            postPlace = true;
+            if (mc.thePlayer.ticksExisted % 3 == 0 && !PacketsHandler.C07.get()) {
+               PacketUtils.sendPacket(mc, new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
+            }
             break;
          case 3:
-            if (mc.thePlayer.ticksExisted % 3 == 0 && !PacketsHandler.C07.get()) {
-               mc.thePlayer.sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 1, null, 0, 0, 0));
-            }
+            postPlace = true;
             break;
          case 4:
+            if (mc.thePlayer.ticksExisted % 3 == 0 && !PacketsHandler.C07.get()) {
+               PacketUtils.sendPacket(mc, new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 1, null, 0, 0, 0));
+            }
+            break;
+         case 5:
             if (reSendConsume) {
                if (mc.thePlayer.onGround) {
                   mc.thePlayer.jump();
@@ -101,9 +107,9 @@ public class NoSlow extends Module {
 
    @SubscribeEvent
    public void onPostMotion(PostMotionEvent e) {
-      if (postPlace && mode.getInput() == 2) {
+      if (postPlace && mode.getInput() == 3) {
          if (mc.thePlayer.ticksExisted % 3 == 0 && !PacketsHandler.C07.get()) {
-            mc.thePlayer.sendQueue.addToSendQueue(new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
+            PacketUtils.sendPacket(mc, new C08PacketPlayerBlockPlacement(mc.thePlayer.getHeldItem()));
          }
          postPlace = false;
       }
@@ -117,23 +123,44 @@ public class NoSlow extends Module {
          ticksOffStairs++;
       }
       postPlace = false;
-      if (vanillaSword.isToggled() && Utils.Player.isPlayerHoldingSword()) {
-         resetFloat();
-         return;
-      }
-      boolean apply = getSlowed() != 0.2f;
-      if (!apply || !mc.thePlayer.isUsingItem()) {
-         resetFloat();
-         return;
-      }
-      if ((canFloat && canFloat() && mc.thePlayer.onGround && ticksOffStairs >= 30)) {
-         e.setPosY(e.getPosY() + 1E-12);
+
+      switch ((int) mode.getInput()) {
+         case 5:
+            if (vanillaSword.isToggled() && Utils.Player.isPlayerHoldingSword()) {
+               resetFloat();
+               return;
+            }
+            boolean apply = getSlowed() != 0.2f;
+            if (!apply || !mc.thePlayer.isUsingItem()) {
+               resetFloat();
+               return;
+            }
+            if ((canFloat && canFloat() && mc.thePlayer.onGround && ticksOffStairs >= 30)) {
+               e.setPosY(e.getPosY() + 1E-12);
+            }
+            break;
+         case 6:
+            Packet release = new C07PacketPlayerDigging(
+                    C07PacketPlayerDigging.Action.RELEASE_USE_ITEM,
+                    BlockPos.ORIGIN,
+                    EnumFacing.UP
+            );
+
+            if (mc.thePlayer.isUsingItem()) {
+               PacketUtils.sendPacket(mc, release);
+            }
+
+            if (mc.thePlayer.getItemInUseDuration() == 3) {
+               mc.thePlayer.stopUsingItem();
+               PacketUtils.sendPacket(mc, release);
+            }
+            break;
       }
    }
 
    @SubscribeEvent
    public void onPacketSend(SendPacketEvent e) {
-      if (e.getPacket() instanceof C08PacketPlayerBlockPlacement && mode.getInput() == 4 && getSlowed() != 0.2f && holdingConsumable(((C08PacketPlayerBlockPlacement) e.getPacket()).getStack()) && !BlockUtils.isInteractable(mc.objectMouseOver) && holdingEdible(((C08PacketPlayerBlockPlacement) e.getPacket()).getStack())) {
+      if (e.getPacket() instanceof C08PacketPlayerBlockPlacement && mode.getInput() == 5 && getSlowed() != 0.2f && holdingConsumable(((C08PacketPlayerBlockPlacement) e.getPacket()).getStack()) && !BlockUtils.isInteractable(mc.objectMouseOver) && holdingEdible(((C08PacketPlayerBlockPlacement) e.getPacket()).getStack())) {
          if (!mc.thePlayer.onGround) {
             canFloat = true;
          } else {
@@ -189,7 +216,7 @@ public class NoSlow extends Module {
          ItemFood food = (ItemFood) stack.getItem();
          boolean alwaysEdible = false;
          try {
-            alwaysEdible = Reflection.alwaysEdible.getBoolean(food);
+            alwaysEdible = food instanceof ItemAppleGold || stack.getItem() instanceof ItemBucketMilk;
          } catch (Exception e) {
             Utils.Player.sendMessageToSelf("&cError checking food edibility, check logs.");
             e.printStackTrace();

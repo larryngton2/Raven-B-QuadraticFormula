@@ -11,7 +11,7 @@ public class AutoBan extends Module {
     public static SliderSetting delay;
 
     public AutoBan() {
-        super("AutoBan", ModuleCategory.fun);
+        super("Auto Ban", ModuleCategory.fun);
         withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("automatically bans you on"));

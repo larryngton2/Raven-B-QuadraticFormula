@@ -4,6 +4,8 @@ import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.movement.KeepSprint;
 import demise.client.module.modules.rage.killAura.KillAura;
+import demise.client.utils.EyeHeightEvent;
+import lombok.NonNull;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.boss.EntityDragonPart;
@@ -22,8 +24,15 @@ import net.minecraft.util.FoodStats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static demise.client.utils.Utils.mc;
 
 @Mixin(EntityPlayer.class)
 public abstract class MixinEntityPlayer extends EntityLivingBase {
@@ -31,41 +40,53 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
         super(p_i1594_1_);
     }
 
+    @Shadow
     protected FoodStats field_71100_bB = new FoodStats();
+
+    @Shadow
     public PlayerCapabilities field_71075_bZ = new PlayerCapabilities();
+
+    @Shadow
     public InventoryPlayer field_71071_by = new InventoryPlayer((EntityPlayer) (Object) this);
 
+    @Shadow
     public void func_71009_b(Entity p_func_71009_b_1_) {
         //idk but this is empty on EntityPlayer.class too
     }
 
+    @Shadow
     public void func_71047_c(Entity p_func_71047_c_1_) {
         //idk but this is empty on EntityPlayer.class too
     }
 
+    @Shadow
     public ItemStack func_71045_bC() {
         return this.field_71071_by.getCurrentItem();
     }
 
+    @Shadow
     public abstract void func_71028_bD();
 
+    @Shadow
     public void func_71020_j(float p_func_71020_j_1_) {
         if (!this.field_71075_bZ.disableDamage && !this.worldObj.isRemote) {
             this.field_71100_bB.addExhaustion(p_func_71020_j_1_);
         }
     }
 
+    @Shadow
     public void func_71064_a(StatBase p_func_71064_a_1_, int p_func_71064_a_2_) {
         //idk but this is empty on EntityPlayer.class too
     }
 
+    @Shadow
     public void func_71029_a(StatBase p_func_71029_a_1_) {
         this.func_71064_a(p_func_71029_a_1_, 1);
     }
 
     /**
-     * @author a
-     * @reason a
+     * @author lucas
+     * @reason keepSprint
      */
     @Overwrite
     public void func_71059_n(Entity p_attackTargetEntityWithCurrentItem_1_) {
@@ -75,9 +96,9 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
                 int i = 0;
                 float f1 = 0.0F;
                 if (p_attackTargetEntityWithCurrentItem_1_ instanceof EntityLivingBase) {
-                    f1 = EnchantmentHelper.func_152377_a(this.getHeldItem(), ((EntityLivingBase) p_attackTargetEntityWithCurrentItem_1_).getCreatureAttribute());
+                    f1 = EnchantmentHelper.getModifierForCreature(this.getHeldItem(), ((EntityLivingBase) p_attackTargetEntityWithCurrentItem_1_).getCreatureAttribute());
                 } else {
-                    f1 = EnchantmentHelper.func_152377_a(this.getHeldItem(), EnumCreatureAttribute.UNDEFINED);
+                    f1 = EnchantmentHelper.getModifierForCreature(this.getHeldItem(), EnumCreatureAttribute.UNDEFINED);
                 }
 
                 i += EnchantmentHelper.getKnockbackModifier(this);
@@ -108,8 +129,6 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
                             p_attackTargetEntityWithCurrentItem_1_.addVelocity((double) (-MathHelper.sin(this.rotationYaw * 3.1415927F / 180.0F) * (float) i * 0.5F), 0.1, (double) (MathHelper.cos(this.rotationYaw * 3.1415927F / 180.0F) * (float) i * 0.5F));
                             Module eepsprint = demise.moduleManager.getModuleByClazz(KeepSprint.class);
                             Module healAura = demise.moduleManager.getModuleByClazz(KillAura.class);
-
-                            //did this while being high, don't know why
 
                             if ((eepsprint != null && eepsprint.isEnabled())) {
                                 KeepSprint.keepSprint(p_attackTargetEntityWithCurrentItem_1_);
@@ -178,6 +197,17 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
                 }
             }
 
+        }
+    }
+
+    @Inject(method = "func_70047_e", at = @At("RETURN"), cancellable = true)
+    public void onGetEyeHeight(@NonNull CallbackInfoReturnable<Float> cir) {
+        EyeHeightEvent event = new EyeHeightEvent(cir.getReturnValue());
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isSet()) {
+            mc.thePlayer.cameraYaw = 0;
+            mc.thePlayer.cameraPitch = 0;
+            cir.setReturnValue((float) event.getEyeHeight());
         }
     }
 }

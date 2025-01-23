@@ -2,6 +2,7 @@ package demise.keystroke;
 
 import demise.client.main.ClientConfig;
 import demise.client.main.demise;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod(
-   modid = "demise",
+   modid = "keystrokesmod",
    name = "KeystrokesMod",
    version = "KMV5",
    acceptedMinecraftVersions = "[1.8.9]",
@@ -19,7 +20,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 )
 
 public class KeyStrokeMod {
+    @Getter
     private static KeyStroke keyStroke;
+    @Getter
     private static KeyStrokeRenderer keyStrokeRenderer = new KeyStrokeRenderer();
     private static boolean isKeyStrokeConfigGuiToggled = false;
     @Mod.EventHandler
@@ -29,14 +32,6 @@ public class KeyStrokeMod {
         MinecraftForge.EVENT_BUS.register(this);
         ClientConfig.applyKeyStrokeSettingsFromConfigFile();
         demise.init();
-    }
-
-    public static KeyStroke getKeyStroke() {
-        return keyStroke;
-    }
-
-    public static KeyStrokeRenderer getKeyStrokeRenderer() {
-        return keyStrokeRenderer;
     }
 
     public static void toggleKeyStrokeConfigGui() {

@@ -4,6 +4,7 @@ import demise.client.module.Module;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.Utils;
+import demise.client.utils.event.update.PreUpdateEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;

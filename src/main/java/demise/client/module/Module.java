@@ -174,7 +174,7 @@ public class Module {
 
    public void resetToDefaults() {
       this.keycode = defualtKeyCode;
-      this.setToggled(defaultEnabled);
+      this.setToggled(false);
 
       for (Setting setting : this.settings) {
          setting.resetToDefaults();

@@ -26,7 +26,7 @@ public class Anticheat extends Module {
     private final HashMap<UUID, PlayerData> players = new HashMap<>();
     private long lastAlert;
     public Anticheat() {
-        super("Anticheat", ModuleCategory.other);
+        super("AntiCheat", ModuleCategory.other);
         this.registerSetting(new DescriptionSetting("Tries to detect cheaters."));
         this.registerSetting(interval = new SliderSetting("Flag interval (sec)", 20.0, 0.0, 60.0, 1.0));
         this.registerSetting(autoReport = new TickSetting("Auto report", false));
@@ -66,10 +66,10 @@ public class Anticheat extends Module {
             hashMap.put(mode, currentTimeMillis);
             flags.put(entityPlayer.getUniqueID(), hashMap);
         }
-        final ChatComponentText chatComponentText = new ChatComponentText(Utils.Player.formatColor("&7[&8demise&7]&r " + entityPlayer.getDisplayName().getUnformattedText() + " &7detected for &8" + mode.getName()));
+        final ChatComponentText chatComponentText = new ChatComponentText(Utils.Client.formatColor("&7[&8demise&7]&r " + entityPlayer.getDisplayName().getUnformattedText() + " &7detected for &8" + mode.getName()));
         final ChatStyle chatStyle = new ChatStyle();
         chatStyle.setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wdr " + entityPlayer.getName()));
-        ((IChatComponent)chatComponentText).appendSibling(new ChatComponentText(Utils.Player.formatColor(" §7[§8WDR§7]")).setChatStyle(chatStyle));
+        ((IChatComponent)chatComponentText).appendSibling(new ChatComponentText(Utils.Client.formatColor(" §7[§8WDR§7]")).setChatStyle(chatStyle));
         mc.thePlayer.addChatMessage(chatComponentText);
         if (shouldPing.isToggled() && Math.abs(lastAlert - currentTimeMillis) >= 1500L) {
             mc.thePlayer.playSound("note.pling", 1.0f, 1.0f);
@@ -77,11 +77,11 @@ public class Anticheat extends Module {
         }
 
         if (autoReport.isToggled()) {
-            mc.thePlayer.sendChatMessage("/wdr " + Utils.Player.stripColor(entityPlayer.getGameProfile().getName()));
+            mc.thePlayer.sendChatMessage("/wdr " + Utils.Client.stripColor(entityPlayer.getGameProfile().getName()));
         }
 
         if (addEnemy.isToggled()) {
-            Utils.Player.addEnemy(Utils.Player.stripColor(entityPlayer.getGameProfile().getName()));
+            Utils.Player.addEnemy(Utils.Client.stripColor(entityPlayer.getGameProfile().getName()));
         }
     }
 

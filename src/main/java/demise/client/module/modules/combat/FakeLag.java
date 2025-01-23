@@ -126,7 +126,9 @@ public class FakeLag extends Module {
         }
 
         if (!Utils.Player.isPlayerInGame() || mc.thePlayer.isDead) {
-            reset();
+            if (lagging) {
+                reset();
+            }
             return;
         }
 

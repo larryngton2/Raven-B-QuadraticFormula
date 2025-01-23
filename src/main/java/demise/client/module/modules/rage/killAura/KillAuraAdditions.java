@@ -9,7 +9,7 @@ import demise.client.utils.Utils;
 public class KillAuraAdditions extends Module {
     public static DescriptionSetting desc, dAutoBlock, dRotation, dAttack, dTarget;
     public static SliderSetting autoBlock, rotationMode, pitchOffset, attackMode, pauseRange, targetSwitchDelay, targetPriority;
-    public static TickSetting noSwing, packet, pauseRotation, rotationOffset, targetSwitch, pitSwitch;
+    public static TickSetting noSwing, pauseRotation, rotationOffset, targetSwitch, pitSwitch;
 
     public KillAuraAdditions() {
         super("KA Additions", ModuleCategory.rage);
@@ -23,9 +23,8 @@ public class KillAuraAdditions extends Module {
         this.registerSetting(noSwing = new TickSetting("NoSwing", false));
 
         //auto block options
-        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Vanilla, Release, AAC, VanillaReblock, Smart, NCP, Interact"));
+        this.registerSetting(dAutoBlock = new DescriptionSetting("None, Fake, Vanilla, Release, AAC, VanillaReblock, Smart, Blink"));
         this.registerSetting(autoBlock = new SliderSetting("AutoBlock", 1, 1, 8, 1));
-        this.registerSetting(packet = new TickSetting("Packet Block", true));
 
         //rotation options
         this.registerSetting(dRotation = new DescriptionSetting("Silent, Normal, Packet, None"));
@@ -56,13 +55,13 @@ public class KillAuraAdditions extends Module {
 
     public enum autoBlockModes {
         None,
+        Fake,
         Vanilla,
         Release,
         AAC,
         VanillaReblock,
         Smart,
-        NCP,
-        Interact
+        Blink
     }
 
     public enum targetPriorityList {

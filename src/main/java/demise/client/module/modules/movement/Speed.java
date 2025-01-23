@@ -279,7 +279,6 @@ public class Speed extends Module {
                      MoveUtil.strafe();
                      mc.thePlayer.motionY += 0.0568;
                      break;
-
                   case 3:
                      mc.thePlayer.motionY -= 0.13;
                      break;
@@ -291,8 +290,6 @@ public class Speed extends Module {
                if (mc.thePlayer.hurtTime >= 7) {
                   MoveUtil.strafe(Math.max(MoveUtil.speed(), 0.281));
                }
-
-               Utils.Player.getSpeedAmplifier();
 
                if (Utils.Player.getSpeedAmplifier() == 3) {
                   switch (offGroundTicks) {

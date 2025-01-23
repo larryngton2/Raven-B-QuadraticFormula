@@ -104,11 +104,11 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     private int field_175168_bP;
 
     /**
-     * @author a
-     * @reason a
+     * @author lucas
+     * @reason prevRenderYaw and prevRenderPitch update as well ass Pre/Post UpdateEvent
      */
     @Overwrite
-    public void onUpdate() {
+    public void func_70071_h_() {
         if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0, this.posZ))) {
             Utils.prevRenderPitch = Utils.renderPitch;
             Utils.prevRenderYaw = Utils.renderYaw;
@@ -129,8 +129,8 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     /**
-     * @author a
-     * @reason a
+     * @author lucas
+     * @reason PreMotionEvent
      */
     @Overwrite
     public void func_175161_p() {
@@ -147,7 +147,9 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(preMotionEvent);
 
-        Utils.serverRotations = new float[]{preMotionEvent.getYaw(), preMotionEvent.getPitch()};
+        Utils.serverRotations = new float[]{
+                preMotionEvent.getYaw(), preMotionEvent.getPitch()
+        };
 
         boolean flag = preMotionEvent.isSprinting();
         if (flag != this.field_175171_bO) {
@@ -172,11 +174,6 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         }
 
         if (this.func_175160_A()) {
-            if (PreMotionEvent.setRenderYaw()) {
-                Utils.Player.setRenderYaw(preMotionEvent.getYaw());
-                preMotionEvent.setRenderYaw(false);
-            }
-
             Utils.renderPitch = preMotionEvent.getPitch();
             Utils.renderYaw = preMotionEvent.getYaw();
 
@@ -220,8 +217,8 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     /**
-     * @author a
-     * @reason a
+     * @author lucas
+     * @reason omniSprint
      */
     @Overwrite
     public void func_70636_d() {

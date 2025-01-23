@@ -39,11 +39,9 @@ public class WTap extends Module {
         this.registerSetting(eventTypeDesc = new DescriptionSetting("Mode: POST"));
     }
 
-
     public void guiUpdate() {
         eventTypeDesc.setDesc(Utils.md + Utils.Modes.SprintResetTimings.values()[(int) eventType.getInput() - 1]);
     }
-
 
     @SubscribeEvent
     public void onTick(TickEvent.RenderTickEvent e) {

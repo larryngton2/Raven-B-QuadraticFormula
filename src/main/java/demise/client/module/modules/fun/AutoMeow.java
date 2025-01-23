@@ -29,7 +29,7 @@ public class AutoMeow extends Module {
     );
 
     public AutoMeow() {
-        super("AutoMeow", ModuleCategory.fun);
+        super("Auto Meow", ModuleCategory.fun);
         withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("yeah"));

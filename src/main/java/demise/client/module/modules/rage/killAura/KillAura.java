@@ -8,22 +8,22 @@ import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.MathUtils;
-import demise.client.utils.PacketsHandler;
 import demise.client.utils.Utils;
 import demise.client.utils.event.motion.PreMotionEvent;
+import demise.client.utils.event.update.PreUpdateEvent;
 import demise.client.utils.packet.PacketUtils;
 import demise.client.utils.packet.SendPacketEvent;
-import lombok.Setter;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
+import net.minecraft.network.login.client.C01PacketEncryptionResponse;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.client.C02PacketUseEntity.Action;
+import net.minecraft.network.status.client.C00PacketServerQuery;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -31,10 +31,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static demise.client.module.modules.rage.killAura.KillAuraAdditions.*;
 import static demise.client.utils.Utils.Player.*;
@@ -75,13 +73,9 @@ public class KillAura extends Module {
     private long lastSwitchTime = 0;
     private static long lastTargetTime = 0;
     private static boolean isBlocking = false;
-    private int interactTicks;
-    private boolean firstCycle;
     private final ConcurrentLinkedQueue<Packet> blinkedPackets = new ConcurrentLinkedQueue<>();
-    private final AtomicBoolean blinking = new AtomicBoolean(false);
-    public boolean lag;
-    @Setter
-    private long lastTime = 0L;
+    private boolean blink = false;
+    private int blockTicks = 0;
 
     @Override
     public void onEnable() {
@@ -93,12 +87,9 @@ public class KillAura extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
-        setBlockingState(false);
-        if (autoBlock.getInput() == 7) {
-            NCPAb(false);
-        }
+        blocking(false);
         resetInterpolation();
-        blinking.set(false);
+        blink = false;
     }
 
     public void update() {
@@ -136,39 +127,25 @@ public class KillAura extends Module {
             }
 
             handleRotation(currentTarget);
-
-            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput() + 0.337) {
-                handleAutoBlock((EntityLivingBase) currentTarget);
-            } else {
-                setBlockingState(false);
-            }
-        } else {
-            setBlockingState(false);
+        } else if (isBlocking) {
+            blocking(false);
         }
     }
 
     @SubscribeEvent
-    public void onPreClientTick(TickEvent.ClientTickEvent e) {
-        if (mc.thePlayer == null || mc.theWorld == null || e.phase == TickEvent.Phase.END) {
+    public void onPreUpdate(PreUpdateEvent e) {
+        if (mc.thePlayer == null || mc.theWorld == null) {
             return;
         }
 
         if (currentTarget != null) {
             if (mc.thePlayer.getDistanceToEntity(currentTarget) <= attackRange.getInput() + 0.337) {
-                if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-                    attack(currentTarget);
-                    if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
-                        mc.thePlayer.motionX *= 0.6;
-                        mc.thePlayer.motionZ *= 0.6;
-                    }
-
-                    lastTargetTime = System.currentTimeMillis();
-                }
+                handleAutoBlock((EntityLivingBase) currentTarget);
+            } else if (isBlocking) {
+                blocking(false);
             }
-
-            if (autoBlock.getInput() == 7 && mc.thePlayer.getDistanceToEntity(currentTarget) <= autoBlockRange.getInput() + 0.337) {
-                NCPAb(true);
-            }
+        } else if (isBlocking) {
+            blocking(false);
         }
     }
 
@@ -268,8 +245,14 @@ public class KillAura extends Module {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPreMotion(PreMotionEvent e) {
-        if (rotationMode.getInput() == 1 && currentTarget != null) {
-            aimSilent(e, currentTarget, (float) rotationSpeed.getInput());
+        if (currentTarget != null) {
+            if (mc.thePlayer.getDistanceToEntity(currentTarget) <= pauseRange.getInput() && pauseRotation.isToggled()) {
+                return;
+            }
+
+            if (rotationMode.getInput() == 1) {
+                aimSilent(e, currentTarget, (float) rotationSpeed.getInput());
+            }
         } else {
             resetInterpolation();
         }
@@ -310,73 +293,74 @@ public class KillAura extends Module {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onSendPacket(SendPacketEvent e) {
-        if (!Utils.Player.nullCheck()) {
+        if (!Utils.Player.isPlayerInGame() || mc.thePlayer.isDead) {
             return;
         }
 
         Packet packet = e.getPacket();
-        if (packet instanceof C08PacketPlayerBlockPlacement) {
-            if (((C08PacketPlayerBlockPlacement) packet).getStack() != null && ((C08PacketPlayerBlockPlacement) packet).getStack().getItem() != null && ((C08PacketPlayerBlockPlacement) packet).getPlacedBlockDirection() != 255) {
-                e.setCanceled(true);
-            }
-        }
-
-        if (blinking.get() && !e.isCanceled()) {
+        if (blink && !e.isCanceled()) {
             if (packet.getClass().getSimpleName().startsWith("S")) {
                 return;
             }
-
             if (packet instanceof C00PacketKeepAlive || packet instanceof C00PacketLoginStart || packet instanceof C00Handshake) {
                 return;
             }
-
             blinkedPackets.add(packet);
             e.setCanceled(true);
         }
     }
 
-    private void handleAutoBlock(EntityLivingBase entity) {
-        if (!Utils.Player.isPlayerHoldingWeapon()) {
-            setBlockingState(false);
+    private void handleAutoBlock(EntityLivingBase e) {
+        if (!Utils.Player.isPlayerHoldingWeapon() && isBlocking) {
+            blocking(false);
             return;
         }
 
         switch ((int) autoBlock.getInput()) {
             case 1: // None
-                setBlockingState(false);
+                if (isBlocking) {
+                    blocking(false);
+                }
+                attack(e);
                 break;
-            case 2: // Vanilla
-                setBlockingState(true);
+            case 2: // Fake
+                //todo lmao
+                attack(e);
                 break;
-            case 3: // Release
-                releaseAb(entity);
+            case 3: // Vanilla
+                blocking(true);
+                attack(e);
                 break;
-            case 4: // AAC
-                AACAb(entity);
+            case 4: // Release
+                releaseAb(e);
                 break;
-            case 5: // VanillaReblock
-                vanillaReblockAb();
+            case 5: // AAC
+                AACAb(e);
                 break;
-            case 6: // Smart
-                smartAb(entity);
+            case 6: // VanillaReblock
+                vanillaReblockAb(e);
                 break;
-            case 8: // Interact
-                interactAb(entity);
+            case 7: // Smart
+                smartAb(e);
+                break;
+            case 8: // Blink
+                blinkAb(e);
                 break;
         }
     }
 
     private void releaseAb(EntityLivingBase e) {
-        setBlockingState(e.hurtTime >= 5 || mc.thePlayer.getDistanceToEntity(e) > attackRange.getInput() + 0.337);
+        attack(e);
+        blocking(e.hurtTime >= 5 || mc.thePlayer.getDistanceToEntity(e) > attackRange.getInput() + 0.337);
     }
 
     private void AACAb(Entity e) {
         if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
-            setBlockingState(false);
+            blocking(false);
             attack(e);
             lastTargetTime = System.currentTimeMillis();
         }
-        mc.addScheduledTask(() -> setBlockingState(true));
+        mc.addScheduledTask(() -> blocking(true));
 
         if (mc.thePlayer.ticksExisted % 2 == 0) {
             mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
@@ -384,84 +368,35 @@ public class KillAura extends Module {
         }
     }
 
-    private void vanillaReblockAb() {
-        setBlockingState(true);
-
+    private void vanillaReblockAb(Entity e) {
+        blocking(true);
+        attack(e);
         if (!mc.gameSettings.keyBindUseItem.isKeyDown() || !mc.thePlayer.isBlocking()) {
-            setBlockingState(true);
+            blocking(true);
         }
     }
 
     private void smartAb(EntityLivingBase e) {
-        setBlockingState(((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) && mc.thePlayer.motionY >= 0) || e.hurtTime >= 5);
+        blocking(((mc.thePlayer.hurtTime <= 5 && mc.thePlayer.hurtTime != 0) && mc.thePlayer.motionY >= 0) || e.hurtTime >= 5);
     }
 
-    private void NCPAb(boolean state) {
-        if (state) {
-            PacketUtils.sendPacket(mc, new C08PacketPlayerBlockPlacement(new BlockPos(-1, -1, -1), 255, mc.thePlayer.inventory.getCurrentItem(), 0.0f, 0.0f, 0.0f));
+    private void blinkAb(Entity e) {
+        if (blockTicks >= 3) {
+            blockTicks = 0;
         } else {
-            PacketUtils.sendPacket(mc, new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, new BlockPos(1.0, 1.0, 1.0), DOWN));
-        }
-    }
-
-    private void interactAb(Entity e) {
-        if (interactTicks >= 3) {
-            interactTicks = 0;
-        } else {
-            setBlockingState(true);
-            interactTicks++;
+            blockTicks++;
         }
 
-        if (firstCycle) {
-            switch (interactTicks) {
-                case 1:
-                    blinking.set(true);
-                    int bestSwapSlot = getBestSwapSlot();
-                    mc.thePlayer.sendQueue.addToSendQueue(new C09PacketHeldItemChange(bestSwapSlot));
-                    PacketsHandler.playerSlot.set(bestSwapSlot);
-                    lag = false;
-                    break;
-                case 2:
-                    mc.thePlayer.sendQueue.addToSendQueue(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem));
-                    PacketsHandler.playerSlot.set(mc.thePlayer.inventory.currentItem);
-                    mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
-                    break;
-                case 3:
-                    setBlockingState(false);
-                    releasePackets();
-                    firstCycle = false;
-                    lag = true;
-                    break;
-            }
-        } else {
-            switch (interactTicks) {
-                case 1:
-                    break;
-                case 2:
-                    lag = false;
-                    int bestSwapSlot = getBestSwapSlot();
-                    blinking.set(true);
-                    mc.thePlayer.sendQueue.addToSendQueue(new C09PacketHeldItemChange(bestSwapSlot));
-                    PacketsHandler.playerSlot.set(bestSwapSlot);
-                    break;
-                case 3:
-                    mc.thePlayer.sendQueue.addToSendQueue(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem));
-                    PacketsHandler.playerSlot.set(mc.thePlayer.inventory.currentItem);
-                    mc.playerController.interactWithEntitySendPacket(mc.thePlayer, e);
-                    setBlockingState(false);
-                    releasePackets(); // release
-                    //firstCycle = true;
-                    lag = true;
-                    break;
-            }
-        }
-    }
-
-    private void setBlockingState(boolean state) {
-        if (packet.isToggled()) {
-            packetBlocking(state);
-        } else {
-            blocking(state);
+        switch (blockTicks) {
+            case 1:
+                start();
+                blocking(false);
+                break;
+            case 3:
+                attack(e);
+                blocking(true);
+                reset();
+                break;
         }
     }
 
@@ -485,81 +420,53 @@ public class KillAura extends Module {
             return;
         }
 
-        boolean isMouseOverNull = mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null;
+        if (System.currentTimeMillis() - lastTargetTime >= MathUtils.randomInt(attackDelay.getInputMin(), attackDelay.getInputMax())) {
+            boolean isMouseOverNull = mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null;
 
-        if (rotationMode.getInput() == 2 && isMouseOverNull) {
-            if (!noSwing.isToggled()) {
-                mc.thePlayer.swingItem();
-            }
-            return;
-        }
-
-        switch ((int) attackMode.getInput()) {
-            case 1:
+            if (rotationMode.getInput() == 2 && isMouseOverNull) {
                 if (!noSwing.isToggled()) {
                     mc.thePlayer.swingItem();
                 }
-                PacketUtils.sendPacket(mc, new C02PacketUseEntity(e, Action.ATTACK));
-                break;
-
-            case 2:
-                if (!noSwing.isToggled()) {
-                    mc.thePlayer.swingItem();
-                }
-                mc.playerController.attackEntity(mc.thePlayer, e);
-                break;
-
-            default:
-                Utils.Player.sendMessageToSelf("the fuck did you do?????");
-                break;
-        }
-    }
-
-    private int getBestSwapSlot() {
-        int currentSlot = mc.thePlayer.inventory.currentItem;
-        int bestSlot = -1;
-        double bestDamage = -1;
-        for (int i = 0; i < 9; ++i) {
-            if (i == currentSlot) {
-                continue;
+                return;
             }
-            ItemStack stack = mc.thePlayer.inventory.getStackInSlot(i);
-            double damage = Utils.Player.getSlotDamage(stack);
-            if (damage != 0) {
-                if (damage > bestDamage) {
-                    bestDamage = damage;
-                    bestSlot = i;
-                }
-            }
-        }
-        if (bestSlot == -1) {
-            for (int i = 0; i < 9; ++i) {
-                if (i == currentSlot) {
-                    continue;
-                }
-                ItemStack stack = mc.thePlayer.inventory.getStackInSlot(i);
-                String[] swapBlacklist = {"compass", "snowball", "spawn", "skull"};
-                if (stack == null || Arrays.stream(swapBlacklist).noneMatch(stack.getUnlocalizedName().toLowerCase()::contains)) {
-                    bestSlot = i;
+
+            switch ((int) attackMode.getInput()) {
+                case 1:
+                    if (!noSwing.isToggled()) {
+                        mc.thePlayer.swingItem();
+                    }
+                    PacketUtils.sendPacket(mc, new C02PacketUseEntity(e, Action.ATTACK));
                     break;
-                }
-            }
-        }
 
-        return bestSlot;
+                case 2:
+                    if (!noSwing.isToggled()) {
+                        mc.thePlayer.swingItem();
+                    }
+                    mc.playerController.attackEntity(mc.thePlayer, e);
+                    break;
+            }
+
+            if (!keepSprintOnGround.isToggled() && mc.thePlayer.onGround || !keepSprintOnAir.isToggled() && !mc.thePlayer.onGround) {
+                mc.thePlayer.motionX *= 0.6;
+                mc.thePlayer.motionZ *= 0.6;
+            }
+
+            lastTargetTime = System.currentTimeMillis();
+        }
     }
 
-    private void releasePackets() {
-        try {
-            synchronized (blinkedPackets) {
-                for (Packet packet : blinkedPackets) {
-                    PacketsHandler.handlePacket(packet);
-                    PacketUtils.sendPacketNoEvent(mc, packet);
-                }
+    private void start() {
+        blink = true;
+        blinkedPackets.clear();
+    }
+
+    private void reset() {
+        blink = false;
+
+        synchronized (blinkedPackets) {
+            for (Packet<?> packet : blinkedPackets) {
+                PacketUtils.sendPacketNoEvent(mc, packet);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Utils.Player.sendMessageToSelf("&cThere was an error releasing blinked packets");
         }
         blinkedPackets.clear();
     }

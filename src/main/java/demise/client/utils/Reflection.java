@@ -293,8 +293,7 @@ public class Reflection {
             try {
                 clickMouse.invoke(Minecraft.getMinecraft());
             }
-            catch (InvocationTargetException ex) {}
-            catch (IllegalAccessException ex2) {}
+            catch (InvocationTargetException | IllegalAccessException ignored) {}
         }
     }
 

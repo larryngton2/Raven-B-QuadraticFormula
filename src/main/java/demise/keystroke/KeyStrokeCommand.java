@@ -7,7 +7,7 @@ import net.minecraft.command.ICommandSender;
 
 public class KeyStrokeCommand extends CommandBase {
    public String getCommandName() {
-      return "demise";
+      return "keystrokesmod";
    }
 
    public void processCommand(ICommandSender sender, String[] args) {
@@ -15,7 +15,7 @@ public class KeyStrokeCommand extends CommandBase {
    }
 
    public String getCommandUsage(ICommandSender sender) {
-      return "/demise";
+      return "/keystrokesmod";
    }
 
    public int getRequiredPermissionLevel() {

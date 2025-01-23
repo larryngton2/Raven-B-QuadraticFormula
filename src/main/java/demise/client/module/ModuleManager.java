@@ -1,5 +1,6 @@
 package demise.client.module;
 
+import demise.client.module.modules.exploit.SlipHack;
 import demise.client.module.modules.hud.HUD;
 import demise.client.module.modules.exploit.Disabler;
 import demise.client.module.modules.fun.AutoBan;
@@ -16,9 +17,7 @@ import demise.client.module.modules.other.*;
 import demise.client.module.modules.player.*;
 import demise.client.module.modules.rage.killAura.KillAuraAdditions;
 import demise.client.module.modules.render.*;
-import demise.client.module.modules.world.AntiBot;
-import demise.client.module.modules.world.ChatLogger;
-import demise.client.module.modules.world.Scaffold;
+import demise.client.module.modules.world.*;
 import demise.client.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
@@ -59,12 +58,10 @@ public class ModuleManager {
       addModule(new Boost());
       addModule(new BridgeAssist());
       addModule(new BridgeInfo());
-      addModule(new BurstClicker());
       addModule(new Chams());
       addModule(new ChatLogger());
       addModule(new ChestESP());
       addModule(new ClientNameSpoof());
-      addModule(new ClickAssist());
       addModule(new DelayRemover());
       addModule(new Disabler());
       addModule(new DuelsStats());
@@ -99,11 +96,9 @@ public class ModuleManager {
       addModule(new SafeWalk());
       addModule(new Scaffold());
       addModule(new SelfDestruct());
-      addModule(new ShiftTap());
       addModule(new SlyPort());
       addModule(new Speed());
       addModule(new Sprint());
-      addModule(new STap());
       addModule(new StopMotion());
       addModule(new StringEncrypt());
       addModule(new Strafe());
@@ -120,6 +115,14 @@ public class ModuleManager {
       addModule(new Weapon());
       addModule(new WTap());
       addModule(new Xray());
+      addModule(new FastPlace());
+      addModule(new Criticals());
+      addModule(new Tower());
+      addModule(new Camera());
+      addModule(new InvManager());
+      addModule(new FastUse());
+      addModule(new LongJump());
+      addModule(new SlipHack());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.

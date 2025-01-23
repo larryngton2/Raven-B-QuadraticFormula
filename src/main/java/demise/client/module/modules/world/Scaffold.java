@@ -20,32 +20,25 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 
 public class Scaffold extends Module {
-    private static DescriptionSetting dRot, dFast, dTower, dSprint;
-    private static SliderSetting forward, diagonal, rotation, towerMode, sprintMode, fastMode, placeDelay, test;
+    private static DescriptionSetting dRot, dFast, dSprint;
+    private static SliderSetting forward, diagonal, rotation, sprintMode, fastMode, placeDelay, test;
     private static TickSetting showBlockCount, accelerationCoolDown, silentSwing, sameY;
     public static TickSetting safeWalk;
-    public static MovingObjectPosition placeBlock;
-
     public Scaffold() {
         super("Scaffold", ModuleCategory.world);
         this.registerSetting(placeDelay = new SliderSetting("Place delay", 0, 0, 250, 25));
 
-        this.registerSetting(dRot = new DescriptionSetting("None, Backwards, Strict"));
-        this.registerSetting(rotation = new SliderSetting("Rotation", 2, 1, 3, 1));
+        this.registerSetting(dRot = new DescriptionSetting("None, Backwards, Strict, Offset"));
+        this.registerSetting(rotation = new SliderSetting("Rotation", 2, 1, 4, 1));
 
         this.registerSetting(dSprint = new DescriptionSetting("None, Normal, Ground, Air"));
         this.registerSetting(sprintMode = new SliderSetting("Sprint mode", 1, 1, 4 ,1));
 
         this.registerSetting(dFast = new DescriptionSetting("None, Jump"));
         this.registerSetting(fastMode = new SliderSetting("Fast mode", 1, 1, 2, 1));
-
-        this.registerSetting(dTower = new DescriptionSetting("None, Vanilla, Hypixel1"));
-        this.registerSetting(towerMode = new SliderSetting("Tower mode", 1, 1, 3, 1));
 
         this.registerSetting(forward = new SliderSetting("Forward motion", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(diagonal = new SliderSetting("Diagonal motion", 1.0, 0.5, 1.2, 0.01));
@@ -57,6 +50,7 @@ public class Scaffold extends Module {
         this.registerSetting(sameY = new TickSetting("Same Y", false));
     }
 
+    public static MovingObjectPosition placeBlock;
     private int lastSlot;
     public float placeYaw;
     public float placePitch;
@@ -66,18 +60,17 @@ public class Scaffold extends Module {
     private int slowTicks;
     public static boolean rmbDown;
     private int ticksAccelerated;
-    private double jumpOffPos;
     private int offGroundTicks, onGroundTicks;
     private long onGroundTime;
     public static boolean sprint;
     private static double originalY;
-    private boolean towering;
     private long lastPlaceTime;
 
     private enum rotationModes {
         None,
         Backwards,
-        Strict
+        Strict,
+        Offset
     }
 
     private enum sprintModes {
@@ -102,7 +95,6 @@ public class Scaffold extends Module {
         dRot.setDesc(Utils.md + rotationModes.values()[(int) rotation.getInput() - 1]);
         dSprint.setDesc(Utils.md + sprintModes.values()[(int) sprintMode.getInput() - 1]);
         dFast.setDesc(Utils.md + fastModes.values()[(int) fastMode.getInput() - 1]);
-        dTower.setDesc(Utils.md + towerModes.values()[(int) towerMode.getInput() - 1]);
     }
 
     @Override
@@ -153,9 +145,15 @@ public class Scaffold extends Module {
 
             switch ((int) fastMode.getInput()) {
                 case 2:
-                    // you need the onGroundTime check or else you won't sprint properly
-                    if (mc.thePlayer.onGround && onGroundTime > 0L) {
-                        mc.thePlayer.jump();
+                    if (mc.thePlayer.onGround) {
+                        if (sprintMode.getInput() == 3) {
+                            // you need the onGroundTime check or else you won't sprint properly
+                            if (onGroundTime > 0L) {
+                                mc.thePlayer.jump();
+                            }
+                        } else {
+                            mc.thePlayer.jump();
+                        }
                     }
                     break;
             }
@@ -184,64 +182,26 @@ public class Scaffold extends Module {
             }
         }
 
-        if (rotation.getInput() != 1) {
-            if (rotation.getInput() == 3 && placeBlock != null) {
-                event.setYaw(placeYaw);
-                event.setPitch(placePitch);
-            } else {
+        switch ((int) rotation.getInput()) {
+            case 1:
+                break;
+            case 2:
                 event.setYaw(getYaw());
                 event.setPitch(85);
-            }
+                break;
+            case 3:
+                if (placeBlock != null) {
+                    event.setYaw(placeYaw);
+                    event.setPitch(placePitch);
+                }
+                break;
+            case 4:
+                if (placeBlock != null) {
+                    event.setYaw(getYaw() + 45f);
+                    event.setPitch(placePitch);
+                }
+                break;
         }
-
-        if (placeBlock != null) {
-            if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                if (towerMode.getInput() != 1) {
-                    towering = true;
-                }
-
-                switch ((int) towerMode.getInput()) {
-                    case 2:
-                        if (jumpOffPos != 0.0D) {
-                            if (mc.thePlayer.posY > jumpOffPos + 0.76) {
-                                mc.thePlayer.setPosition(
-                                        mc.thePlayer.posX,
-                                        new BigDecimal(mc.thePlayer.posY).setScale(0, RoundingMode.FLOOR).doubleValue(),
-                                        mc.thePlayer.posZ
-                                );
-
-                                mc.thePlayer.motionY = 0.42;
-
-                                jumpOffPos = mc.thePlayer.posY;
-                            }
-                        }
-                        break;
-                    case 3:
-                        if (jumpOffPos != 0.0D) {
-                            switch (offGroundTicks % 3) {
-                                case 0:
-                                    mc.thePlayer.motionY = 0.42;
-                                    break;
-                                case 2:
-                                    mc.thePlayer.motionY = 1 - (mc.thePlayer.posY % 1.0);
-                                    break;
-                            }
-
-                            jumpOffPos = mc.thePlayer.posY;
-                            break;
-                        }
-                        break;
-                }
-
-                if (mc.thePlayer.onGround && jumpOffPos == 0.0D) {
-                    jumpOffPos = mc.thePlayer.posY;
-                }
-            } else {
-                jumpOffPos = 0.0D;
-                towering = false;
-            }
-        }
-
     }
 
     @SubscribeEvent
@@ -279,7 +239,7 @@ public class Scaffold extends Module {
                                     }
                                     final BlockPos offset = blockPos.offset(enumFacing2);
                                     if (BlockUtils.replaceable(offset)) {
-                                        final double distanceSqToCenter = offset.distanceSqToCenter(mc.thePlayer.posX,  !towering ? (sameY.isToggled() ? originalY - 1 : mc.thePlayer.posY - 1) : mc.thePlayer.posY - 1, mc.thePlayer.posZ);
+                                        final double distanceSqToCenter = offset.distanceSqToCenter(mc.thePlayer.posX, !Tower.towering ? (sameY.isToggled() ? originalY - 1 : mc.thePlayer.posY - 1) : mc.thePlayer.posY - 1, mc.thePlayer.posZ);
                                         if (enumFacing == null || distanceSqToCenter < lastDistance) {
                                             enumFacing = enumFacing2;
                                             lastDistance = distanceSqToCenter;
@@ -470,7 +430,7 @@ public class Scaffold extends Module {
         for (int i = 0; i < 9; ++i) {
             final ItemStack itemStack = mc.thePlayer.inventory.mainInventory[i];
             if (itemStack != null && itemStack.getItem() instanceof ItemBlock && itemStack.stackSize > 0) {
-                //InvManager.canBePlaced((ItemBlock) itemStack.getItem())
+                BlockUtils.canBePlaced((ItemBlock) itemStack.getItem());
                 if (mc.thePlayer.inventory.mainInventory[i].stackSize > highestStack) {
                     highestStack = mc.thePlayer.inventory.mainInventory[i].stackSize;
                     slot = i;
@@ -485,7 +445,7 @@ public class Scaffold extends Module {
         for (int i = 0; i < 9; ++i) {
             final ItemStack stack = mc.thePlayer.inventory.mainInventory[i];
             if (stack != null && stack.getItem() instanceof ItemBlock && stack.stackSize > 0) {
-                //InvManager.canBePlaced((ItemBlock) itemStack.getItem())
+                BlockUtils.canBePlaced((ItemBlock) stack.getItem());
                 totalBlocks += stack.stackSize;
             }
         }

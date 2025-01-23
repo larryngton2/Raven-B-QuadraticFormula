@@ -42,7 +42,7 @@ public class AutoGroomer extends Module {
     );
 
     public AutoGroomer() {
-        super("AutoGroomer", ModuleCategory.fun);
+        super("Auto Groomer", ModuleCategory.fun);
         withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("1zuna."));

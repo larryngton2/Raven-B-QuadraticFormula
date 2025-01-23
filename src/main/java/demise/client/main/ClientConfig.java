@@ -1,6 +1,7 @@
 package demise.client.main;
 
 import demise.client.clickgui.demise.components.CategoryComponent;
+import demise.client.module.Module;
 import demise.client.module.modules.client.Terminal;
 import demise.keystroke.KeyStroke;
 import demise.client.module.modules.hud.HUD;
@@ -28,14 +29,14 @@ public class ClientConfig {
    //when you are coding the config manager and life be like
    //public static String ip_token_discord_webhook_logger_spyware_malware_minecraft_block_hacker_sigma_miner_100_percent_haram_no_cap_m8_Kopamed_is_sexy = "https://imgur.com/a/hYd1023";
 
-   public ClientConfig(){
+   public ClientConfig() {
       configDir = new File(Minecraft.getMinecraft().mcDataDir, "keystrokes");
-      if(!configDir.exists()){
+      if (!configDir.exists()) {
          configDir.mkdir();
       }
 
       configFile = new File(configDir, fileName);
-      if(!configFile.exists()){
+      if (!configFile.exists()) {
          try {
             configFile.createNewFile();
          } catch (IOException e) {
@@ -47,7 +48,7 @@ public class ClientConfig {
    public static void saveKeyStrokeSettingsToConfigFile() {
       try {
          //ip_token_discord_webhook_logger_spyware_malware_minecraft_block_hacker_sigma_miner_100_percent_haram_no_cap_m8_Kopamed_is_sexy.equalsIgnoreCase("Lol gotta add usages to make this funnier XD");
-         File file = new File(mc.mcDataDir + File.separator + "demise", "config");
+         File file = new File(mc.mcDataDir + File.separator + "keystrokesmod", "config");
          if (!file.exists()) {
             file.getParentFile().mkdirs();
             file.createNewFile();
@@ -56,11 +57,11 @@ public class ClientConfig {
          FileWriter writer = new FileWriter(file, false);
          writer.write(
                  KeyStroke.x + "\n" +
-                 KeyStroke.y + "\n" +
-                 KeyStroke.enabled + "\n" +
-                 KeyStroke.showMouseButtons + "\n" +
-                 KeyStroke.currentColorNumber + "\n" +
-                 KeyStroke.outline
+                         KeyStroke.y + "\n" +
+                         KeyStroke.enabled + "\n" +
+                         KeyStroke.showMouseButtons + "\n" +
+                         KeyStroke.currentColorNumber + "\n" +
+                         KeyStroke.outline
          );
          writer.close();
       } catch (Throwable var2) {
@@ -71,7 +72,7 @@ public class ClientConfig {
 
    public static void applyKeyStrokeSettingsFromConfigFile() {
       try {
-         File file = new File(mc.mcDataDir + File.separator + "demise", "config");
+         File file = new File(mc.mcDataDir + File.separator + "keystrokesmod", "config");
          if (!file.exists()) {
             return;
          }
@@ -80,25 +81,25 @@ public class ClientConfig {
          int i = 0;
 
          String line;
-         while((line = reader.readLine()) != null) {
-            switch(i) {
-            case 0:
-               KeyStroke.x = Integer.parseInt(line);
-               break;
-            case 1:
-               KeyStroke.y = Integer.parseInt(line);
-               break;
-            case 2:
-               KeyStroke.enabled = Boolean.parseBoolean(line);
-               break;
-            case 3:
-               KeyStroke.showMouseButtons = Boolean.parseBoolean(line);
-               break;
-            case 4:
-               KeyStroke.currentColorNumber = Integer.parseInt(line);
-               break;
-            case 5:
-               KeyStroke.outline = Boolean.parseBoolean(line);
+         while ((line = reader.readLine()) != null) {
+            switch (i) {
+               case 0:
+                  KeyStroke.x = Integer.parseInt(line);
+                  break;
+               case 1:
+                  KeyStroke.y = Integer.parseInt(line);
+                  break;
+               case 2:
+                  KeyStroke.enabled = Boolean.parseBoolean(line);
+                  break;
+               case 3:
+                  KeyStroke.showMouseButtons = Boolean.parseBoolean(line);
+                  break;
+               case 4:
+                  KeyStroke.currentColorNumber = Integer.parseInt(line);
+                  break;
+               case 5:
+                  KeyStroke.outline = Boolean.parseBoolean(line);
             }
             ++i;
          }
@@ -136,56 +137,64 @@ public class ClientConfig {
       }
    }
 
-   public void applyConfig(){
+   public void applyConfig() {
       List<String> config = this.parseConfigFile();
 
-      for(String line : config){
-         if(line.startsWith(hypixelApiKeyPrefix)){
+      for (String line : config) {
+         if (line.startsWith(hypixelApiKeyPrefix)) {
             Utils.URLS.hypixelApiKey = line.replace(hypixelApiKeyPrefix, "");
             demise.getExecutor().execute(() -> {
                if (!Utils.URLS.isHypixelKeyValid(Utils.URLS.hypixelApiKey)) {
                   Utils.URLS.hypixelApiKey = "";
-               } else{
+               } else {
                }
 
             });
-         } else if(line.startsWith(pasteApiKeyPrefix)){
+         } else if (line.startsWith(pasteApiKeyPrefix)) {
             Utils.URLS.pasteApiKey = line.replace(pasteApiKeyPrefix, "");
-         } else if(line.startsWith(clickGuiPosPrefix)){
+         } else if (line.startsWith(clickGuiPosPrefix)) {
             loadClickGuiCoords(line.replace(clickGuiPosPrefix, ""));
-         } else if(line.startsWith(loadedConfigPrefix)){
+         } else if (line.startsWith(loadedConfigPrefix)) {
             demise.configManager.loadConfigByName(line.replace(loadedConfigPrefix, ""));
          } else if (line.startsWith(HUD.HUDX_prefix)) {
             try {
                HUD.setHudX(Integer.parseInt(line.replace(HUD.HUDX_prefix, "")));
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
          } else if (line.startsWith(HUD.HUDY_prefix)) {
             try {
                HUD.setHudY(Integer.parseInt(line.replace(HUD.HUDY_prefix, "")));
-            } catch (Exception e) {e.printStackTrace();}
-         } else if(line.startsWith(terminalPosPrefix)){
-            try{
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+         } else if (line.startsWith(terminalPosPrefix)) {
+            try {
                String[] split_up = line.replace(terminalPosPrefix, "").split(",");
                int i1 = Integer.parseInt(split_up[0]);
                int i2 = Integer.parseInt(split_up[1]);
                demise.clickGui.terminal.setLocation(i1, i2);
-            } catch (Exception e){}
-         } else if(line.startsWith(terminalSizePrefix)){
-            try{
+            } catch (Exception e) {
+            }
+         } else if (line.startsWith(terminalSizePrefix)) {
+            try {
                String[] split_up = line.replace(terminalSizePrefix, "").split(",");
                int i1 = Integer.parseInt(split_up[0]);
                int i2 = Integer.parseInt(split_up[1]);
                demise.clickGui.terminal.setSize(i1, i2);
-            } catch (Exception e){}
-         } else if(line.startsWith(terminalOpenedPrefix)){
-            try{
+            } catch (Exception e) {
+            }
+         } else if (line.startsWith(terminalOpenedPrefix)) {
+            try {
                demise.clickGui.terminal.opened = Boolean.parseBoolean(line.replace(terminalOpenedPrefix, ""));
-            } catch (Exception e){}
-         } else if(line.startsWith(terminalHiddenPrefix)){
-            try{
+            } catch (Exception e) {
+            }
+         } else if (line.startsWith(terminalHiddenPrefix)) {
+            try {
                Terminal terminalModule = (Terminal) demise.moduleManager.getModuleByClazz(Terminal.class);
                terminalModule.setToggled(!Boolean.parseBoolean(line.replace(terminalHiddenPrefix, "")));
-            } catch (Exception e){}
+            } catch (Exception e) {
+            }
          }
       }
    }
@@ -205,9 +214,9 @@ public class ClientConfig {
    }
 
    private void loadClickGuiCoords(String decryptedString) {
-      for (String what : decryptedString.split("/")){
+      for (String what : decryptedString.split("/")) {
          for (CategoryComponent cat : demise.clickGui.getCategoryList()) {
-            if(what.startsWith(cat.categoryName.name())){
+            if (what.startsWith(cat.categoryName.name())) {
                List<String> cfg = Utils.Java.StringListToList(what.split("~"));
                cat.setX(Integer.parseInt(cfg.get(1)));
                cat.setY(Integer.parseInt(cfg.get(2)));

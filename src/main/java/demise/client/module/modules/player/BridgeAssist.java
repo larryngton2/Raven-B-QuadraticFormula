@@ -28,7 +28,6 @@ public class BridgeAssist extends Module {
     private double speedYaw, speedPitch;
     private float waitingForYaw, waitingForPitch;
 
-
     public BridgeAssist() {
         super("Bridge Assist", ModuleCategory.player);
         DescriptionSetting goodAdvice;

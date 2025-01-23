@@ -123,7 +123,7 @@ public class PacketsHandler {
         }
     }
 
-    public boolean sent() {
+    public static boolean sent() {
         return C02.get() || C08.get() || C09.get() || C07.get() || C0A.get();
     }
 

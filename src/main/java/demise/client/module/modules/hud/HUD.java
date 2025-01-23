@@ -32,6 +32,23 @@ public class HUD extends Module {
    public static TickSetting editPosition, dropShadow, alphabeticalSort, watermark, tHudStatus, targetHUD, arrayList;
    public static SliderSetting colourMode, tHudMode;
    public static DescriptionSetting colourModeDesc, tHudDesc;
+
+   public HUD() {
+      super("HUD", ModuleCategory.render);
+      this.registerSetting(editPosition = new TickSetting("Edit position", false));
+      this.registerSetting(dropShadow = new TickSetting("Drop shadow", true));
+      this.registerSetting(watermark = new TickSetting("Watermark", true));
+      this.registerSetting(arrayList = new TickSetting("ArrayList", true));
+      this.registerSetting(alphabeticalSort = new TickSetting("Alphabetical sort", false));
+      this.registerSetting(colourMode = new SliderSetting("Value: ", 1, 1, 7, 1));
+      this.registerSetting(colourModeDesc = new DescriptionSetting("Mode: RAVEN"));
+      this.registerSetting(targetHUD = new TickSetting("TargetHUD", true));
+      this.registerSetting(tHudDesc = new DescriptionSetting("demise, b4"));
+      this.registerSetting(tHudMode = new SliderSetting("Mode", 1, 1, 2, 1));
+      this.registerSetting(tHudStatus = new TickSetting("Show W/L", true));
+      showedError = false;
+   }
+
    @Getter
    private static int hudX = 5;
    @Getter
@@ -59,22 +76,6 @@ public class HUD extends Module {
    private Timer healthBarTimer = null;
    private double lastHealth;
    private float lastHealthBar;
-
-   public HUD() {
-      super("HUD", ModuleCategory.render);
-      this.registerSetting(editPosition = new TickSetting("Edit position", false));
-      this.registerSetting(dropShadow = new TickSetting("Drop shadow", true));
-      this.registerSetting(watermark = new TickSetting("Watermark", true));
-      this.registerSetting(arrayList = new TickSetting("ArrayList", true));
-      this.registerSetting(alphabeticalSort = new TickSetting("Alphabetical sort", false));
-      this.registerSetting(colourMode = new SliderSetting("Value: ", 1, 1, 7, 1));
-      this.registerSetting(colourModeDesc = new DescriptionSetting("Mode: RAVEN"));
-      this.registerSetting(targetHUD = new TickSetting("TargetHUD", true));
-      this.registerSetting(tHudDesc = new DescriptionSetting("demise, b4"));
-      this.registerSetting(tHudMode = new SliderSetting("Mode", 1, 1, 2, 1));
-      this.registerSetting(tHudStatus = new TickSetting("Show W/L", true));
-      showedError = false;
-   }
 
    private enum targetHUDModes {
       demise,
@@ -121,7 +122,8 @@ public class HUD extends Module {
             );
 
             mc.fontRendererObj.drawString(
-                    "emise | " + Minecraft.getDebugFPS() + "fps | " + mc.getCurrentServerData().serverIP,
+                    "emise | " + Minecraft.getDebugFPS() + "fps | " +
+                            (mc.isSingleplayer() ? "singleplayer" : mc.getCurrentServerData().serverIP),
                     (float) watermarkX + mc.fontRendererObj.getStringWidth("d"),
                     (float) watermarkY,
                     Color.WHITE.getRGB(),
@@ -168,7 +170,7 @@ public class HUD extends Module {
 
          if (arrayList.isToggled()) {
             for (Module m : en) {
-               if (m.isEnabled() && m != this) {
+               if (m.isEnabled() && m.moduleCategory() != ModuleCategory.render) {
                   if (HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT || HUD.positionMode == Utils.HUD.PositionMode.UPRIGHT) {
                      if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
                         mc.fontRendererObj.drawString(m.getName(), (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());

@@ -47,7 +47,7 @@ public class PreMotionEvent extends Event {
         return setRenderYaw;
     }
 
-    public void setRenderYaw(boolean setRenderYaw) {
+    public static void setRenderYaw(boolean setRenderYaw) {
         PreMotionEvent.setRenderYaw = setRenderYaw;
     }
 

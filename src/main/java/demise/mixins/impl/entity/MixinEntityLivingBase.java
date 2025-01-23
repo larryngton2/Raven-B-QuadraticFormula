@@ -7,7 +7,8 @@ import demise.client.module.modules.movement.Sprint;
 import demise.client.utils.MoveUtil;
 import demise.client.utils.Utils;
 import demise.client.utils.event.JumpEvent;
-import demise.client.utils.event.motion.PreMotionEvent;
+import demise.client.utils.event.MoveEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,11 +17,13 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
@@ -35,12 +38,12 @@ public abstract class MixinEntityLivingBase extends Entity {
 
     @Shadow
     public PotionEffect func_70660_b(Potion potionIn) {
-        return (PotionEffect) this.activePotionsMap.get(Integer.valueOf(potionIn.id));
+        return this.activePotionsMap.get(potionIn.id);
     }
 
     @Shadow
     public boolean func_70644_a(Potion potionIn) {
-        return this.activePotionsMap.containsKey(Integer.valueOf(potionIn.id));
+        return this.activePotionsMap.containsKey(potionIn.id);
     }
 
     @Shadow
@@ -53,19 +56,18 @@ public abstract class MixinEntityLivingBase extends Entity {
     public float field_70733_aJ;
 
     @Inject(method = "func_110146_f", at = @At("HEAD"), cancellable = true)
-    protected void injectFunc110146_f(float p_110146_1_, float p_110146_2_, CallbackInfoReturnable<Float> cir) {
-        float rotationYaw = this.rotationYaw;
-        if ((EntityLivingBase) (Object) this instanceof EntityPlayerSP && PreMotionEvent.setRenderYaw()) {
+    protected void func_110146_f(float p_110146_1_, float p_110146_2_, CallbackInfoReturnable<Float> cir) {
+        if ((EntityLivingBase) (Object) this instanceof EntityPlayerSP) {
             if (this.field_70733_aJ > 0F) {
                 p_110146_1_ = Utils.renderYaw;
             }
-            rotationYaw = Utils.renderYaw;
-            field_70759_as = Utils.renderYaw;
+
+            this.field_70759_as = Utils.Client.interpolateValue(Utils.Client.getTimer().renderPartialTicks, Utils.prevRenderYaw, Utils.renderYaw);
         }
 
         float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.field_70761_aq);
         this.field_70761_aq += f * 0.3F;
-        float f1 = MathHelper.wrapAngleTo180_float(rotationYaw - this.field_70761_aq);
+        float f1 = MathHelper.wrapAngleTo180_float(this.field_70759_as - this.field_70761_aq);
         boolean flag = f1 < 90.0F || f1 >= 90.0F;
 
         if (f1 < -75.0F) {
@@ -76,7 +78,7 @@ public abstract class MixinEntityLivingBase extends Entity {
             f1 = 75.0F;
         }
 
-        this.field_70761_aq = rotationYaw - f1;
+        this.field_70761_aq = this.field_70759_as - f1;
 
         if (f1 * f1 > 2500.0F) {
             this.field_70761_aq += f1 * 0.2F;
@@ -89,6 +91,23 @@ public abstract class MixinEntityLivingBase extends Entity {
         cir.setReturnValue(p_110146_2_);
     }
 
+    @Redirect(method = "func_70612_e", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;moveEntity(DDD)V"))
+    public void onMoveEntity(EntityLivingBase instance, double x, double y, double z) {
+        if (instance instanceof EntityPlayerSP) {
+            MoveEvent event = new MoveEvent(x, y, z);
+            MinecraftForge.EVENT_BUS.post(event);
+
+            if (event.isCanceled())
+                return;
+
+            x = event.getX();
+            y = event.getY();
+            z = event.getZ();
+        }
+
+        instance.moveEntity(x, y, z);
+    }
+
     @Shadow
     protected float func_175134_bD() {
         return 0.42F;
@@ -96,7 +115,7 @@ public abstract class MixinEntityLivingBase extends Entity {
 
     /**
      * @author lucas
-     * @reason omniSprint fix
+     * @reason sprint directionFix
      */
     @Overwrite
     protected void func_70664_aZ() {

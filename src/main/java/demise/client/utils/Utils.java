@@ -22,6 +22,8 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -129,7 +131,6 @@ public class Utils {
 
       public static void aimSilent(PreMotionEvent e, Entity currentTarget, float rotationSpeed) {
          float[] targetRot = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
-         float[] fixedRotation = fixRotation(interpolatedYaw, interpolatedPitch, e.getYaw(), e.getPitch());
 
          if (rotationSpeed == 1) {
             e.setYaw(targetRot[0]);
@@ -138,8 +139,8 @@ public class Utils {
             interpolatedYaw = interpolate(interpolatedYaw,targetRot[0], rotationSpeed);
             interpolatedPitch = interpolate(interpolatedPitch, targetRot[1], rotationSpeed);
 
-            e.setYaw(fixedRotation[0]);
-            e.setPitch(fixedRotation[1]);
+            e.setYaw(interpolatedYaw);
+            e.setPitch(interpolatedPitch);
          }
       }
 
@@ -171,7 +172,7 @@ public class Utils {
          }
       }
 
-      private static float interpolate(float current, float target, float speed) {
+      public static float interpolate(float current, float target, float speed) {
          if (speed < 0.0f) speed = 0.0f;
          if (speed > 1.0f) speed = 1.0f;
          return current + (target - current) * speed;
@@ -331,6 +332,31 @@ public class Utils {
             }
          }
          return index;
+      }
+
+      public static float getEfficiency(final ItemStack itemStack, final Block block) {
+         float getStrVsBlock = itemStack.getStrVsBlock(block);
+         if (getStrVsBlock > 1.0f) {
+            final int getEnchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, itemStack);
+            if (getEnchantmentLevel > 0) {
+               getStrVsBlock += getEnchantmentLevel * getEnchantmentLevel + 1;
+            }
+         }
+         return getStrVsBlock;
+      }
+
+      public static double getDamage(ItemStack itemStack) {
+         if (itemStack == null) {
+            return 0;
+         }
+         double getAmount = 0;
+         for (final Map.Entry<String, AttributeModifier> entry : itemStack.getAttributeModifiers().entries()) {
+            if (entry.getKey().equals("generic.attackDamage")) {
+               getAmount = entry.getValue().getAmount();
+               break;
+            }
+         }
+         return getAmount + EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, itemStack) * 1.25;
       }
 
       public static double getSlotDamage(int slot) {
@@ -530,24 +556,6 @@ public class Utils {
          return !enemies.isEmpty() && enemies.contains(name.toLowerCase());
       }
 
-      public static String formatColor(String txt) {
-         return txt.replaceAll("&", "§");
-      }
-
-      public static String stripColor(final String s) {
-         if (s.isEmpty()) {
-            return s;
-         }
-         final char[] array = StringUtils.stripControlCodes(s).toCharArray();
-         final StringBuilder sb = new StringBuilder();
-         for (final char c : array) {
-            if (c < '\u007f' && c > '\u0014') {
-               sb.append(c);
-            }
-         }
-         return sb.toString();
-      }
-
       public static boolean nullCheck() {
          return mc.thePlayer != null && mc.theWorld != null;
       }
@@ -735,6 +743,24 @@ public class Utils {
          return a.getInputMin() == a.getInputMax() ? a.getInputMin() : a.getInputMin() + r.nextDouble() * (a.getInputMax() - a.getInputMin());
       }
 
+      public static String formatColor(String txt) {
+         return txt.replaceAll("&", "§");
+      }
+
+      public static String stripColor(final String s) {
+         if (s.isEmpty()) {
+            return s;
+         }
+         final char[] array = StringUtils.stripControlCodes(s).toCharArray();
+         final StringBuilder sb = new StringBuilder();
+         for (final char c : array) {
+            if (c < '\u007f' && c > '\u0014') {
+               sb.append(c);
+            }
+         }
+         return sb.toString();
+      }
+
       public static boolean isHyp() {
          if (!Player.isPlayerInGame()) return false;
          try {
@@ -743,6 +769,55 @@ public class Utils {
             welpBruh.printStackTrace();
             return false;
          }
+      }
+
+      public static boolean isLobby() {
+         if (isHyp()) {
+            List<String> sidebarLines = getSidebarLines();
+            if (!sidebarLines.isEmpty()) {
+               String[] parts = stripColor(sidebarLines.get(1)).split(" {2}");
+               return parts.length > 1 && parts[1].charAt(0) == 'L';
+            }
+         }
+         return false;
+      }
+
+      public static List<String> getSidebarLines() {
+         final List<String> lines = new ArrayList<>();
+         if (mc.theWorld == null) {
+            return lines;
+         }
+         final Scoreboard scoreboard = mc.theWorld.getScoreboard();
+         if (scoreboard == null) {
+            return lines;
+         }
+         final ScoreObjective objective = scoreboard.getObjectiveInDisplaySlot(1);
+         if (objective == null) {
+            return lines;
+         }
+         Collection<Score> scores = scoreboard.getSortedScores(objective);
+         final List<Score> list = new ArrayList<>();
+         for (final Score input : scores) {
+            if (input != null && input.getPlayerName() != null && !input.getPlayerName().startsWith("#")) {
+               list.add(input);
+            }
+         }
+         if (list.size() > 15) {
+            scores = new ArrayList<>(Lists.newArrayList(Iterables.skip(list, list.size() - 15)));
+         } else {
+            scores = list;
+         }
+         int index = 0;
+         for (final Score score : scores) {
+            ++index;
+            final ScorePlayerTeam team = scoreboard.getPlayersTeam(score.getPlayerName());
+            lines.add(ScorePlayerTeam.formatPlayerName(team, score.getPlayerName()));
+            if (index == scores.size()) {
+               lines.add(objective.getDisplayName());
+            }
+         }
+         Collections.reverse(lines);
+         return lines;
       }
 
       public static net.minecraft.util.Timer getTimer() {
@@ -1033,9 +1108,8 @@ public class Utils {
    }
 
    public static class URLS {
-
       public static final String base_url = "https://api.paste.ee/v1/pastes/";
-      public static final String base_paste = "{\"description\":\"demise B+ Config\",\"expiration\":\"never\",\"sections\":[{\"name\":\"TitleGoesHere\",\"syntax\":\"text\",\"contents\":\"BodyGoesHere\"}]}";
+      public static final String base_paste = "{\"description\":\"demise Config\",\"expiration\":\"never\",\"sections\":[{\"name\":\"TitleGoesHere\",\"syntax\":\"text\",\"contents\":\"BodyGoesHere\"}]}";
       public static String hypixelApiKey = "";
       public static String pasteApiKey = "";
 
