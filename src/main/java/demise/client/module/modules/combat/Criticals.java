@@ -33,7 +33,6 @@ public class Criticals extends Module {
 
     public Criticals() {
         super("Criticals", ModuleCategory.combat);
-        withEnabled();
 
         this.registerSetting(dMode = new DescriptionSetting("Jump, NoGround, Visual"));
         this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 6, 1));

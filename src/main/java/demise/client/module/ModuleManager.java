@@ -1,15 +1,14 @@
 package demise.client.module;
 
 import demise.client.module.modules.exploit.SlipHack;
+import demise.client.module.modules.fun.AutoGroomer;
+import demise.client.module.modules.fun.AutoMeow;
+import demise.client.module.modules.fun.Twerk;
 import demise.client.module.modules.hud.HUD;
 import demise.client.module.modules.exploit.Disabler;
-import demise.client.module.modules.fun.AutoBan;
-import demise.client.module.modules.fun.AutoMeow;
 import demise.client.module.modules.rage.killAura.KillAura;
 import demise.client.module.modules.client.*;
 import demise.client.module.modules.combat.*;
-import demise.client.module.modules.fun.AutoGroomer;
-import demise.client.module.modules.fun.Twerk;
 import demise.client.module.modules.hotkey.*;
 import demise.client.module.modules.minigames.*;
 import demise.client.module.modules.movement.*;
@@ -40,7 +39,6 @@ public class ModuleManager {
       addModule(new Anticheat());
       addModule(new AntiShuffle());
       addModule(new Armour());
-      addModule(new AutoBan());
       addModule(new AutoBlock());
       addModule(new AutoGroomer());
       addModule(new AutoHead());
@@ -108,7 +106,6 @@ public class ModuleManager {
       addModule(new Trajectories());
       addModule(new Tracers());
       addModule(new Twerk());
-      addModule(new UpdateCheck());
       addModule(new Velocity());
       addModule(new VClip());
       addModule(new WaterBucket());
@@ -157,7 +154,7 @@ public class ModuleManager {
    }
 
 
-    public List<Module> getModulesInCategory(Module.ModuleCategory categ) {
+   public List<Module> getModulesInCategory(Module.ModuleCategory categ) {
       ArrayList<Module> modulesOfCat = new ArrayList<>();
 
       for (Module mod : modules) {

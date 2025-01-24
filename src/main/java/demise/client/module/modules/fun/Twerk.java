@@ -11,7 +11,6 @@ public class Twerk extends Module {
 
     public Twerk() {
         super("Twerk", ModuleCategory.fun);
-        withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("why not"));
         this.registerSetting(delay = new SliderSetting("Delay", 1, 1, 20, 1));

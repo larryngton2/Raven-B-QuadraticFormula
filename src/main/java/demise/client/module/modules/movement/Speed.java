@@ -13,6 +13,7 @@ import demise.client.utils.Utils;
 import demise.client.utils.event.JumpEvent;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class Speed extends Module {
    private static DescriptionSetting dc;
@@ -22,8 +23,8 @@ public class Speed extends Module {
 
    public Speed() {
       super("Speed", ModuleCategory.movement);
-      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, NCP Tick 4, ONCPFHop, Watchdog 7 tick"));
-      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 9, 1));
+      this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, NCP Tick 4, ONCPFHop, Watchdog 7 tick, Galaxy strafe"));
+      this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 10, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
       this.registerSetting(damageBoost = new TickSetting("Damage Boost", false));
       this.registerSetting(pOffGroundTicks = new TickSetting("Print Air Ticks", false));
@@ -42,7 +43,8 @@ public class Speed extends Module {
       Vulcan_Deprecated,
       NCP_Tick4,
       OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop,
-      Watchdog7Tick
+      Watchdog7Tick,
+      GalaxyStrafe
    }
 
    public void guiUpdate() {
@@ -69,6 +71,7 @@ public class Speed extends Module {
          stoppedTicks++;
          return;
       } else {
+         KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
          movingTicks++;
          stoppedTicks = 0;
       }
@@ -90,7 +93,7 @@ public class Speed extends Module {
       }
 
       if (damageBoost.isToggled() && mc.thePlayer.hurtTime >= 9) {
-         MoveUtil.strafe(0.5);
+         MoveUtil.strafe(1);
       }
 
       if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
@@ -241,7 +244,6 @@ public class Speed extends Module {
          case 8:
             Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
             if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
-               KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
                mc.thePlayer.noClip = true;
 
                mc.thePlayer.setSprinting(true);
@@ -302,6 +304,13 @@ public class Speed extends Module {
                         mc.thePlayer.motionZ *= 1.2;
                   }
                }
+            }
+            break;
+         case 10:
+            if (mc.thePlayer.hurtTime >= 8) {
+               MoveUtil.strafe(25);
+            } else {
+               MoveUtil.strafe();
             }
             break;
       }

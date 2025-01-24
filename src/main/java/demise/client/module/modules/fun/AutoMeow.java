@@ -30,7 +30,6 @@ public class AutoMeow extends Module {
 
     public AutoMeow() {
         super("Auto Meow", ModuleCategory.fun);
-        withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("yeah"));
         this.registerSetting(delay = new SliderSetting("Delay", 1, 0, 200, 1));

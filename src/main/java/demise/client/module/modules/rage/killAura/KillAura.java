@@ -47,7 +47,6 @@ public class KillAura extends Module {
 
     public KillAura() {
         super("KillAura", ModuleCategory.rage);
-        withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("Attacks nearby players."));
 

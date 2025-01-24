@@ -13,7 +13,6 @@ public class KillAuraAdditions extends Module {
 
     public KillAuraAdditions() {
         super("KA Additions", ModuleCategory.rage);
-        withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("Additions to the KillAura module."));
 

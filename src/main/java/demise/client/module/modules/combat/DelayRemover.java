@@ -17,7 +17,6 @@ public class DelayRemover extends Module {
 
    public DelayRemover() {
       super("Delay Remover", ModuleCategory.combat);
-      withEnabled();
 
       this.registerSetting(desc = new DescriptionSetting("Gives you 1.7 hitreg."));
       this.leftClickCounterField = ReflectionHelper.findField(Minecraft.class, "field_71429_W", "leftClickCounter");

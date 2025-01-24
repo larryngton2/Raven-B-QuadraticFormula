@@ -43,7 +43,6 @@ public class AutoGroomer extends Module {
 
     public AutoGroomer() {
         super("Auto Groomer", ModuleCategory.fun);
-        withEnabled();
 
         this.registerSetting(desc = new DescriptionSetting("1zuna."));
         this.registerSetting(delay = new SliderSetting("Delay", 1, 0, 200, 1));

@@ -121,12 +121,10 @@ public class CategoryComponent {
          renderer.drawString(this.categoryOpened ? "-" : "+", (float) (this.x + marginX), (float) ((double) this.y + marginY), Color.white.getRGB(), false);
          GL11.glPopMatrix();
          if (this.categoryOpened && !this.modulesInCategory.isEmpty()) {
-
             for (Component c2 : this.modulesInCategory) {
                c2.draw();
             }
          }
-
       }
    }
 

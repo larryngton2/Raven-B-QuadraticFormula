@@ -38,7 +38,6 @@ public class ConfigManager {
         if (!defaultFile.exists()) {
             save();
         }
-
     }
 
     /**
@@ -67,7 +66,7 @@ public class ConfigManager {
     public void discoverConfigs() {
         configs.clear();
         if (configDirectory.listFiles() == null || !(Objects.requireNonNull(configDirectory.listFiles()).length > 0))
-            return;  // nothing to discover if there are no files in the directory
+            return;  //nothing to discover if there are no files in the directory
 
         for (File file : Objects.requireNonNull(configDirectory.listFiles())) {
             if (file.getName().endsWith(".bplus")) {

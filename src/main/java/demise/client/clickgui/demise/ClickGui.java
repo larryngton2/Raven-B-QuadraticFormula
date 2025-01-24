@@ -8,20 +8,13 @@ import demise.client.utils.Timer;
 import demise.client.utils.version.Version;
 import lombok.Getter;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.inventory.GuiInventory;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 public class ClickGui extends GuiScreen {
-   private ScheduledFuture<?> sf;
-   private Timer aT;
-   private Timer aL;
-   private Timer aE;
    private Timer aR;
    @Getter
    private final ArrayList<CategoryComponent> categoryList;
@@ -42,15 +35,11 @@ public class ClickGui extends GuiScreen {
          topOffset += 20;
       }
       terminal.setLocation(5, topOffset);
-      terminal.setSize((int) (92 * 1.5), (int) ((92 * 1.5) * 0.75));
+      terminal.setSize(184, 92);
    }
 
    public void initMain() {
-      (this.aT = this.aE = this.aR = new Timer(500.0F)).start();
-      this.sf = demise.getExecutor().schedule(() -> (
-              this.aL = new Timer(650.0F)
-      ).start(), 650L, TimeUnit.MILLISECONDS);
-
+      (this.aR = new Timer(500.0F)).start();
    }
 
    public void initGui() {
@@ -59,31 +48,10 @@ public class ClickGui extends GuiScreen {
 
    public void drawScreen(int x, int y, float p) {
       Version clientVersion = demise.versionManager.getClientVersion();
-      Version latestVersion = demise.versionManager.getLatestVersion();
 
       drawRect(0, 0, this.width, this.height, (int) (this.aR.getValueFloat(0.0F, 0.7F, 2) * 255.0F) << 24);
-      int quarterScreenHeight = this.height / 4;
-      int halfScreenWidth = this.width / 2;
-      int w_c = 30 - this.aT.getValueInt(0, 30, 3);
-      this.drawCenteredString(this.fontRendererObj, "d", halfScreenWidth - w_c, quarterScreenHeight - 26, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight - 15, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "m", halfScreenWidth - w_c, quarterScreenHeight - 5, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "i", halfScreenWidth - w_c, quarterScreenHeight + 5, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "s", halfScreenWidth - w_c, quarterScreenHeight + 15, Color.WHITE.getRGB());
-      this.drawCenteredString(this.fontRendererObj, "e", halfScreenWidth - w_c, quarterScreenHeight + 25, Color.WHITE.getRGB());
 
-      if (latestVersion.isNewerThan(clientVersion)) {
-         int margin = 2;
-         int rows = 1;
-         for (int i = demise.updateText.length - 1; i >= 0; i--) {
-            String up = demise.updateText[i];
-            mc.fontRendererObj.drawString(up, halfScreenWidth - this.fontRendererObj.getStringWidth(up) / 2, this.height - this.fontRendererObj.FONT_HEIGHT * rows - margin, Color.lightGray.getRGB());
-            rows++;
-            margin += 2;
-         }
-      } else {
-         mc.fontRendererObj.drawString("demise " + clientVersion + " | Config: " + demise.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
-      }
+      mc.fontRendererObj.drawStringWithShadow("demise " + clientVersion + " | Config: " + demise.configManager.getConfig().getName(), 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, Color.WHITE.getRGB());
 
       for (CategoryComponent category : categoryList) {
          category.rf(this.fontRendererObj);
@@ -93,9 +61,6 @@ public class ClickGui extends GuiScreen {
             module.update(x, y);
          }
       }
-
-      // PLAYER
-      GuiInventory.drawEntityOnScreen(this.width + 15 - this.aE.getValueInt(0, 40, 2), this.height - 19 - this.fontRendererObj.FONT_HEIGHT, 40, (float) (this.width - 25 - x), (float) (this.height - 50 - y), this.mc.thePlayer);
 
       terminal.update(x, y);
       terminal.draw();
@@ -201,11 +166,6 @@ public class ClickGui extends GuiScreen {
    }
 
    public void onGuiClosed() {
-      this.aL = null;
-      if (this.sf != null) {
-         this.sf.cancel(true);
-         this.sf = null;
-      }
       demise.configManager.save();
       demise.clientConfig.saveConfig();
    }
@@ -213,5 +173,4 @@ public class ClickGui extends GuiScreen {
    public boolean doesGuiPauseGame() {
       return false;
    }
-
 }

@@ -19,7 +19,6 @@ public class AntiBot extends Module {
 
    public AntiBot() {
       super("AntiBot", ModuleCategory.world);
-      withEnabled();
 
       this.registerSetting(a = new TickSetting("Wait 80 ticks", false));
    }
