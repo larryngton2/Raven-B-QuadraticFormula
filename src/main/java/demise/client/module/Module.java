@@ -193,15 +193,13 @@ public class Module {
    }
 
    public enum ModuleCategory {
-      combat,
+      legit,
       movement,
       player,
       world,
       render,
-      minigames,
       other,
       client,
-      hotkey,
       fun,
       rage,
       exploit

@@ -13,24 +13,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class Terminal extends Module {
-   public static boolean visible = false;
    public static boolean b = false;
    public static Timer animation;
    public static TickSetting animate;
-   public static SliderSetting opacity;
 
    public Terminal() {
       super("Terminal", ModuleCategory.client);
-      withEnabled();
-
-      this.registerSetting(opacity = new SliderSetting("Terminal background opacity", 100, 0, 255, 1));
    }
 
    public void onEnable() {
       demise.clickGui.terminal.show();
-      //keystrokesmod.client.clickgui.raven.CommandLine.setccs();
-      //visible = true;
-      //b = false;
+
       (animation = new Timer(500.0F)).start();
    }
 

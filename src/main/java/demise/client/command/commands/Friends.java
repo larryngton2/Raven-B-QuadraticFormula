@@ -1,7 +1,7 @@
 package demise.client.command.commands;
 
 import demise.client.command.Command;
-import demise.client.module.modules.combat.AimAssist;
+import demise.client.utils.Utils;
 import net.minecraft.entity.Entity;
 
 import static demise.client.clickgui.demise.Terminal.print;
@@ -19,7 +19,7 @@ public class Friends extends Command {
             listFriends();
         } else if(args.length == 2){
             if(args[0].equalsIgnoreCase("add")){
-                boolean added = AimAssist.addFriend(args[1]);
+                boolean added = Utils.Player.addFriend(args[1]);
                 if (added) {
                     print("Successfully added " + args[1] + " to your friends list!");
                 } else {
@@ -27,7 +27,7 @@ public class Friends extends Command {
                 }
             }
             else if(args[0].equalsIgnoreCase("remove")){
-                boolean removed = AimAssist.removeFriend(args[1]);
+                boolean removed = Utils.Player.removeFriend(args[1]);
                 if (removed) {
                     print("Successfully removed " + args[1] + " from your friends list!");
                 } else {
@@ -40,11 +40,11 @@ public class Friends extends Command {
     }
 
     public void listFriends(){
-        if(AimAssist.getFriends().isEmpty()){
+        if(Utils.getFriends().isEmpty()){
             print("You have no friends. :(");
         } else {
             print("Your friends are:");
-            for (Entity entity : AimAssist.getFriends()){
+            for (Entity entity : Utils.getFriends()){
                 print(entity.getName());
             }
         }

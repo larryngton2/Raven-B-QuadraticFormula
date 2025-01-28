@@ -2,12 +2,10 @@ package demise.client.tweaker;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.combat.LeftClicker;
-import demise.client.module.modules.combat.Reach;
+import demise.client.module.modules.legit.LeftClicker;
+import demise.client.module.modules.legit.Reach;
 import demise.client.module.modules.other.NameHider;
-import demise.client.module.modules.other.StringEncrypt;
-import demise.client.module.modules.player.SafeWalk;
-import demise.client.module.modules.render.AntiShuffle;
+import demise.client.module.modules.legit.SafeWalk;
 import demise.client.module.modules.world.Scaffold;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -26,16 +24,6 @@ public class ASMEventHandler {
       Module nameHider = demise.moduleManager.getModuleByClazz(NameHider.class);
       if (nameHider != null && nameHider.isEnabled()) {
          s = NameHider.getUnformattedTextForChat(s);
-      }
-
-      Module antiShuffle = demise.moduleManager.getModuleByClazz(StringEncrypt.class);
-      if (antiShuffle != null && antiShuffle.isEnabled()) {
-         s = AntiShuffle.getUnformattedTextForChat(s);
-      }
-
-      Module stringEncrypt = demise.moduleManager.getModuleByClazz(StringEncrypt.class);
-      if (stringEncrypt != null && stringEncrypt.isEnabled()) {
-         s = StringEncrypt.getUnformattedTextForChat(s);
       }
 
       return s;

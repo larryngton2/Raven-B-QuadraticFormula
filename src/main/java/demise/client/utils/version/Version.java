@@ -1,7 +1,10 @@
 package demise.client.utils.version;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 
+@Getter
 public class Version {
     private final String version;
     private final String branchName;
@@ -15,22 +18,6 @@ public class Version {
         for (String number : this.version.split("\\.")) {
             this.versionNumbers.add(Integer.parseInt(number));
         }
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getBranchName() {
-        return branchName;
-    }
-
-    public int getBranchCommit() {
-        return branchCommit;
-    }
-
-    public ArrayList<Integer> getVersionNumbers() {
-        return versionNumbers;
     }
 
     public boolean isNewerThan(Version versionToCompare) {

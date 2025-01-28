@@ -6,9 +6,13 @@
   "verbose": true,
   "mixins": [
     "entity.MixinEntityLivingBase",
-    "entity.MixinEntityPlayer",
-    "entity.MixinEntityPlayerSP",
     "network.MixinNetworkManager",
+    "entity.MixinEntityPlayer",
+    "entity.MixinEntity"
+  ],
+  "client": [
+    "client.MixinMovementInputFromOptions",
+    "entity.MixinEntityPlayerSP",
     "render.MixinModelBiped"
   ]
 }

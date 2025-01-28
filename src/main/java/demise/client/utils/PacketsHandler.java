@@ -2,7 +2,7 @@ package demise.client.utils;
 
 import demise.client.utils.event.ReceivePacketEvent;
 import demise.client.utils.event.update.PostUpdateEvent;
-import demise.client.utils.packet.SendPacketEvent;
+import demise.client.utils.event.packet.SendPacketEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.network.Packet;

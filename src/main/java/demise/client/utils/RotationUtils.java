@@ -4,10 +4,9 @@ import demise.client.utils.event.motion.PreMotionEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
+
+import java.util.List;
 
 public class RotationUtils {
     public static final Minecraft mc = Minecraft.getMinecraft();
@@ -155,5 +154,51 @@ public class RotationUtils {
         if (moveStrafing < 0F) rotationYaw += 90F * forward;
 
         return Math.toRadians(rotationYaw);
+    }
+
+    public static boolean isPossibleToHit(Entity target, double reach, float[] rotations) {
+        final Vec3 eyePosition = mc.thePlayer.getPositionEyes(1.0f);
+
+        final float yaw = rotations[0];
+        final float pitch = rotations[1];
+
+        final float radianYaw = -yaw * 0.017453292f - (float) Math.PI;
+        final float radianPitch = -pitch * 0.017453292f;
+
+        final float cosYaw = MathHelper.cos(radianYaw);
+        final float sinYaw = MathHelper.sin(radianYaw);
+        final float cosPitch = -MathHelper.cos(radianPitch);
+        final float sinPitch = MathHelper.sin(radianPitch);
+
+        final Vec3 lookVector = new Vec3(
+                sinYaw * cosPitch,
+                sinPitch,
+                cosYaw * cosPitch
+        );
+
+        final double lookVecX = lookVector.xCoord * reach;
+        final double lookVecY = lookVector.yCoord * reach;
+        final double lookVecZ = lookVector.zCoord * reach;
+
+        final Vec3 endPosition = eyePosition.addVector(lookVecX, lookVecY, lookVecZ);
+
+        final Entity renderViewEntity = mc.getRenderViewEntity();
+        final AxisAlignedBB expandedBox = renderViewEntity
+                .getEntityBoundingBox()
+                .addCoord(lookVecX, lookVecY, lookVecZ)
+                .expand(1.0, 1.0, 1.0);
+
+        final List<Entity> entitiesInPath = mc.theWorld.getEntitiesWithinAABBExcludingEntity(renderViewEntity, expandedBox);
+        for (Entity entity : entitiesInPath) {
+            if (entity == target && entity.canBeCollidedWith()) {
+                final float borderSize = entity.getCollisionBorderSize();
+                final AxisAlignedBB entityBox = entity.getEntityBoundingBox()
+                        .expand(borderSize, borderSize, borderSize);
+                final MovingObjectPosition intercept = entityBox.calculateIntercept(eyePosition, endPosition);
+                return intercept != null;
+            }
+        }
+
+        return false;
     }
 }

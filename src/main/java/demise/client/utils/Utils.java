@@ -6,10 +6,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.combat.LeftClicker;
+import demise.client.module.modules.legit.LeftClicker;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.utils.event.motion.PreMotionEvent;
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLadder;
@@ -59,7 +60,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 
-import static demise.client.module.modules.rage.killAura.KillAuraAdditions.pitchOffset;
 import static demise.client.utils.Utils.Java.rand;
 
 public class Utils {
@@ -74,8 +74,77 @@ public class Utils {
    public static HashSet<String> enemies = new HashSet<>();
    private static float interpolatedYaw = 0.0f;
    private static float interpolatedPitch = 0.0f;
+   @Getter
+   public static ArrayList<Entity> friends = new ArrayList<>();
 
    public static class Player {
+      public static boolean isAFriend(Entity entity) {
+         if (entity == mc.thePlayer) return true;
+
+         for (Entity wut : friends) {
+            if (wut.equals(entity))
+               return true;
+         }
+         try {
+            EntityPlayer bruhentity = (EntityPlayer) entity;
+            if (demise.debugger) {
+               Utils.Player.sendMessageToSelf("unformatted / " + bruhentity.getDisplayName().getUnformattedText().replace("§", "%"));
+
+               Utils.Player.sendMessageToSelf("susbstring entity / " + bruhentity.getDisplayName().getUnformattedText().substring(0, 2));
+               Utils.Player.sendMessageToSelf("substring player / " + mc.thePlayer.getDisplayName().getUnformattedText().substring(0, 2));
+            }
+            if (mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || mc.thePlayer.getDisplayName().getUnformattedText().startsWith(bruhentity.getDisplayName().getUnformattedText().substring(0, 2)))
+               return true;
+         } catch (Exception fhwhfhwe) {
+            if (demise.debugger) {
+               Utils.Player.sendMessageToSelf(fhwhfhwe.getMessage());
+            }
+         }
+         return false;
+      }
+
+      public static void addFriend(Entity entityPlayer) {
+         friends.add(entityPlayer);
+      }
+
+      public static boolean addFriend(String name) {
+         boolean found = false;
+         for (Entity entity : mc.theWorld.getLoadedEntityList()) {
+            if (entity.getName().equalsIgnoreCase(name) || entity.getCustomNameTag().equalsIgnoreCase(name)) {
+               if (!isAFriend(entity)) {
+                  addFriend(entity);
+                  found = true;
+               }
+            }
+         }
+
+         return found;
+      }
+
+      public static boolean removeFriend(String name) {
+         boolean removed = false;
+         boolean found = false;
+         for (NetworkPlayerInfo networkPlayerInfo : new ArrayList<>(mc.getNetHandler().getPlayerInfoMap())) {
+            Entity entity = mc.theWorld.getPlayerEntityByName(networkPlayerInfo.getDisplayName().getUnformattedText());
+            if (entity.getName().equalsIgnoreCase(name) || entity.getCustomNameTag().equalsIgnoreCase(name)) {
+               removed = removeFriend(entity);
+               found = true;
+            }
+         }
+
+         return found && removed;
+      }
+
+      public static boolean removeFriend(Entity entityPlayer) {
+         try {
+            friends.remove(entityPlayer);
+         } catch (Exception eeeeee) {
+            eeeeee.printStackTrace();
+            return false;
+         }
+         return true;
+      }
+
       public static void setRenderYaw(float yaw) {
          mc.thePlayer.rotationYawHead = yaw;
       }
@@ -129,24 +198,45 @@ public class Utils {
 
       public static RandomizedAim randomizedAim = new RandomizedAim();
 
-      public static void aimSilent(PreMotionEvent e, Entity currentTarget, float rotationSpeed) {
-         float[] targetRot = Utils.Player.getTargetRotations(currentTarget, (float) pitchOffset.getInput());
-
-         if (rotationSpeed == 1) {
-            e.setYaw(targetRot[0]);
-            e.setPitch(targetRot[1]);
-         } else {
-            interpolatedYaw = interpolate(interpolatedYaw,targetRot[0], rotationSpeed);
-            interpolatedPitch = interpolate(interpolatedPitch, targetRot[1], rotationSpeed);
-
-            e.setYaw(interpolatedYaw);
-            e.setPitch(interpolatedPitch);
-         }
-      }
-
       public static void resetInterpolation() {
          interpolatedYaw = 0.0f;
          interpolatedPitch = 0.0f;
+      }
+
+      public static void aimSilent(PreMotionEvent e, Entity currentTarget, float rotationSpeed, boolean offset, float ps) {
+         if (currentTarget != null) {
+            float[] targetRot = Utils.Player.getTargetRotations(currentTarget, ps);
+
+            if (targetRot != null) {
+               randomizedAim.updateOffset(3.5f, 2.75f, 1.0f, 0.01f);
+
+               float randomizedYaw = randomizedAim.getRandomYaw(targetRot[0]);
+               float randomizedPitch = randomizedAim.getRandomPitch(targetRot[1] + 4.0F + ps);
+               float targetYaw = targetRot[0];
+               float targetPitch = targetRot[1] + 4.0F + ps;
+               float finalRotationSpeed;
+
+               //todo: not use this shitty ass method
+               if (mc.thePlayer.rotationYaw - e.getYaw() == 180f || mc.thePlayer.rotationYaw - e.getYaw() == -180f) {
+                  finalRotationSpeed = 1.0f;
+               } else {
+                  finalRotationSpeed = rotationSpeed;
+               }
+
+               if (offset) {
+                  interpolatedYaw = interpolate(Utils.serverRotations[0], randomizedYaw, finalRotationSpeed);
+                  interpolatedPitch = interpolate(Utils.serverRotations[1], randomizedPitch, finalRotationSpeed);
+               } else {
+                  interpolatedYaw = interpolate(Utils.serverRotations[0], targetYaw, finalRotationSpeed);
+                  interpolatedPitch = interpolate(Utils.serverRotations[1], targetPitch, finalRotationSpeed);
+               }
+
+               e.setYaw(interpolatedYaw);
+               e.setPitch(interpolatedPitch);
+
+               serverRotations = new float[]{e.getYaw(), e.getPitch()};
+            }
+         }
       }
 
       public static void aim(Entity entity, float ps, float rotationSpeed, boolean offset) {
@@ -167,6 +257,25 @@ public class Utils {
                } else {
                   mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, targetYaw, rotationSpeed);
                   mc.thePlayer.rotationPitch = interpolate(mc.thePlayer.rotationPitch, targetPitch, rotationSpeed);
+               }
+            }
+         }
+      }
+
+      public static void aimYaw(Entity entity, float rotationSpeed, boolean offset) {
+         if (entity != null) {
+            float[] t = getTargetRotations(entity, 0f);
+            if (t != null) {
+               randomizedAim.updateOffset(3.5f, 2.75f, 1.0f, 0.01f);
+
+               float randomizedYaw = randomizedAim.getRandomYaw(t[0]);
+               float targetYaw = t[0];
+
+               if (offset) {
+                  mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, randomizedYaw, rotationSpeed);
+
+               } else {
+                  mc.thePlayer.rotationYaw = interpolate(mc.thePlayer.rotationYaw, targetYaw, rotationSpeed);
                }
             }
          }

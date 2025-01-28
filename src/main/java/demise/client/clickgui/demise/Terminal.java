@@ -13,7 +13,8 @@ import java.util.ArrayList;
 
 public class Terminal implements Component {
     @Getter
-    private int x, y, width, height, barHeight, border;
+    private int x, y, width, barHeight, border;
+    private int height;
     private int minWidth, minHeight;
     private int resizeButtonSize;
     public boolean opened = false;

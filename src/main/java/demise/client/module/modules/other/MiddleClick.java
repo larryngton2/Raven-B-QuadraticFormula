@@ -1,7 +1,7 @@
 package demise.client.module.modules.other;
 
 import demise.client.module.Module;
-import demise.client.module.modules.combat.AimAssist;
+import demise.client.module.modules.legit.AimAssist;
 import demise.client.module.setting.impl.ComboSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.Utils;
@@ -89,7 +89,7 @@ public class MiddleClick extends Module {
         if (player == null) {
             Utils.Player.sendMessageToSelf("Please aim at a player/entity when removing them.");
         } else {
-            if (AimAssist.removeFriend(player)) {
+            if (Utils.Player.removeFriend(player)) {
                 Utils.Player.sendMessageToSelf("Successfully removed " + player.getName() + " from friends list!");
             } else {
                 Utils.Player.sendMessageToSelf(player.getName() + " was not found in the friends list!");
@@ -102,7 +102,7 @@ public class MiddleClick extends Module {
         if (player == null) {
             Utils.Player.sendMessageToSelf("Please aim at a player/entity when adding them.");
         } else {
-            AimAssist.addFriend(player);
+            Utils.Player.addFriend(player);
             Utils.Player.sendMessageToSelf("Successfully added " + player.getName() + " to friends list.");
         }
     }

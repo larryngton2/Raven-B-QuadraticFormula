@@ -7,119 +7,73 @@ import demise.client.utils.Utils;
 import net.minecraft.client.Minecraft;
 
 public class Fly extends Module {
-   private final Fly.VanFly vanFly = new VanFly();
-   private final Fly.GliFly gliFly = new Fly.GliFly();
    public static DescriptionSetting dc;
-   public static SliderSetting a;
-   public static SliderSetting b;
-   private static final String c1 = "Vanilla";
-   private static final String c2 = "Glide";
+   public static SliderSetting speed;
+   public static SliderSetting mode;
 
    public Fly() {
       super("Fly", ModuleCategory.movement);
-      this.registerSetting(a = new SliderSetting("Value", 1.0D, 1.0D, 2.0D, 1.0D));
-      this.registerSetting(dc = new DescriptionSetting(Utils.md + c1));
-      this.registerSetting(b = new SliderSetting("Speed", 2.0D, 1.0D, 5.0D, 0.1D));
+      this.registerSetting(dc = new DescriptionSetting("Vanilla, Glide"));
+      this.registerSetting(mode = new SliderSetting("Mode", 1.0D, 1.0D, 2.0D, 1.0D));
+      this.registerSetting(speed = new SliderSetting("Speed", 2.0D, 1.0D, 5.0D, 0.1D));
    }
 
-   public void onEnable() {
-      switch ((int) a.getInput()) {
-         case 1:
-            this.vanFly.onEnable();
-            break;
-         case 2:
-            this.gliFly.onEnable();
-      }
+   private boolean opf = false;
 
-   }
-
-   public void onDisable() {
-      switch ((int) a.getInput()) {
-         case 1:
-            this.vanFly.onDisable();
-            break;
-         case 2:
-            this.gliFly.onDisable();
-      }
-
-   }
-
-   public void update() {
-      switch ((int) a.getInput()) {
-         case 1:
-            this.vanFly.update();
-            break;
-         case 2:
-            this.gliFly.update();
-      }
-
+   private enum modes {
+      Vanilla,
+      Glide
    }
 
    public void guiUpdate() {
-      switch ((int) a.getInput()) {
+      dc.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+   }
+
+   public void update() {
+      switch ((int) mode.getInput()) {
          case 1:
-            dc.setDesc(Utils.md + c1);
+            mc.thePlayer.motionY = 0.0D;
+            mc.thePlayer.capabilities.setFlySpeed((float) (0.05000000074505806D * speed.getInput()));
+            mc.thePlayer.capabilities.isFlying = true;
             break;
          case 2:
-            dc.setDesc(Utils.md + c2);
-      }
+            if (Module.mc.thePlayer.movementInput.moveForward > 0.0F) {
+               if (!this.opf) {
+                  this.opf = true;
+                  if (Module.mc.thePlayer.onGround) {
+                     Module.mc.thePlayer.jump();
+                  }
+               } else {
+                  if (Module.mc.thePlayer.onGround || Module.mc.thePlayer.isCollidedHorizontally) {
+                     Fly.this.disable();
+                     return;
+                  }
 
-   }
-
-   class GliFly {
-      boolean opf = false;
-
-      public void onEnable() {
-      }
-
-      public void onDisable() {
-         this.opf = false;
-      }
-
-      public void update() {
-         if (Module.mc.thePlayer.movementInput.moveForward > 0.0F) {
-            if (!this.opf) {
-               this.opf = true;
-               if (Module.mc.thePlayer.onGround) {
-                  Module.mc.thePlayer.jump();
+                  double s = 1.94D * speed.getInput();
+                  double r = Math.toRadians(Module.mc.thePlayer.rotationYaw + 90.0F);
+                  Module.mc.thePlayer.motionX = s * Math.cos(r);
+                  Module.mc.thePlayer.motionZ = s * Math.sin(r);
                }
-            } else {
-               if (Module.mc.thePlayer.onGround || Module.mc.thePlayer.isCollidedHorizontally) {
-                  Fly.this.disable();
-                  return;
-               }
-
-               double s = 1.94D * Fly.b.getInput();
-               double r = Math.toRadians(Module.mc.thePlayer.rotationYaw + 90.0F);
-               Module.mc.thePlayer.motionX = s * Math.cos(r);
-               Module.mc.thePlayer.motionZ = s * Math.sin(r);
             }
-         }
-
+            break;
       }
    }
 
-   static class VanFly {
-      private final float dfs = 0.05F;
+   public void onDisable() {
+      switch ((int) mode.getInput()) {
+         case 1:
+            if (Minecraft.getMinecraft().thePlayer == null)
+               return;
 
-      public void onEnable() {
-      }
+            if (Minecraft.getMinecraft().thePlayer.capabilities.isFlying) {
+               Minecraft.getMinecraft().thePlayer.capabilities.isFlying = false;
+            }
 
-      public void onDisable() {
-         if (Minecraft.getMinecraft().thePlayer == null)
-            return;
-
-         if (Minecraft.getMinecraft().thePlayer.capabilities.isFlying) {
-            Minecraft.getMinecraft().thePlayer.capabilities.isFlying = false;
-         }
-
-         Minecraft.getMinecraft().thePlayer.capabilities.setFlySpeed(0.05F);
-      }
-
-      public void update() {
-         Module.mc.thePlayer.motionY = 0.0D;
-         Module.mc.thePlayer.capabilities.setFlySpeed((float) (0.05000000074505806D * Fly.b.getInput()));
-         Module.mc.thePlayer.capabilities.isFlying = true;
+            Minecraft.getMinecraft().thePlayer.capabilities.setFlySpeed(0.05F);
+            break;
+         case 2:
+            this.opf = false;
+            break;
       }
    }
 }

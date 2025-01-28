@@ -1,5 +1,7 @@
 package demise.client.utils.version;
 
+import lombok.Getter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Scanner;
 
+@Getter
 public class VersionManager {
 
     private Version latestVersion;
@@ -78,11 +81,4 @@ public class VersionManager {
         this.clientVersion = new Version(version, branch, branchCommit);
     }
 
-    public Version getClientVersion() {
-        return clientVersion;
-    }
-
-    public Version getLatestVersion() {
-        return latestVersion;
-    }
 }

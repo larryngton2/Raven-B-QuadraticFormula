@@ -2,8 +2,8 @@ package demise.mixins.impl.network;
 
 import io.netty.channel.ChannelHandlerContext;
 import demise.client.utils.event.ReceivePacketEvent;
-import demise.client.utils.packet.PacketUtils;
-import demise.client.utils.packet.SendPacketEvent;
+import demise.client.utils.PacketUtils;
+import demise.client.utils.event.packet.SendPacketEvent;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import org.spongepowered.asm.mixin.Mixin;

@@ -9,18 +9,19 @@ import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.*;
 import demise.client.utils.event.motion.PreMotionEvent;
 import demise.client.utils.event.update.PreUpdateEvent;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0APacketAnimation;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Scaffold extends Module {
     private static DescriptionSetting dRot, dFast, dSprint;
@@ -410,6 +411,7 @@ public class Scaffold extends Module {
             placeBlock = null;
             return;
         }
+
         if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld, getHeldItem, placeBlock.getBlockPos(), placeBlock.sideHit, placeBlock.hitVec)) {
             if (silentSwing.isToggled()) {
                 mc.thePlayer.sendQueue.addToSendQueue(new C0APacketAnimation());

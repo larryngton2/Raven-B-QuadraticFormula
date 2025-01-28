@@ -2,7 +2,7 @@ package demise.client.module.modules.hud;
 
 import demise.client.main.demise;
 import demise.client.module.*;
-import demise.client.module.modules.rage.killAura.KillAura;
+import demise.client.module.modules.rage.KillAura;
 import demise.client.module.setting.Setting;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;

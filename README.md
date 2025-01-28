@@ -1,12 +1,12 @@
-# Raven b quadratic
-A Raven fork based off of Raven B+, for forge 1.8.9.
+# demise
+A Forge client based off of Raven B+, for 1.8.9.
 
 ---
 
 ## Installation
 > Make sure you have Forge installed first.
 
-1. Download [Raven b quadratic](https://github.com/larryngton2/Raven-B-QuadraticFormula/releases).
+1. Download [demise](https://github.com/larryngton2/demise/releases/latest).
 2. Place the jar in your Forge mods folder: `.minecraft/mods/`.
 
 ---

@@ -1,23 +1,24 @@
 package demise.client.utils.event;
 
-
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Getter
 @Setter
+@Getter
+@Cancelable
 public class StrafeEvent extends Event {
-    public StrafeEvent(float forward, float strafe, float friction, float attributeSpeed, float yaw) {
-        this.forward = forward;
-        this.strafe = strafe;
-        this.friction = friction;
-        this.attributeSpeed = attributeSpeed;
-        this.yaw = yaw;
-    }
-
-    private float forward, strafe;
-    private float friction, attributeSpeed;
+    private float forward;
+    private float strafe;
+    private float friction;
     private float yaw;
 
+    public StrafeEvent(float strafe, float forward, float friction, float yaw) {
+        this.strafe = strafe;
+        this.forward = forward;
+        this.friction = friction;
+        this.yaw = yaw;
+        this.isCancelable();
+    }
 }

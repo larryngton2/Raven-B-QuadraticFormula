@@ -3,7 +3,7 @@ package demise.mixins.impl.entity;
 import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.movement.KeepSprint;
-import demise.client.module.modules.rage.killAura.KillAura;
+import demise.client.module.modules.rage.KillAura;
 import demise.client.utils.EyeHeightEvent;
 import lombok.NonNull;
 import net.minecraft.enchantment.EnchantmentHelper;

@@ -2,7 +2,7 @@ package demise.client.module.modules.movement;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.combat.Reach;
+import demise.client.module.modules.legit.Reach;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
@@ -17,7 +17,7 @@ public class KeepSprint extends Module {
 
    public KeepSprint() {
       super("KeepSprint", ModuleCategory.movement);
-      this.registerSetting(new DescriptionSetting(new String("Default is 40% motion reduction.")));
+      this.registerSetting(new DescriptionSetting("Default is 40% motion reduction."));
       this.registerSetting(slow = new SliderSetting("Slow %", 40.0D, 0.0D, 40.0D, 1.0D));
       this.registerSetting(disableWhileJump = new TickSetting("Disable while jumping", false));
       this.registerSetting(reduceReachHits = new TickSetting("Only reduce reach hits", false));

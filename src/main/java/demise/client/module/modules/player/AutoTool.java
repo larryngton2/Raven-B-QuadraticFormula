@@ -2,7 +2,7 @@ package demise.client.module.modules.player;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.combat.LeftClicker;
+import demise.client.module.modules.legit.LeftClicker;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.CoolDown;

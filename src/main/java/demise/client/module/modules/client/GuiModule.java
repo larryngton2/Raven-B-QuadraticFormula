@@ -1,6 +1,5 @@
 package demise.client.module.modules.client;
 
-import demise.client.clickgui.demise.ClickGui;
 import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.setting.impl.SliderSetting;

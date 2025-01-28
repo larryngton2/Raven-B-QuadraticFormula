@@ -4,7 +4,7 @@ import demise.client.module.Module;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.utils.*;
-import demise.client.utils.packet.PacketUtils;
+import demise.client.utils.PacketUtils;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

@@ -85,19 +85,18 @@ public class MoveUtil {
         return toRadians(rotationYaw);
     }
 
-    public static double getStrictDirection() {
-        float rotationYaw = mc.thePlayer.rotationYaw;
+    public static double getDirection(float rotationYaw, final double moveForward, final double moveStrafing) {
+        if (moveForward < 0F) rotationYaw += 180F;
 
-        if (mc.thePlayer.movementInput.moveForward < 0F)
-            rotationYaw += 180F;
+        float forward = 1F;
 
-        if (mc.thePlayer.movementInput.moveStrafe > 0F)
-            rotationYaw -= 90F;
+        if (moveForward < 0F) forward = -0.5F;
+        else if (moveForward > 0F) forward = 0.5F;
 
-        if (mc.thePlayer.movementInput.moveStrafe < 0F)
-            rotationYaw += 90F;
+        if (moveStrafing > 0F) rotationYaw -= 90F * forward;
+        if (moveStrafing < 0F) rotationYaw += 90F * forward;
 
-        return toRadians(rotationYaw);
+        return Math.toRadians(rotationYaw);
     }
 
     public static double speed() {

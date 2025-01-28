@@ -2,7 +2,6 @@ package demise.client.module.modules.other;
 
 import demise.client.module.Module;
 import demise.client.module.setting.impl.DescriptionSetting;
-import demise.client.module.modules.minigames.DuelsStats;
 import demise.client.utils.Utils;
 
 public class NameHider extends Module {
@@ -16,7 +15,7 @@ public class NameHider extends Module {
 
    public static String getUnformattedTextForChat(String s) {
       if (mc.thePlayer != null) {
-         s = DuelsStats.playerNick.isEmpty() ? s.replace(mc.thePlayer.getName(), n) : s.replace(DuelsStats.playerNick, n);
+         s = s.replace(mc.thePlayer.getName(), n);
       }
 
       return s;
