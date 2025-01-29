@@ -25,3 +25,13 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Create Release
+      uses: "0xDylan/action-auto-releases-n20@v1.1"
+      with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Latest Build"
+          files: |
+            ./build/libs/BetterKeystrokes-1.2.jar
