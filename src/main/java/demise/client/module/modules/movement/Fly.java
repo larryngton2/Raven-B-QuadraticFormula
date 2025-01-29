@@ -5,6 +5,8 @@ import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class Fly extends Module {
    public static DescriptionSetting dc;
@@ -12,7 +14,7 @@ public class Fly extends Module {
    public static SliderSetting mode;
 
    public Fly() {
-      super("Fly", ModuleCategory.movement);
+      super("Fly", ModuleCategory.movement, "");
       this.registerSetting(dc = new DescriptionSetting("Vanilla, Glide"));
       this.registerSetting(mode = new SliderSetting("Mode", 1.0D, 1.0D, 2.0D, 1.0D));
       this.registerSetting(speed = new SliderSetting("Speed", 2.0D, 1.0D, 5.0D, 0.1D));
@@ -27,6 +29,11 @@ public class Fly extends Module {
 
    public void guiUpdate() {
       dc.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
    }
 
    public void update() {

@@ -1,6 +1,5 @@
 package demise.client.module.modules.movement;
 
-/*
 import demise.client.module.Module;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
@@ -20,7 +19,7 @@ public class MovementFix extends Module {
     private static SliderSetting mode;
 
     public MovementFix() {
-        super("MovementFix", ModuleCategory.movement);
+        super("MovementFix", ModuleCategory.movement, "");
         this.registerSetting(d = new DescriptionSetting("Normal, Test"));
         this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 3, 1));
     }
@@ -226,4 +225,3 @@ public class MovementFix extends Module {
         return Math.toRadians(rotationYaw);
     }
 }
- */

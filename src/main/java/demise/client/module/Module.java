@@ -3,6 +3,7 @@ package demise.client.module;
 import com.google.gson.JsonObject;
 import demise.client.module.setting.Setting;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -26,11 +27,23 @@ public class Module {
    private boolean isToggled = false;
 
    private String description = "";
+   @Getter
+   @Setter
+   private String tag;
 
    public Module(String name, ModuleCategory moduleCategory) {
       this.moduleName = name;
       this.moduleCategory = moduleCategory;
       this.settings = new ArrayList<>();
+      this.tag = "";
+      mc = Minecraft.getMinecraft();
+   }
+
+   public Module(String name, ModuleCategory moduleCategory, String defaultTag) {
+      this.moduleName = name;
+      this.moduleCategory = moduleCategory;
+      this.settings = new ArrayList<>();
+      this.tag = isEnabled() ? defaultTag : "";
       mc = Minecraft.getMinecraft();
    }
 
@@ -128,7 +141,7 @@ public class Module {
       return this.moduleName;
    }
 
-    public Setting getSettingByName(String name) {
+   public Setting getSettingByName(String name) {
       for (Setting setting : this.settings) {
          if (setting.getName().equalsIgnoreCase(name))
             return setting;
@@ -144,7 +157,7 @@ public class Module {
       return this.moduleCategory;
    }
 
-    public void onEnable() {
+   public void onEnable() {
    }
 
    public void onDisable() {
@@ -167,7 +180,7 @@ public class Module {
    public void guiButtonToggled(Setting b) {
    }
 
-    public void setbind(int keybind) {
+   public void setbind(int keybind) {
       this.keycode = keybind;
    }
 
@@ -181,7 +194,6 @@ public class Module {
    }
 
    public void onGuiClose() {
-
    }
 
    public String getBindAsString() {

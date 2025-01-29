@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class Criticals extends Module {
     public static DescriptionSetting dMode;
@@ -24,7 +25,7 @@ public class Criticals extends Module {
     public static TickSetting botCheck;
 
     public Criticals() {
-        super("Criticals", ModuleCategory.rage);
+        super("Criticals", ModuleCategory.rage, "");
 
         this.registerSetting(dMode = new DescriptionSetting("Jump, NoGround, Visual"));
         this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 6, 1));
@@ -39,6 +40,11 @@ public class Criticals extends Module {
         NCP,
         Timer,
         Timer2
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
     }
 
     public void guiUpdate() {

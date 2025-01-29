@@ -21,6 +21,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class NoSlow extends Module {
    public static SliderSetting mode;
@@ -32,7 +33,7 @@ public class NoSlow extends Module {
    public static TickSetting vanillaSword;
 
    public NoSlow() {
-      super("NoSlow", ModuleCategory.movement);
+      super("NoSlow", ModuleCategory.movement, "");
       this.registerSetting(new DescriptionSetting("Default is 80% motion reduction."));
       this.registerSetting(agugu = new DescriptionSetting("Vanilla, Pre, Post, Alpha, Float"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 6, 1));
@@ -55,6 +56,11 @@ public class NoSlow extends Module {
       Alpha,
       Float,
       Intave
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
    }
 
    public void guiUpdate() {

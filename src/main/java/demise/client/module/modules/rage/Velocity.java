@@ -11,6 +11,7 @@ import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 public class Velocity extends Module {
@@ -19,7 +20,7 @@ public class Velocity extends Module {
    public static TickSetting onlyWhileTargetting, disableOnS;
 
    public Velocity() {
-      super("Velocity", ModuleCategory.rage);
+      super("Velocity", ModuleCategory.rage, "");
 
       this.registerSetting(dMode = new DescriptionSetting("Normal, Cancel, IntaveReduce, JumpReset, BMC 1.9"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 5, 1));
@@ -40,6 +41,11 @@ public class Velocity extends Module {
 
    public void guiUpdate() {
       dMode.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
    }
 
    @SubscribeEvent

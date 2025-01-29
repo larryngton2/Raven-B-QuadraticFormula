@@ -8,13 +8,14 @@ import demise.client.utils.PacketUtils;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class FastUse extends Module {
     private static DescriptionSetting d;
     private static SliderSetting mode, timer;
 
     public FastUse() {
-        super("FastUse", ModuleCategory.player);
+        super("FastUse", ModuleCategory.player, "");
 
         this.registerSetting(d = new DescriptionSetting("Instant, NCP, AAC"));
         this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 3, 1));
@@ -27,6 +28,11 @@ public class FastUse extends Module {
         Instant,
         NCP,
         AAC
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
     }
 
     public void guiUpdate() {

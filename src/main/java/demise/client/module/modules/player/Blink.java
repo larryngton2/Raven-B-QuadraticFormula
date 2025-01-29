@@ -17,6 +17,7 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,14 @@ public class Blink extends Module {
     private static DescriptionSetting faggot;
 
     public Blink() {
-        super("Blink", ModuleCategory.player);
+        super("Blink", ModuleCategory.player, "");
         this.registerSetting(pulse = new TickSetting("Pulse", false));
         this.registerSetting(pulseDelay = new SliderSetting("Pulse delay", 1000, 0, 10000, 100));
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(String.valueOf(System.currentTimeMillis() - startTime));
     }
 
     private void start() {

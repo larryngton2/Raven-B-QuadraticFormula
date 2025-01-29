@@ -37,7 +37,7 @@ public class SafeWalk extends Module {
    private final CoolDown shiftTimer = new CoolDown(0);
 
    public SafeWalk() {
-      super("SafeWalk", ModuleCategory.legit);
+      super("SafeWalk", ModuleCategory.legit, "");
       this.registerSetting(doShift = new TickSetting("Shift", false));
       this.registerSetting(shiftOnJump = new TickSetting("Shift during jumps", false));
       this.registerSetting(shiftTime = new DoubleSliderSetting("Shift time: (s)", 140, 200, 0, 280, 5));
@@ -191,6 +191,8 @@ public class SafeWalk extends Module {
             }
          }
       }
+
+      this.setTag(shiftTime.getInputMin() + "-" + shiftTime.getInputMax() + "ms");
    }
 
    private void setShift(boolean sh) {

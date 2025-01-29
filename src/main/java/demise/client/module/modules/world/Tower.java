@@ -13,6 +13,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class Tower extends Module {
     private static SliderSetting towerMode, forward, diagonal;
 
     public Tower() {
-        super("Tower", ModuleCategory.world);
+        super("Tower", ModuleCategory.world, "");
 
         this.registerSetting(dTower = new DescriptionSetting("Vanilla, Hypixel1"));
         this.registerSetting(towerMode = new SliderSetting("Tower mode", 1, 1, 3, 1));
@@ -44,6 +45,11 @@ public class Tower extends Module {
 
     public void guiUpdate() {
         dTower.setDesc(Utils.md + towerModes.values()[(int) towerMode.getInput() - 1]);
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(String.valueOf(towerModes.values()[(int) towerMode.getInput() - 1]));
     }
 
     public void update() {

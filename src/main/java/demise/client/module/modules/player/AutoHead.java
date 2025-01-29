@@ -1,10 +1,13 @@
 package demise.client.module.modules.player;
 
 import demise.client.module.Module;
+import demise.client.module.modules.movement.Fly;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.Range;
 
 public class AutoHead extends Module {
@@ -12,12 +15,17 @@ public class AutoHead extends Module {
     public static SliderSetting health;
 
     public AutoHead() {
-        super("AutoHead", ModuleCategory.player);
+        super("AutoHead", ModuleCategory.player, "");
         this.registerSetting(health = new SliderSetting("Health", 15, 1, 20, 1));
     }
 
     private boolean healed;
     private int lastSlot;
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(String.valueOf(health.getInput()));
+    }
 
     public void update() {
         if (Range.between(1, 9).contains(getSlot()) && mc.thePlayer.getHealth() < health.getInput()) {

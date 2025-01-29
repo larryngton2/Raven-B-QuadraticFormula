@@ -22,6 +22,7 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +37,14 @@ public class FakeLag extends Module {
     private boolean lagging;
 
     public FakeLag() {
-        super("FakeLag", ModuleCategory.rage);
+        super("FakeLag", ModuleCategory.rage, "");
         this.registerSetting(range = new DoubleSliderSetting("Range", 3.0, 6.0, 0.5, 8.0, 0.1));
         this.registerSetting(pulseDelay = new DoubleSliderSetting("Pulse delay", 100, 200, 25, 1000, 25));
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(pulseDelay.getInputMin() + "-" + pulseDelay.getInputMax());
     }
 
     public static EntityLivingBase findTarget() {

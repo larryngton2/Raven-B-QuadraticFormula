@@ -2,6 +2,7 @@ package demise.client.module.modules.player;
 
 import demise.client.main.demise;
 import demise.client.module.*;
+import demise.client.module.modules.movement.Fly;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
@@ -17,6 +18,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
 
 public class AutoPlace extends Module {
@@ -32,10 +34,15 @@ public class AutoPlace extends Module {
    private BlockPos lp = null;
 
    public AutoPlace() {
-      super("AutoPlace", ModuleCategory.player);
+      super("AutoPlace", ModuleCategory.player, "");
       this.registerSetting(ds = new DescriptionSetting("FD: FPS/80"));
       this.registerSetting(c = new SliderSetting("Frame delay", 8.0D, 0.0D, 30.0D, 1.0D));
       this.registerSetting(a = new TickSetting("Hold right", true));
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(c.getInput() + "ms");
    }
 
    public void guiUpdate() {

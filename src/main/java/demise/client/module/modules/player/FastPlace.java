@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -30,9 +31,14 @@ public class FastPlace extends Module {
    }
 
    public FastPlace() {
-      super("FastPlace", ModuleCategory.player);
+      super("FastPlace", ModuleCategory.player, "");
       this.registerSetting(delaySlider = new SliderSetting("Delay", 0.0D, 0.0D, 4.0D, 1.0D));
       this.registerSetting(blockOnly = new TickSetting("Blocks only", true));
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(String.valueOf(delaySlider.getInput()));
    }
 
    @Override

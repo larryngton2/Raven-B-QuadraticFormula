@@ -30,13 +30,18 @@ public class HitBox extends Module {
    private static MovingObjectPosition mv;
 
    public HitBox() {
-      super("HitBox", ModuleCategory.legit);
+      super("HitBox", ModuleCategory.legit, "");
       this.registerSetting(a = new SliderSetting("Multiplier", 1.2D, 1.0D, 5.0D, 0.05D));
       this.registerSetting(b = new TickSetting("Show new hitbox", false));
    }
 
    public void update() {
       gmo(1.0F);
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent event) {
+      this.setTag(a.getInput() + "x");
    }
 
    @SubscribeEvent

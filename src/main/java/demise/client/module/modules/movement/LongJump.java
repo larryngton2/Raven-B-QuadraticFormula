@@ -13,6 +13,7 @@ import demise.client.utils.event.motion.PreMotionEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.Range;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class LongJump extends Module {
     public static SliderSetting mode;
 
     public LongJump() {
-        super("LongJump", ModuleCategory.movement);
+        super("LongJump", ModuleCategory.movement, "");
         this.registerSetting(d = new DescriptionSetting("NCP, Miniblox"));
         this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 2, 1));
     }
@@ -42,6 +43,11 @@ public class LongJump extends Module {
 
     public void guiUpdate() {
         d.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+    }
+
+    @SubscribeEvent
+    public void onRenderTick(TickEvent.RenderTickEvent ev) {
+        this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
     }
 
     @Override

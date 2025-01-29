@@ -28,7 +28,7 @@ public class Reach extends Module {
    public static TickSetting hit_through_blocks;
 
    public Reach() {
-      super("Reach", ModuleCategory.legit);
+      super("Reach", ModuleCategory.legit, "");
       this.registerSetting(reach = new DoubleSliderSetting("Reach (Blocks)", 3.1, 3.3, 3, 6, 0.05));
       this.registerSetting(weapon_only = new TickSetting("Weapon only", false));
       this.registerSetting(moving_only = new TickSetting("Moving only", false));
@@ -57,6 +57,8 @@ public class Reach extends Module {
       if (autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
          call();
       }
+
+      this.setTag(reach.getInputMin() + "-" + reach.getInputMax());
    }
 
    public static boolean call() {

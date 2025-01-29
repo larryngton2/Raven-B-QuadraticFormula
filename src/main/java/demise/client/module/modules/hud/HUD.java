@@ -108,6 +108,8 @@ public class HUD extends Module {
             return;
          }
 
+         demise.moduleManager.sort();
+
          int ded = 0;
 
          if (watermark.isToggled()) {
@@ -171,65 +173,34 @@ public class HUD extends Module {
          if (arrayList.isToggled()) {
             for (Module m : en) {
                if (m.isEnabled() && m.moduleCategory() != ModuleCategory.render) {
-                  if (HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT || HUD.positionMode == Utils.HUD.PositionMode.UPRIGHT) {
-                     if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN2) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 10;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), (float) y, Utils.Client.astolfoColorsDraw(10, 14), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO2) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO3) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 10;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.WHITE) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Color.WHITE.getRGB(), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.DEMISE) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.grayscaleDraw(10, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     }
-                  } else {
-                     if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN2) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 10;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.astolfoColorsDraw(10, 14), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO2) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO3) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 10;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.WHITE) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Color.WHITE.getRGB(), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                     } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.DEMISE) {
-                        mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.grayscaleDraw(10, del), dropShadow.isToggled());
-                        y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                        del -= 120;
-                     }
+                  int moduleColor = Color.WHITE.getRGB();
+                  if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
+                     moduleColor = Utils.Client.rainbowDraw(2L, del);
+                     del -= 120;
+                  } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN2) {
+                     moduleColor = Utils.Client.rainbowDraw(2L, del);
+                     del -= 10;
+                  } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO) {
+                     moduleColor = Utils.Client.astolfoColorsDraw(10, 14);
+                     del -= 120;
+                  } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO2) {
+                     moduleColor = Utils.Client.astolfoColorsDraw(10, del);
+                     del -= 120;
+                  } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO3) {
+                     moduleColor = Utils.Client.astolfoColorsDraw(10, del);
+                     del -= 10;
+                  } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.DEMISE) {
+                     moduleColor = Utils.Client.grayscaleDraw(10, del);
+                     del -= 120;
                   }
+
+                  float moduleX = (HUD.positionMode == Utils.HUD.PositionMode.DOWNRIGHT || HUD.positionMode == Utils.HUD.PositionMode.UPRIGHT)
+                          ? hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName()))
+                          : hudX;
+
+                  mc.fontRendererObj.drawString(m.getName(), moduleX, (float) y, moduleColor, dropShadow.isToggled());
+                  mc.fontRendererObj.drawString(m.getTag(), moduleX + mc.fontRendererObj.getStringWidth(m.getName()) + 2, (float) y, Color.lightGray.getRGB(), dropShadow.isToggled());
+                  y += mc.fontRendererObj.FONT_HEIGHT + margin;
                }
             }
          }

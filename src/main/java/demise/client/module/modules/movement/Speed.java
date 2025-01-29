@@ -22,7 +22,7 @@ public class Speed extends Module {
    private static TickSetting damageBoost, pOffGroundTicks, pSpeed;
 
    public Speed() {
-      super("Speed", ModuleCategory.movement);
+      super("Speed", ModuleCategory.movement, "");
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, NCP Tick 4, ONCPFHop, Watchdog 7 tick, Galaxy strafe"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 10, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
@@ -45,6 +45,11 @@ public class Speed extends Module {
       OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop,
       Watchdog7Tick,
       GalaxyStrafe
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
    }
 
    public void guiUpdate() {

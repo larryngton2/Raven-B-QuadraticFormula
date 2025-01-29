@@ -3,6 +3,7 @@ package demise.client.module.modules.player;
 import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.legit.LeftClicker;
+import demise.client.module.modules.movement.Fly;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.CoolDown;
@@ -31,7 +32,7 @@ public class AutoTool extends Module {
     //public static List<Block> pickaxe = Arrays.asList(ItemBlock.class, BlockIce.class);
 
     public AutoTool() {
-        super("Auto Tool", ModuleCategory.player);
+        super("Auto Tool", ModuleCategory.player, "");
 
         this.registerSetting(hotkeyBack = new TickSetting("Hotkey back", true));
         this.registerSetting(mineDelay = new DoubleSliderSetting("Max delay", 10, 50, 0, 2000, 1));
@@ -42,6 +43,8 @@ public class AutoTool extends Module {
     public void onRenderTick(TickEvent.RenderTickEvent e) {
         if (!Utils.Player.isPlayerInGame() || mc.currentScreen != null)
             return;
+
+        this.setTag(mineDelay.getInputMin() + "-" + mineDelay.getInputMax());
 
         // quit if the player is not tryna mine
         if (!Mouse.isButtonDown(0)) {

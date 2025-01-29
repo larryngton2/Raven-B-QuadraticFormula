@@ -54,11 +54,11 @@ public class LeftClicker extends Module {
     private Method playerMouseInput;
 
     public LeftClicker(){
-        super("Left Clicker", ModuleCategory.legit);
+        super("Left Clicker", ModuleCategory.legit, "");
 
         this.registerSetting(bestWithDelayRemover = new DescriptionSetting("Best with delay remover."));
-        this.registerSetting(leftCPS = new DoubleSliderSetting("Left CPS", 9, 13, 1, 60, 0.5));
-        this.registerSetting(jitterLeft = new SliderSetting("Jitter left", 0.0D, 0.0D, 3.0D, 0.1D));
+        this.registerSetting(leftCPS = new DoubleSliderSetting("CPS", 9, 13, 1, 60, 0.5));
+        this.registerSetting(jitterLeft = new SliderSetting("Jitter", 0.0D, 0.0D, 3.0D, 0.1D));
         this.registerSetting(inventoryFill = new TickSetting("Inventory fill", false));
         this.registerSetting(weaponOnly = new TickSetting("Weapon only", false));
         this.registerSetting(breakBlocks = new TickSetting("Break blocks", false));
@@ -110,21 +110,22 @@ public class LeftClicker extends Module {
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent ev) {
-        if(!Utils.Client.currentScreenMinecraft() &&
+        if (!Utils.Client.currentScreenMinecraft() &&
                 !(Minecraft.getMinecraft().currentScreen instanceof GuiInventory) // to make it work in survival inventory
                 && !(Minecraft.getMinecraft().currentScreen instanceof GuiChest) // to make it work in chests
         )
             return;
 
-        if(clickTimings.getMode() != AimAssist.RightClicker.ClickEvent.Render)
+        if (clickTimings.getMode() != AimAssist.RightClicker.ClickEvent.Render)
             return;
 
-        if(clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.Raven){
+        if (clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.Raven) {
             ravenClick();
-        }
-        else if (clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.SKid){
+        } else if (clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.SKid) {
             skidClick(ev, null);
         }
+
+        this.setTag(leftCPS.getInputMin() + "-" + leftCPS.getInputMax());
     }
 
     @SubscribeEvent

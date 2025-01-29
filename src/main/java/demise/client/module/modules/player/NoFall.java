@@ -18,13 +18,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.Range;
 
-
 public class NoFall extends Module {
    private static SliderSetting mode, fallDistance;
    private static DescriptionSetting dMode;
 
    public NoFall() {
-      super("NoFall", ModuleCategory.player);
+      super("NoFall", ModuleCategory.player, "");
 
       this.registerSetting(dMode = new DescriptionSetting("Vanilla, Hypixel, TP"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 4, 1));
@@ -43,6 +42,11 @@ public class NoFall extends Module {
 
    public void guiUpdate() {
       dMode.setDesc(Utils.md + modes.values()[(int) mode.getInput() - 1]);
+   }
+
+   @SubscribeEvent
+   public void onRenderTick(TickEvent.RenderTickEvent ev) {
+      this.setTag(String.valueOf(modes.values()[(int) mode.getInput() - 1]));
    }
 
    public void update() {

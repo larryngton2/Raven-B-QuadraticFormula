@@ -145,9 +145,8 @@ public class ModuleManager {
       if (HUD.alphabeticalSort.isToggled()) {
          modules.sort(Comparator.comparing(Module::getName));
       } else {
-         modules.sort((o1, o2) -> Utils.mc.fontRendererObj.getStringWidth(o2.getName()) - Utils.mc.fontRendererObj.getStringWidth(o1.getName()));
+         modules.sort((o1, o2) -> Utils.mc.fontRendererObj.getStringWidth(o2.getName() + o2.getTag()) - Utils.mc.fontRendererObj.getStringWidth(o1.getName() + o1.getTag()));
       }
-
    }
 
    public int numberOfModules() {
@@ -155,19 +154,24 @@ public class ModuleManager {
    }
 
    public void sortLongShort() {
-      modules.sort(Comparator.comparingInt(o2 -> Utils.mc.fontRendererObj.getStringWidth(o2.getName())));
+      modules.sort(Comparator.comparingInt(o2 ->
+              Utils.mc.fontRendererObj.getStringWidth(o2.getName() + o2.getTag())
+      ));
    }
 
    public void sortShortLong() {
-      modules.sort((o1, o2) -> Utils.mc.fontRendererObj.getStringWidth(o2.getName()) - Utils.mc.fontRendererObj.getStringWidth(o1.getName()));
+      modules.sort((o1, o2) ->
+              Utils.mc.fontRendererObj.getStringWidth(o2.getName() + o2.getTag()) -
+                      Utils.mc.fontRendererObj.getStringWidth(o1.getName() + o1.getTag())
+      );
    }
 
    public int getLongestActiveModule(FontRenderer fr) {
       int length = 0;
       for (Module mod : modules) {
          if (mod.isEnabled()) {
-            if (fr.getStringWidth(mod.getName()) > length) {
-               length = fr.getStringWidth(mod.getName());
+            if (fr.getStringWidth(mod.getName() + mod.getTag()) > length) {
+               length = fr.getStringWidth(mod.getName() + mod.getTag());
             }
          }
       }

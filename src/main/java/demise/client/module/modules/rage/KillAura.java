@@ -40,17 +40,17 @@ import static demise.client.utils.Utils.Player.*;
 import static net.minecraft.util.EnumFacing.DOWN;
 
 public class KillAura extends Module {
+    private static SliderSetting attackRange, rotationSpeed, autoBlockRange, searchRange, targetPriority, tagMode;
     public static SliderSetting autoBlock, rotationMode, pitchOffset, attackMode, pauseRange, targetSwitchDelay;
-    private static SliderSetting attackRange, rotationSpeed, autoBlockRange, searchRange, targetPriority;
     public static TickSetting noSwing, pauseRotation, rotationOffset, targetSwitch, pitSwitch;
-    public static DescriptionSetting dAutoBlock, dRotation, dAttack, dTarget;
+    public static DescriptionSetting dAutoBlock, dRotation, dAttack, dTarget, dTag;
     public static TickSetting forceSprint, onlyWeapon, botCheck;
     public static TickSetting keepSprintOnGround, keepSprintOnAir;
     private static DoubleSliderSetting attackDelay;
     public static DescriptionSetting desc;
 
     public KillAura() {
-        super("KillAura", ModuleCategory.rage);
+        super("KillAura", ModuleCategory.rage, "");
 
         this.registerSetting(desc = new DescriptionSetting("Attacks nearby players."));
 
@@ -101,6 +101,43 @@ public class KillAura extends Module {
     private int blockTicks = 0;
     private Vec3 blinkPos;
 
+    private enum rotModes {
+        Silent,
+        Normal,
+        None
+    }
+
+    private enum attackModes {
+        Packet,
+        PlayerController,
+        Click;
+    }
+
+    private enum autoBlockModes {
+        None,
+        Fake,
+        Vanilla,
+        Release,
+        AAC,
+        VanillaReblock,
+        Smart,
+        Blink,
+        PerfectBlink;
+    }
+
+    private enum targetPriorityList {
+        None,
+        Distance,
+        Health;
+    }
+
+    public void guiUpdate() {
+        dRotation.setDesc(Utils.md + rotModes.values()[(int) rotationMode.getInput() - 1]);
+        dAttack.setDesc(Utils.md + attackModes.values()[(int) attackMode.getInput() - 1]);
+        dAutoBlock.setDesc(Utils.md + autoBlockModes.values()[(int) autoBlock.getInput() - 1]);
+        dTarget.setDesc(Utils.md + targetPriorityList.values()[(int) targetPriority.getInput() - 1]);
+    }
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -114,43 +151,6 @@ public class KillAura extends Module {
         blocking(false);
         resetInterpolation();
         blink = false;
-    }
-
-    public enum rotModes {
-        Silent,
-        Normal,
-        None
-    }
-
-    public enum attackModes {
-        Packet,
-        PlayerController,
-        Click
-    }
-
-    public enum autoBlockModes {
-        None,
-        Fake,
-        Vanilla,
-        Release,
-        AAC,
-        VanillaReblock,
-        Smart,
-        Blink,
-        PerfectBlink
-    }
-
-    public enum targetPriorityList {
-        None,
-        Distance,
-        Health
-    }
-
-    public void guiUpdate() {
-        dRotation.setDesc(Utils.md + rotModes.values()[(int) rotationMode.getInput() - 1]);
-        dAttack.setDesc(Utils.md + attackModes.values()[(int) attackMode.getInput() - 1]);
-        dAutoBlock.setDesc(Utils.md + autoBlockModes.values()[(int) autoBlock.getInput() - 1]);
-        dTarget.setDesc(Utils.md + targetPriorityList.values()[(int) targetPriority.getInput() - 1]);
     }
 
     public void update() {
@@ -345,6 +345,8 @@ public class KillAura extends Module {
                 blinkAb(currentTarget);
             }
         }
+
+        this.setTag(this.isEnabled() ? currentTarget != null ? currentTarget.getName() : "null" : "");
     }
 
     @SubscribeEvent
