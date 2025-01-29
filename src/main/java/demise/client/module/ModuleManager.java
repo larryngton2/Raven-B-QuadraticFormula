@@ -72,7 +72,7 @@ public class ModuleManager {
       addModule(new NoSlow());
       addModule(new PlayerESP());
       addModule(new Reach());
-      addModule(new AimAssist.RightClicker());
+      addModule(new RightClicker());
       addModule(new SafeWalk());
       addModule(new Scaffold());
       addModule(new Speed());

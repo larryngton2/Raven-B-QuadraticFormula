@@ -63,8 +63,8 @@ public class LeftClicker extends Module {
         this.registerSetting(weaponOnly = new TickSetting("Weapon only", false));
         this.registerSetting(breakBlocks = new TickSetting("Break blocks", false));
 
-        this.registerSetting(clickTimings = new ComboSetting("Click event", AimAssist.RightClicker.ClickEvent.Render));
-        this.registerSetting(clickStyle = new ComboSetting("Click Style", AimAssist.RightClicker.ClickStyle.Raven));
+        this.registerSetting(clickTimings = new ComboSetting("Click event", RightClicker.ClickEvent.Render));
+        this.registerSetting(clickStyle = new ComboSetting("Click Style", RightClicker.ClickStyle.Raven));
 
         try {
             this.playerMouseInput = ReflectionHelper.findMethod(
@@ -116,12 +116,12 @@ public class LeftClicker extends Module {
         )
             return;
 
-        if (clickTimings.getMode() != AimAssist.RightClicker.ClickEvent.Render)
+        if (clickTimings.getMode() != RightClicker.ClickEvent.Render)
             return;
 
-        if (clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.Raven) {
+        if (clickStyle.getMode() == RightClicker.ClickStyle.Raven) {
             ravenClick();
-        } else if (clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.SKid) {
+        } else if (clickStyle.getMode() == RightClicker.ClickStyle.SKid) {
             skidClick(ev, null);
         }
 
@@ -135,13 +135,13 @@ public class LeftClicker extends Module {
         )
             return;
 
-        if(clickTimings.getMode() != AimAssist.RightClicker.ClickEvent.Tick)
+        if(clickTimings.getMode() != RightClicker.ClickEvent.Tick)
             return;
 
-        if(clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.Raven){
+        if(clickStyle.getMode() == RightClicker.ClickStyle.Raven){
             ravenClick();
         }
-        else if (clickStyle.getMode() == AimAssist.RightClicker.ClickStyle.SKid){
+        else if (clickStyle.getMode() == RightClicker.ClickStyle.SKid){
             skidClick(null, ev);
         }
     }
