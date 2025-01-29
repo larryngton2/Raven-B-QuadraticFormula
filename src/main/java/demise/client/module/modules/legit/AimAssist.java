@@ -9,6 +9,7 @@ import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.module.modules.world.AntiBot;
 import demise.client.utils.MathUtils;
+import demise.client.utils.RotationUtils;
 import demise.client.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -55,9 +56,9 @@ public class AimAssist extends Module {
 
          if (findTarget() != null) {
             if (pitch.isToggled()) {
-               Utils.Player.aim(target, 0f, MathUtils.randomFloat(speed1.getInput(), speed2.getInput()), offset.isToggled());
+               RotationUtils.aim(target, 0f, MathUtils.randomFloat(speed1.getInput(), speed2.getInput()), offset.isToggled());
             } else {
-               Utils.Player.aimYaw(target, MathUtils.randomFloat(speed1.getInput(), speed2.getInput()), offset.isToggled());
+               RotationUtils.aimYaw(target, MathUtils.randomFloat(speed1.getInput(), speed2.getInput()), offset.isToggled());
             }
          }
       }

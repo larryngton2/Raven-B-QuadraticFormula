@@ -31,9 +31,8 @@ public class SafeWalk extends Module {
    public static DescriptionSetting blockShowModeDesc;
    public static DoubleSliderSetting shiftTime;
 
-   private static boolean shouldBridge = false;
+   public static boolean shouldBridge = false;
    private static boolean isShifting = false;
-   private boolean allowedShift;
    private final CoolDown shiftTimer = new CoolDown(0);
 
    public SafeWalk() {
@@ -84,6 +83,7 @@ public class SafeWalk extends Module {
                return;
             }
          }
+
          if (onHold.isToggled()) {
             if (!Keyboard.isKeyDown(mc.gameSettings.keyBindSneak.getKeyCode())) {
                shouldBridge = false;

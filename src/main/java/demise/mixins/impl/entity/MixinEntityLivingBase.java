@@ -5,6 +5,7 @@ import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.movement.Sprint;
 import demise.client.utils.MoveUtil;
+import demise.client.utils.RotationUtils;
 import demise.client.utils.Utils;
 import demise.client.utils.event.JumpEvent;
 import demise.client.utils.event.MoveEvent;
@@ -59,10 +60,10 @@ public abstract class MixinEntityLivingBase extends Entity {
     protected void func_110146_f(float p_110146_1_, float p_110146_2_, CallbackInfoReturnable<Float> cir) {
         if ((EntityLivingBase) (Object) this instanceof EntityPlayerSP) {
             if (this.field_70733_aJ > 0F) {
-                p_110146_1_ = Utils.renderYaw;
+                p_110146_1_ = RotationUtils.renderYaw;
             }
 
-            this.field_70759_as = Utils.Client.interpolateValue(Utils.Client.getTimer().renderPartialTicks, Utils.prevRenderYaw, Utils.renderYaw);
+            this.field_70759_as = Utils.Client.interpolateValue(Utils.Client.getTimer().renderPartialTicks, RotationUtils.prevRenderYaw, RotationUtils.renderYaw);
         }
 
         float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.field_70761_aq);

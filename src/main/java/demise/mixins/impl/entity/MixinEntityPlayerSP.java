@@ -7,6 +7,7 @@ import demise.client.module.modules.movement.NoSlow;
 import demise.client.module.modules.movement.Sprint;
 import demise.client.module.modules.world.Scaffold;
 import demise.client.utils.MoveUtil;
+import demise.client.utils.RotationUtils;
 import demise.client.utils.Utils;
 import demise.client.utils.event.motion.PostMotionEvent;
 import demise.client.utils.event.motion.PreMotionEvent;
@@ -110,8 +111,8 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     @Overwrite
     public void func_70071_h_() {
         if (this.worldObj.isBlockLoaded(new BlockPos(this.posX, 0.0, this.posZ))) {
-            Utils.prevRenderPitch = Utils.renderPitch;
-            Utils.prevRenderYaw = Utils.renderYaw;
+            RotationUtils.prevRenderPitch = RotationUtils.renderPitch;
+            RotationUtils.prevRenderYaw = RotationUtils.renderYaw;
 
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new PreUpdateEvent());
 
@@ -147,7 +148,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
 
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(preMotionEvent);
 
-        Utils.serverRotations = new float[]{
+        RotationUtils.serverRotations = new float[]{
                 preMotionEvent.getYaw(), preMotionEvent.getPitch()
         };
 
@@ -174,8 +175,8 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         }
 
         if (this.func_175160_A()) {
-            Utils.renderPitch = preMotionEvent.getPitch();
-            Utils.renderYaw = preMotionEvent.getYaw();
+            RotationUtils.renderPitch = preMotionEvent.getPitch();
+            RotationUtils.renderYaw = preMotionEvent.getYaw();
 
             double d0 = preMotionEvent.getPosX() - this.field_175172_bI;
             double d1 = preMotionEvent.getPosY() - this.field_175166_bJ;

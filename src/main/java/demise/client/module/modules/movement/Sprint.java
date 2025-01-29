@@ -2,6 +2,7 @@ package demise.client.module.modules.movement;
 
 import demise.client.module.Module;
 import demise.client.module.setting.impl.TickSetting;
+import demise.client.utils.MoveUtil;
 import demise.client.utils.Utils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
@@ -21,7 +22,7 @@ public class Sprint extends Module {
    public void p(PlayerTickEvent e) {
       if (Utils.Player.isPlayerInGame() && mc.inGameHasFocus) {
          if (omni.isToggled()) {
-            if (Utils.Player.isMoving() && mc.thePlayer.getFoodStats().getFoodLevel() > 6) {
+            if (MoveUtil.isMoving() && mc.thePlayer.getFoodStats().getFoodLevel() > 6) {
                mc.thePlayer.setSprinting(true);
             }
          } else {

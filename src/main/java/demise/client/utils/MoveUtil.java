@@ -9,6 +9,8 @@ import static java.lang.Math.toRadians;
 import static demise.client.utils.Utils.mc;
 
 public class MoveUtil {
+
+
     public static void strafe2(double MinSpeed, double MaxSpeed) {
         MovementInput input = mc.thePlayer.movementInput;
 
@@ -47,8 +49,46 @@ public class MoveUtil {
         }
     }
 
+    public static void bop(double s) {
+        double forward = mc.thePlayer.movementInput.moveForward;
+        double strafe = mc.thePlayer.movementInput.moveStrafe;
+        float yaw = mc.thePlayer.rotationYaw;
+        if (forward == 0.0D && strafe == 0.0D) {
+            mc.thePlayer.motionX = 0.0D;
+            mc.thePlayer.motionZ = 0.0D;
+        } else {
+            if (forward != 0.0D) {
+                if (strafe > 0.0D) {
+                    yaw += (float) (forward > 0.0D ? -45 : 45);
+                } else if (strafe < 0.0D) {
+                    yaw += (float) (forward > 0.0D ? 45 : -45);
+                }
+
+                strafe = 0.0D;
+                if (forward > 0.0D) {
+                    forward = 1.0D;
+                } else if (forward < 0.0D) {
+                    forward = -1.0D;
+                }
+            }
+
+            double rad = Math.toRadians(yaw + 90.0F);
+            double sin = Math.sin(rad);
+            double cos = Math.cos(rad);
+            mc.thePlayer.motionX = forward * s * cos + strafe * s * sin;
+            mc.thePlayer.motionZ = forward * s * sin - strafe * s * cos;
+        }
+    }
+
     public static boolean isMoving() {
         return isMoving(mc.thePlayer);
+    }
+
+    public static double getPlayerBPS(Entity en, int d) {
+        double x = en.posX - en.prevPosX;
+        double z = en.posZ - en.prevPosZ;
+        double sp = Math.sqrt(x * x + z * z) * 20.0D;
+        return Utils.Java.round(sp, d);
     }
 
     public static boolean isMoving(EntityLivingBase player) {

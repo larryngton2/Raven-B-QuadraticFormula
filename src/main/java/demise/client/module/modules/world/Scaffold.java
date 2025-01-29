@@ -166,7 +166,7 @@ public class Scaffold extends Module {
         if (!Utils.Player.nullCheck()) {
             return;
         }
-        double roundedSpeed = Utils.Player.rnd(MoveUtil.speed(), 2);
+        double roundedSpeed = MathUtils.round(MoveUtil.speed(), 2);
         if (accelerationCoolDown.isToggled() && roundedSpeed > 0.26) {
             slow = true;
             slowTicks = 0;

@@ -1,5 +1,6 @@
 package demise.mixins.impl.render;
 
+import demise.client.utils.RotationUtils;
 import demise.client.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
@@ -29,7 +30,7 @@ public class MixinModelBiped {
         if (field_78120_m == 3) field_178723_h.rotateAngleY = 0F;
 
         if (p_setRotationAngles_7_ instanceof EntityPlayer && p_setRotationAngles_7_.equals(Minecraft.getMinecraft().thePlayer)) {
-            field_78116_c.rotateAngleX = (float) Math.toRadians(Utils.Client.interpolateValue(Utils.Client.getTimer().renderPartialTicks, Utils.prevRenderPitch, Utils.renderPitch));
+            field_78116_c.rotateAngleX = (float) Math.toRadians(Utils.Client.interpolateValue(Utils.Client.getTimer().renderPartialTicks, RotationUtils.prevRenderPitch, RotationUtils.renderPitch));
         }
 
         Utils.Player.sendMessageToSelf(String.valueOf(p_setRotationAngles_7_ instanceof EntityPlayer && p_setRotationAngles_7_.equals(Minecraft.getMinecraft().thePlayer)));

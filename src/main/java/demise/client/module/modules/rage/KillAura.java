@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static demise.client.utils.RenderUtils.drawBox;
+import static demise.client.utils.RotationUtils.resetInterpolation;
 import static demise.client.utils.Utils.Player.*;
 import static net.minecraft.util.EnumFacing.DOWN;
 
@@ -72,7 +73,7 @@ public class KillAura extends Module {
         //rotation
         this.registerSetting(rotationSpeed = new SliderSetting("Rotation Speed", 1.0, 0.01, 1, 0.01));
         this.registerSetting(dRotation = new DescriptionSetting("Silent, Normal, None"));
-        this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 3, 1));
+        this.registerSetting(rotationMode = new SliderSetting("Rotation Mode", 1, 1, 4, 1));
         this.registerSetting(targetSwitch = new TickSetting("Target Switch", false));
         this.registerSetting(pitSwitch = new TickSetting("Pit Switch", false)); // helps with vampire thing on the pit
         this.registerSetting(dTarget = new DescriptionSetting("None, Distance, Health"));
@@ -104,7 +105,8 @@ public class KillAura extends Module {
     private enum rotModes {
         Silent,
         Normal,
-        None
+        None,
+        test
     }
 
     private enum attackModes {
@@ -193,7 +195,9 @@ public class KillAura extends Module {
                 return;
             }
 
-            handleRotation(currentTarget);
+            if (rotationMode.getInput() == 2) {
+                RotationUtils.aim(currentTarget, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
+            }
         } else if (isBlocking) {
             blocking(false);
         }
@@ -296,16 +300,6 @@ public class KillAura extends Module {
         return target;
     }
 
-    private void handleRotation(Entity entity) {
-        if (currentTarget == null) {
-            return;
-        }
-
-        if (rotationMode.getInput() == 2) {
-            aim(entity, (float) pitchOffset.getInput(), (float) rotationSpeed.getInput(), rotationOffset.isToggled());
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPreMotion(PreMotionEvent e) {
         if (currentTarget != null) {
@@ -313,11 +307,16 @@ public class KillAura extends Module {
                 return;
             }
 
-            if (rotationMode.getInput() == 1) {
-                aimSilent(e, currentTarget, (float) rotationSpeed.getInput(), rotationOffset.isToggled(), (float) pitchOffset.getInput());
+            switch ((int) rotationMode.getInput()) {
+                case 1:
+                    RotationUtils.aimSilent(e, currentTarget, (float) rotationSpeed.getInput(), rotationOffset.isToggled(), (float) pitchOffset.getInput());
+                    break;
+                case 4:
+                    //aimSilentTest(e, currentTarget, (float) rotationSpeed.getInput(), rotationOffset.isToggled(), (float) pitchOffset.getInput());
+                    break;
             }
         } else {
-            resetInterpolation();
+            RotationUtils.resetInterpolation();
         }
     }
 
@@ -516,7 +515,7 @@ public class KillAura extends Module {
                     return;
                 }
             } else if (rotationMode.getInput() == 1) {
-                if (!RotationUtils.isPossibleToHit(e, attackRange.getInput() + 0.337, Utils.serverRotations)) {
+                if (!RotationUtils.isPossibleToHit(e, attackRange.getInput() + 0.337, RotationUtils.serverRotations)) {
                     if (!noSwing.isToggled()) {
                         mc.thePlayer.swingItem();
                     }

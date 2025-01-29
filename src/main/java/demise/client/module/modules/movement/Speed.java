@@ -127,14 +127,14 @@ public class Speed extends Module {
 
          case 3: {
             Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
-            if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
+            if (fly != null && !fly.isEnabled() && MoveUtil.isMoving() && !mc.thePlayer.isInWater()) {
                KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
                mc.thePlayer.noClip = true;
 
                mc.thePlayer.setSprinting(true);
                double spd = 0.0025D * MathUtils.randomFloat(speed.getInputMin(), speed.getInputMax());
                double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
-               Utils.Player.bop(m);
+               MoveUtil.bop(m);
             }
          }
          break;
@@ -248,13 +248,13 @@ public class Speed extends Module {
 
          case 8:
             Module fly = demise.moduleManager.getModuleByClazz(Fly.class);
-            if (fly != null && !fly.isEnabled() && Utils.Player.isMoving() && !mc.thePlayer.isInWater()) {
+            if (fly != null && !fly.isEnabled() && MoveUtil.isMoving() && !mc.thePlayer.isInWater()) {
                mc.thePlayer.noClip = true;
 
                mc.thePlayer.setSprinting(true);
                double spd = 0.0025 * 0.4;
                double m = (float) (Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ) + spd);
-               Utils.Player.bop(m);
+               MoveUtil.bop(m);
             }
 
             if (offGroundTicks == 4) {

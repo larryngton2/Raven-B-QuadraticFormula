@@ -4,6 +4,7 @@ import demise.client.module.Module;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.utils.MoveUtil;
+import demise.client.utils.RotationUtils;
 import demise.client.utils.Utils;
 import demise.client.utils.event.JumpEvent;
 import demise.client.utils.event.input.PrePlayerInputEvent;
@@ -73,7 +74,7 @@ public class MovementFix extends Module {
     }
 
     public void update() {
-        if (Math.abs(Utils.serverRotations[0] % 360 - Math.toDegrees(MoveUtil.getDirection()) % 360) > 45 && fixMovement()) {
+        if (Math.abs(RotationUtils.serverRotations[0] % 360 - Math.toDegrees(MoveUtil.getDirection()) % 360) > 45 && fixMovement()) {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);
             mc.thePlayer.setSprinting(false);
         }
@@ -82,7 +83,7 @@ public class MovementFix extends Module {
     @SubscribeEvent
     public void onJump(JumpEvent e) {
         if (fixMovement()) {
-            e.setYaw(Utils.serverRotations[0]);
+            e.setYaw(RotationUtils.serverRotations[0]);
         }
     }
 
@@ -91,7 +92,7 @@ public class MovementFix extends Module {
         if (fixMovement()) {
             switch ((int) mode.getInput()) {
                 case 1:
-                    e.setYaw(Utils.serverRotations[0]);
+                    e.setYaw(RotationUtils.serverRotations[0]);
                     break;
                 case 2:
 //                    double diff = Math.toRadians(mc.thePlayer.rotationYaw - mc.thePlayer.rotationYawHead);
