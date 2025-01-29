@@ -1,4 +1,5 @@
 name: Java CI with Gradle
+permissions: write-all
 
 on:
   push:
