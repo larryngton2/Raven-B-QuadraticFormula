@@ -1,4 +1,4 @@
-package demise.client.module.modules.rage;
+package demise.client.module.modules.combat;
 
 import demise.client.module.Module;
 import demise.client.module.setting.impl.DescriptionSetting;
@@ -20,7 +20,7 @@ public class Velocity extends Module {
    public static TickSetting onlyWhileTargetting, disableOnS;
 
    public Velocity() {
-      super("Velocity", ModuleCategory.rage, "");
+      super("Velocity", ModuleCategory.combat, "");
 
       this.registerSetting(dMode = new DescriptionSetting("Normal, Cancel, IntaveReduce, JumpReset, BMC 1.9"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 5, 1));

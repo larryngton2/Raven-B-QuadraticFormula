@@ -57,7 +57,7 @@ public class LeftClicker extends Module {
         super("Left Clicker", ModuleCategory.legit, "");
 
         this.registerSetting(bestWithDelayRemover = new DescriptionSetting("Best with delay remover."));
-        this.registerSetting(leftCPS = new DoubleSliderSetting("CPS", 9, 13, 1, 60, 0.5));
+        this.registerSetting(leftCPS = new DoubleSliderSetting("CPS", 9, 13, 1, 60, 1));
         this.registerSetting(jitterLeft = new SliderSetting("Jitter", 0.0D, 0.0D, 3.0D, 0.1D));
         this.registerSetting(inventoryFill = new TickSetting("Inventory fill", false));
         this.registerSetting(weaponOnly = new TickSetting("Weapon only", false));
@@ -125,7 +125,7 @@ public class LeftClicker extends Module {
             skidClick(ev, null);
         }
 
-        this.setTag(leftCPS.getInputMin() + "-" + leftCPS.getInputMax());
+        this.setTag(leftCPS.getInputMin() == leftCPS.getInputMax() ? String.valueOf(leftCPS.getInputMax()) : leftCPS.getInputMin() + "-" + leftCPS.getInputMax());
     }
 
     @SubscribeEvent

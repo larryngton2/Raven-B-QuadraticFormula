@@ -88,7 +88,6 @@ public class WTap extends Module {
                         return;
                     }
 
-
                     if (hitCoolDown && !alreadyHit) {
                         hitsWaited++;
                         if (hitsWaited >= hitTimeout) {

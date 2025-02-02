@@ -1,7 +1,8 @@
-package demise.client.module.modules.legit;
+package demise.client.module.modules.combat;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
+import demise.client.module.modules.legit.LeftClicker;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.Utils;
@@ -28,7 +29,7 @@ public class Reach extends Module {
    public static TickSetting hit_through_blocks;
 
    public Reach() {
-      super("Reach", ModuleCategory.legit, "");
+      super("Reach", ModuleCategory.combat, "");
       this.registerSetting(reach = new DoubleSliderSetting("Reach (Blocks)", 3.1, 3.3, 3, 6, 0.05));
       this.registerSetting(weapon_only = new TickSetting("Weapon only", false));
       this.registerSetting(moving_only = new TickSetting("Moving only", false));
@@ -58,7 +59,7 @@ public class Reach extends Module {
          call();
       }
 
-      this.setTag(reach.getInputMin() + "-" + reach.getInputMax());
+      this.setTag(reach.getInputMin() == reach.getInputMax() ? String.valueOf(reach.getInputMin()) : reach.getInputMin() + "-" + reach.getInputMax());
    }
 
    public static boolean call() {

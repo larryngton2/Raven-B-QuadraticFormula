@@ -1,20 +1,17 @@
 package demise.client.module;
 
+import demise.client.module.modules.combat.*;
 import demise.client.module.modules.exploit.SlipHack;
 import demise.client.module.modules.fun.AutoGroomer;
 import demise.client.module.modules.fun.AutoMeow;
 import demise.client.module.modules.fun.Twerk;
 import demise.client.module.modules.hud.HUD;
 import demise.client.module.modules.exploit.Disabler;
-import demise.client.module.modules.rage.Criticals;
-import demise.client.module.modules.rage.FakeLag;
-import demise.client.module.modules.rage.KillAura;
 import demise.client.module.modules.client.*;
 import demise.client.module.modules.legit.*;
 import demise.client.module.modules.movement.*;
 import demise.client.module.modules.other.*;
 import demise.client.module.modules.player.*;
-import demise.client.module.modules.rage.Velocity;
 import demise.client.module.modules.render.*;
 import demise.client.module.modules.world.*;
 import demise.client.utils.Utils;
@@ -77,7 +74,7 @@ public class ModuleManager {
       addModule(new Scaffold());
       addModule(new Speed());
       addModule(new Sprint());
-      addModule(new StopMotion());
+      addModule(new Freeze());
       addModule(new Strafe());
       addModule(new Terminal());
       addModule(new Timer());
@@ -95,6 +92,7 @@ public class ModuleManager {
       addModule(new LongJump());
       addModule(new SlipHack());
       //addModule(new MovementFix());
+      addModule(new MoreKB());
 
       // why ?
       // idk dude. you tell me why. I am pretty sure this was blowsy's work.
@@ -145,7 +143,7 @@ public class ModuleManager {
       if (HUD.alphabeticalSort.isToggled()) {
          modules.sort(Comparator.comparing(Module::getName));
       } else {
-         modules.sort((o1, o2) -> Utils.mc.fontRendererObj.getStringWidth(o2.getName() + 2 + o2.getTag()) - Utils.mc.fontRendererObj.getStringWidth(o1.getName() + o1.getTag()));
+         modules.sort((o1, o2) -> Utils.mc.fontRendererObj.getStringWidth(o2.getName() + " " + o2.getTag()) - Utils.mc.fontRendererObj.getStringWidth(o1.getName() + " " + o1.getTag()));
       }
    }
 
@@ -155,14 +153,14 @@ public class ModuleManager {
 
    public void sortLongShort() {
       modules.sort(Comparator.comparingInt(o2 ->
-              Utils.mc.fontRendererObj.getStringWidth(o2.getName() + 2 + o2.getTag())
+              Utils.mc.fontRendererObj.getStringWidth(o2.getName() + " " + o2.getTag())
       ));
    }
 
    public void sortShortLong() {
       modules.sort((o1, o2) ->
-              Utils.mc.fontRendererObj.getStringWidth(o2.getName() + 2 + o2.getTag()) -
-                      Utils.mc.fontRendererObj.getStringWidth(o1.getName() + 2 + o1.getTag())
+              Utils.mc.fontRendererObj.getStringWidth(o2.getName() + " " + o2.getTag()) -
+                      Utils.mc.fontRendererObj.getStringWidth(o1.getName() + " " + o1.getTag())
       );
    }
 
@@ -170,8 +168,8 @@ public class ModuleManager {
       int length = 0;
       for (Module mod : modules) {
          if (mod.isEnabled()) {
-            if (fr.getStringWidth(mod.getName() + 2 + mod.getTag()) > length) {
-               length = fr.getStringWidth(mod.getName() + 2 + mod.getTag());
+            if (fr.getStringWidth(mod.getName() + " " + mod.getTag()) > length) {
+               length = fr.getStringWidth(mod.getName() + " " + mod.getTag());
             }
          }
       }

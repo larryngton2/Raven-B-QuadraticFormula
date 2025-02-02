@@ -3,7 +3,7 @@ package demise.mixins.impl.entity;
 import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.movement.KeepSprint;
-import demise.client.module.modules.rage.KillAura;
+import demise.client.module.modules.combat.KillAura;
 import demise.client.utils.EyeHeightEvent;
 import lombok.NonNull;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static demise.client.utils.Utils.mc;
 
-@Mixin(EntityPlayer.class)
+@Mixin(value = EntityPlayer.class, priority = 999)
 public abstract class MixinEntityPlayer extends EntityLivingBase {
     public MixinEntityPlayer(World p_i1594_1_) {
         super(p_i1594_1_);

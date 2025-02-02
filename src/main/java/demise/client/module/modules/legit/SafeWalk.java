@@ -192,7 +192,7 @@ public class SafeWalk extends Module {
          }
       }
 
-      this.setTag(shiftTime.getInputMin() + "-" + shiftTime.getInputMax() + "ms");
+      this.setTag(doShift.isToggled() ? shiftTime.getInputMin() == shiftTime.getInputMax() ? String.valueOf(shiftTime.getInputMin()) : shiftTime.getInputMin() + "-" + shiftTime.getInputMax() + "ms" : "");
    }
 
    private void setShift(boolean sh) {

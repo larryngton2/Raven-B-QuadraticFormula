@@ -1,4 +1,4 @@
-package demise.client.module.modules.rage;
+package demise.client.module.modules.combat;
 
 import demise.client.module.Module;
 import demise.client.module.modules.world.AntiBot;
@@ -37,14 +37,14 @@ public class FakeLag extends Module {
     private boolean lagging;
 
     public FakeLag() {
-        super("FakeLag", ModuleCategory.rage, "");
+        super("FakeLag", ModuleCategory.combat, "");
         this.registerSetting(range = new DoubleSliderSetting("Range", 3.0, 6.0, 0.5, 8.0, 0.1));
         this.registerSetting(pulseDelay = new DoubleSliderSetting("Pulse delay", 100, 200, 25, 1000, 25));
     }
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent ev) {
-        this.setTag(pulseDelay.getInputMin() + "-" + pulseDelay.getInputMax());
+        this.setTag(pulseDelay.getInputMin() == pulseDelay.getInputMax() ? lagging ? String.valueOf(System.currentTimeMillis() - startTime) : String.valueOf(pulseDelay.getInputMin()) : lagging ? String.valueOf(System.currentTimeMillis() - startTime) : pulseDelay.getInputMin() + "-" + pulseDelay.getInputMax());
     }
 
     public static EntityLivingBase findTarget() {
@@ -77,6 +77,10 @@ public class FakeLag extends Module {
     }
 
     public void update() {
+        if (mc.theWorld == null) {
+            return;
+        }
+
         EntityLivingBase target = findTarget();
 
         if (target == null) {
@@ -120,20 +124,18 @@ public class FakeLag extends Module {
 
     @SubscribeEvent
     public void onSendPacket(SendPacketEvent e) {
-        MinecraftForge.EVENT_BUS.register(this);
+        if (!Utils.Player.nullCheck() || mc.thePlayer.isDead) {
+            if (lagging) {
+                reset();
+            }
+            return;
+        }
 
         if (!lagging) {
             return;
         }
 
         if (findTarget() != null && mc.thePlayer.getDistanceToEntity(findTarget()) >= range.getInputMax() + 0.337) {
-            return;
-        }
-
-        if (!Utils.Player.isPlayerInGame() || mc.thePlayer.isDead) {
-            if (lagging) {
-                reset();
-            }
             return;
         }
 

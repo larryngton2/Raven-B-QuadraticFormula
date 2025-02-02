@@ -2,12 +2,13 @@ package demise.client.module.modules.hud;
 
 import demise.client.main.demise;
 import demise.client.module.*;
-import demise.client.module.modules.rage.KillAura;
+import demise.client.module.modules.combat.KillAura;
 import demise.client.module.setting.Setting;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.*;
+import demise.client.utils.Timer;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -24,12 +25,11 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 public class HUD extends Module {
-   public static TickSetting editPosition, dropShadow, alphabeticalSort, watermark, tHudStatus, targetHUD, arrayList;
+   public static TickSetting editPosition, dropShadow, alphabeticalSort, watermark, tHudStatus, targetHUD, arrayList, lowercaseArraylistTags;
    public static SliderSetting colourMode, tHudMode;
    public static DescriptionSetting colourModeDesc, tHudDesc;
 
@@ -39,6 +39,7 @@ public class HUD extends Module {
       this.registerSetting(dropShadow = new TickSetting("Drop shadow", true));
       this.registerSetting(watermark = new TickSetting("Watermark", true));
       this.registerSetting(arrayList = new TickSetting("ArrayList", true));
+      this.registerSetting(lowercaseArraylistTags = new TickSetting("Lowercase arraylist tags", true));
       this.registerSetting(alphabeticalSort = new TickSetting("Alphabetical sort", false));
       this.registerSetting(colourMode = new SliderSetting("Value: ", 1, 1, 7, 1));
       this.registerSetting(colourModeDesc = new DescriptionSetting("Mode: RAVEN"));
@@ -110,16 +111,34 @@ public class HUD extends Module {
 
          demise.moduleManager.sort();
 
-         int ded = 0;
-
          if (watermark.isToggled()) {
-            ded -= 120;
+            int ded = 0;
+            int moduleColor = Color.WHITE.getRGB();
+            if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
+               moduleColor = Utils.Client.rainbowDraw(2L, ded);
+               ded -= 120;
+            } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN2) {
+               moduleColor = Utils.Client.rainbowDraw(2L, ded);
+               ded -= 10;
+            } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO) {
+               moduleColor = Utils.Client.astolfoColorsDraw(10, 14);
+               ded -= 120;
+            } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO2) {
+               moduleColor = Utils.Client.astolfoColorsDraw(10, ded);
+               ded -= 120;
+            } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO3) {
+               moduleColor = Utils.Client.astolfoColorsDraw(10, ded);
+               ded -= 10;
+            } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.DEMISE) {
+               moduleColor = Utils.Client.grayscaleDraw(10, ded);
+               ded -= 120;
+            }
 
             mc.fontRendererObj.drawString(
                     "d",
                     (float) watermarkX,
                     (float) watermarkY,
-                    Utils.Client.grayscaleDraw(2L, ded),
+                    moduleColor,
                     dropShadow.isToggled()
             );
 
@@ -172,7 +191,7 @@ public class HUD extends Module {
 
          if (arrayList.isToggled()) {
             for (Module m : en) {
-               if (m.isEnabled() && m.moduleCategory() != ModuleCategory.render) {
+               if (m.isEnabled() && m.moduleCategory() != ModuleCategory.render && !Objects.equals(m.getName(), "Terminal")) {
                   int moduleColor = Color.WHITE.getRGB();
                   if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
                      moduleColor = Utils.Client.rainbowDraw(2L, del);
@@ -199,7 +218,7 @@ public class HUD extends Module {
                           : hudX;
 
                   mc.fontRendererObj.drawString(m.getName(), moduleX, (float) y, moduleColor, dropShadow.isToggled());
-                  mc.fontRendererObj.drawString(m.getTag(), moduleX + mc.fontRendererObj.getStringWidth(m.getName()) + 2, (float) y, Color.lightGray.getRGB(), dropShadow.isToggled());
+                  mc.fontRendererObj.drawString(lowercaseArraylistTags.isToggled() ? m.getTag().toLowerCase() : m.getTag(), moduleX + mc.fontRendererObj.getStringWidth(m.getName() + " "), (float) y, Color.lightGray.getRGB(), dropShadow.isToggled());
                   y += mc.fontRendererObj.FONT_HEIGHT + margin;
                }
             }

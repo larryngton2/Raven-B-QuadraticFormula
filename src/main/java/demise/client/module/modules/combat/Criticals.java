@@ -1,8 +1,7 @@
-package demise.client.module.modules.rage;
+package demise.client.module.modules.combat;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.legit.AimAssist;
 import demise.client.module.modules.movement.Speed;
 import demise.client.module.modules.world.AntiBot;
 import demise.client.module.setting.impl.DescriptionSetting;
@@ -25,7 +24,7 @@ public class Criticals extends Module {
     public static TickSetting botCheck;
 
     public Criticals() {
-        super("Criticals", ModuleCategory.rage, "");
+        super("Criticals", ModuleCategory.combat, "");
 
         this.registerSetting(dMode = new DescriptionSetting("Jump, NoGround, Visual"));
         this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 6, 1));

@@ -3,7 +3,7 @@ package demise.client.tweaker;
 import demise.client.main.demise;
 import demise.client.module.Module;
 import demise.client.module.modules.legit.LeftClicker;
-import demise.client.module.modules.legit.Reach;
+import demise.client.module.modules.combat.Reach;
 import demise.client.module.modules.other.NameHider;
 import demise.client.module.modules.legit.SafeWalk;
 import demise.client.module.modules.world.Scaffold;

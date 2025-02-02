@@ -6,7 +6,6 @@ import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
-import demise.client.utils.BlockUtils;
 import demise.client.utils.MathUtils;
 import demise.client.utils.MoveUtil;
 import demise.client.utils.Utils;
@@ -16,16 +15,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class Speed extends Module {
-   private static DescriptionSetting dc;
-   private static SliderSetting mode;
-   private static DoubleSliderSetting speed;
    private static TickSetting damageBoost, pOffGroundTicks, pSpeed;
+   private static SliderSetting mode, minSpeed;
+   private static DoubleSliderSetting speed;
+   private static DescriptionSetting dc;
 
    public Speed() {
       super("Speed", ModuleCategory.movement, "");
       this.registerSetting(dc = new DescriptionSetting("Strafe, GroundStrafe, BHop, NCP, Miniblox, Vulcan, NCP Tick 4, ONCPFHop, Watchdog 7 tick, Galaxy strafe"));
       this.registerSetting(mode = new SliderSetting("Mode", 1, 1, 10, 1));
       this.registerSetting(speed = new DoubleSliderSetting("Speed", 0.25, 0.5, 0, 5, 0.05));
+      this.registerSetting(minSpeed = new SliderSetting("Min speed", 0.25, 0, 1, 0.01));
       this.registerSetting(damageBoost = new TickSetting("Damage Boost", false));
       this.registerSetting(pOffGroundTicks = new TickSetting("Print Air Ticks", false));
       this.registerSetting(pSpeed = new TickSetting("Print Speed", false));
@@ -35,16 +35,16 @@ public class Speed extends Module {
    private int movingTicks, stoppedTicks;
 
    public enum modes {
-      Strafe,
-      GroundStrafe,
-      BHop,
-      NCP_Tick5,
-      Miniblox,
-      Vulcan_Deprecated,
-      NCP_Tick4,
-      OldNoCheatPlusStrictStrafeFastPullDownOnTick4BunnyHop,
-      Watchdog7Tick,
-      GalaxyStrafe
+      Strafe, // 1
+      GroundStrafe, // 2
+      BHop, // 3
+      NCP_Tick5, // 4
+      Miniblox, // 5
+      Vulcan, // 6
+      NCP_Tick4, // 7
+      ONCPBHop, // 8
+      Watchdog7Tick, // 9
+      GalaxyStrafe // 10
    }
 
    @SubscribeEvent
@@ -103,6 +103,14 @@ public class Speed extends Module {
 
       if (mc.thePlayer.onGround && MoveUtil.isMoving() && mode.getInput() != 7) {
          mc.thePlayer.jump();
+      }
+
+      if (MoveUtil.speed() < minSpeed.getInput() && MoveUtil.isMoving() && movingTicks > 15) {
+         MoveUtil.strafe(minSpeed.getInput());
+      }
+
+      if (mode.getInput() != 8) {
+         Utils.Client.getTimer().timerSpeed = 1.0f;
       }
 
       switch ((int) mode.getInput()) {
@@ -200,10 +208,6 @@ public class Speed extends Module {
                   }
                }
                break;
-
-               case 4:
-                  mc.thePlayer.motionY -= 0.376f;
-                  break;
 
                case 6:
                   if (MoveUtil.speed() > 0.298) {
@@ -307,6 +311,7 @@ public class Speed extends Module {
                      case 8:
                         mc.thePlayer.motionX *= 1.2;
                         mc.thePlayer.motionZ *= 1.2;
+                        break;
                   }
                }
             }

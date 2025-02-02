@@ -50,11 +50,10 @@ public class RightClicker extends Module {
     private boolean allowedClick;
     private boolean rightDown;
 
-
     public RightClicker() {
-        super("Right Clicker", ModuleCategory.legit);
+        super("Right Clicker", ModuleCategory.legit, "");
 
-        this.registerSetting(rightCPS = new DoubleSliderSetting("RightCPS", 12, 16, 1, 60, 0.5));
+        this.registerSetting(rightCPS = new DoubleSliderSetting("CPS", 12, 16, 1, 60, 1));
         this.registerSetting(jitterRight = new SliderSetting("Jitter right", 0.0D, 0.0D, 3.0D, 0.1D));
         this.registerSetting(rightClickDelay = new SliderSetting("Rightclick delay (ms)", 85D, 0D, 500D, 1.0D));
         this.registerSetting(noBlockSword = new TickSetting("Don't rightclick sword", true));
@@ -120,6 +119,8 @@ public class RightClicker extends Module {
         } else if (clickStyle.getMode() == ClickStyle.SKid) {
             skidClick(ev, null);
         }
+
+        this.setTag(rightCPS.getInputMin() == rightCPS.getInputMax() ? String.valueOf(rightCPS.getInputMax()) : rightCPS.getInputMin() + "-" + rightCPS.getInputMax());
     }
 
     @SubscribeEvent

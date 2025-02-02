@@ -7,13 +7,14 @@ import static demise.client.clickgui.demise.Terminal.print;
 
 public class Uwu extends Command {
     private static boolean u;
+
     public Uwu() {
-        super("uwu", "hevex/blowsy added this lol", 0, 0,  new String[] {},  new String[] {"hevex", "blowsy", "weeb", "torture", "noplsno"});
+        super("uwu", "hevex/blowsy added this lol", 0, 0, new String[]{}, new String[]{"hevex", "blowsy", "weeb", "torture", "noplsno"});
         u = false;
     }
 
     @Override
-    public void onCall(String[] args){
+    public void onCall(String[] args) {
         if (u) {
             return;
         }
@@ -21,7 +22,7 @@ public class Uwu extends Command {
         demise.getExecutor().execute(() -> {
             u = true;
 
-            for(int i = 0; i < 4; ++i) {
+            for (int i = 0; i < 4; ++i) {
                 if (i == 0) {
                     print("nya");
                 } else if (i == 1) {
@@ -34,7 +35,7 @@ public class Uwu extends Command {
 
                 try {
                     Thread.sleep(500L);
-                } catch (InterruptedException var2) {
+                } catch (InterruptedException ignored) {
                 }
             }
 

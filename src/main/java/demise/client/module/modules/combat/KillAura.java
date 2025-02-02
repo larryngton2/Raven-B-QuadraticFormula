@@ -1,4 +1,4 @@
-package demise.client.module.modules.rage;
+package demise.client.module.modules.combat;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
@@ -25,7 +25,6 @@ import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.client.C02PacketUseEntity.Action;
 import net.minecraft.util.*;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -41,17 +40,17 @@ import static demise.client.utils.Utils.Player.*;
 import static net.minecraft.util.EnumFacing.DOWN;
 
 public class KillAura extends Module {
-    private static SliderSetting attackRange, rotationSpeed, autoBlockRange, searchRange, targetPriority, tagMode;
     public static SliderSetting autoBlock, rotationMode, pitchOffset, attackMode, pauseRange, targetSwitchDelay;
+    private static SliderSetting attackRange, rotationSpeed, autoBlockRange, searchRange, targetPriority;
     public static TickSetting noSwing, pauseRotation, rotationOffset, targetSwitch, pitSwitch;
-    public static DescriptionSetting dAutoBlock, dRotation, dAttack, dTarget, dTag;
+    public static DescriptionSetting dAutoBlock, dRotation, dAttack, dTarget;
     public static TickSetting forceSprint, onlyWeapon, botCheck;
     public static TickSetting keepSprintOnGround, keepSprintOnAir;
     private static DoubleSliderSetting attackDelay;
     public static DescriptionSetting desc;
 
     public KillAura() {
-        super("KillAura", ModuleCategory.rage, "");
+        super("KillAura", ModuleCategory.combat, "");
 
         this.registerSetting(desc = new DescriptionSetting("Attacks nearby players."));
 
@@ -121,7 +120,7 @@ public class KillAura extends Module {
         Vanilla,
         Release,
         AAC,
-        VanillaReblock,
+        VanillaForce,
         Smart,
         Blink,
         PerfectBlink;
@@ -142,15 +141,15 @@ public class KillAura extends Module {
 
     @Override
     public void onEnable() {
-        super.onEnable();
         lastTargetTime = lastSwitchTime = System.currentTimeMillis();
         resetInterpolation();
     }
 
     @Override
     public void onDisable() {
-        super.onDisable();
-        blocking(false);
+        if (isBlocking) {
+            blocking(false);
+        }
         resetInterpolation();
         blink = false;
     }
@@ -348,17 +347,6 @@ public class KillAura extends Module {
         this.setTag(this.isEnabled() ? currentTarget != null ? currentTarget.getName() : "null" : "");
     }
 
-    @SubscribeEvent
-    public void onMouse(MouseEvent e) {
-        if (e.button == 0 || e.button == 1) {
-            if (!Utils.Player.isPlayerHoldingWeapon() || currentTarget == null || rotationMode.getInput() != 1) {
-                return;
-            }
-
-            e.setCanceled(true);
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onSendPacket(SendPacketEvent e) {
         if (!Utils.Player.isPlayerInGame() || mc.thePlayer.isDead) {
@@ -386,12 +374,17 @@ public class KillAura extends Module {
     }
 
     private void handleAutoBlock(EntityLivingBase e) {
-        if (!Utils.Player.isPlayerHoldingWeapon() && isBlocking) {
-            blocking(false);
+        if (!Utils.Player.isPlayerHoldingWeapon()) {
+            if (isBlocking) {
+                blocking(false);
+            }
             return;
         }
 
         if (currentTarget != null && mc.thePlayer.getDistanceToEntity(currentTarget) > autoBlockRange.getInput() + 0.337) {
+            if (isBlocking) {
+                blocking(false);
+            }
             return;
         }
 

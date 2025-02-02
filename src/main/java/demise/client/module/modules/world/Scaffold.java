@@ -9,9 +9,7 @@ import demise.client.module.setting.impl.TickSetting;
 import demise.client.utils.*;
 import demise.client.utils.event.motion.PreMotionEvent;
 import demise.client.utils.event.update.PreUpdateEvent;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C0APacketAnimation;
@@ -21,11 +19,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Scaffold extends Module {
     private static DescriptionSetting dRot, dFast, dSprint;
-    private static SliderSetting forward, diagonal, rotation, sprintMode, fastMode, placeDelay, test;
+    private static SliderSetting forward, diagonal, rotation, sprintMode, fastMode, placeDelay;
     private static TickSetting showBlockCount, accelerationCoolDown, silentSwing, sameY;
     public static TickSetting safeWalk;
     public Scaffold() {
@@ -84,12 +81,6 @@ public class Scaffold extends Module {
     private enum fastModes {
         None,
         Jump
-    }
-
-    private enum towerModes {
-        None,
-        Vanilla,
-        Hypixel1
     }
 
     public void guiUpdate() {

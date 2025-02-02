@@ -1,7 +1,8 @@
-package demise.client.module.modules.legit;
+package demise.client.module.modules.combat;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
+import demise.client.module.modules.legit.LeftClicker;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.module.modules.world.AntiBot;
@@ -30,7 +31,7 @@ public class HitBox extends Module {
    private static MovingObjectPosition mv;
 
    public HitBox() {
-      super("HitBox", ModuleCategory.legit, "");
+      super("HitBox", ModuleCategory.combat, "");
       this.registerSetting(a = new SliderSetting("Multiplier", 1.2D, 1.0D, 5.0D, 0.05D));
       this.registerSetting(b = new TickSetting("Show new hitbox", false));
    }

@@ -2,34 +2,17 @@ package demise.client.module.modules.legit;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.player.FastPlace;
-import demise.client.module.setting.impl.ComboSetting;
-import demise.client.module.setting.impl.DoubleSliderSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;
 import demise.client.module.modules.world.AntiBot;
 import demise.client.utils.MathUtils;
 import demise.client.utils.RotationUtils;
 import demise.client.utils.Utils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.*;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Mouse;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Random;
 
 public class AimAssist extends Module {
    private static TickSetting botCheck, offset, pitch, onClick;

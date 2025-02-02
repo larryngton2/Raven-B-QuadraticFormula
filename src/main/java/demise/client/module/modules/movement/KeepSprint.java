@@ -2,7 +2,7 @@ package demise.client.module.modules.movement;
 
 import demise.client.main.demise;
 import demise.client.module.Module;
-import demise.client.module.modules.legit.Reach;
+import demise.client.module.modules.combat.Reach;
 import demise.client.module.setting.impl.DescriptionSetting;
 import demise.client.module.setting.impl.SliderSetting;
 import demise.client.module.setting.impl.TickSetting;

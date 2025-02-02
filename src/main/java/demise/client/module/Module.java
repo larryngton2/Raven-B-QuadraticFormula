@@ -213,7 +213,7 @@ public class Module {
       other,
       client,
       fun,
-      rage,
+      combat,
       exploit
    }
 }

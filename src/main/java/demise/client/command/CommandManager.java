@@ -22,7 +22,6 @@ public class CommandManager {
         this.addCommand(new Update());
         this.addCommand(new Help());
         this.addCommand(new SetKey());
-        this.addCommand(new Discord());
         this.addCommand(new ConfigCommand());
         this.addCommand(new Clear());
         this.addCommand(new Cname());
